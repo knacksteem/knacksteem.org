@@ -26,3 +26,13 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+a{
+  background-color: black;
+  color: white;
+  padding: 15px 30px;
+  font-size: 16px;
+  &:hover{
+    background-color: lighten(black, 10%);
+  }
+}

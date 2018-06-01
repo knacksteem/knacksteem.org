@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import Home from './containers/Home/Home';
+import './Home.scss';
 import sc2 from 'sc2-sdk';
 
-class App extends Component {
+class Home extends Component {
   getOathURL(){
     let api = sc2.Initialize({
         app: 'knacksteem.app',
@@ -13,9 +13,11 @@ class App extends Component {
   }
   render() {
     return (
-      <Home/>
+      <div className="App">
+        <a href={this.getOathURL()}>Login</a>
+      </div>
     );
   }
 }
 
-export default App;
+export default Home;
