@@ -6,6 +6,7 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 
 class Home extends Component {
+
   getOathURL(){
     let api = sc2.Initialize({
         app: 'knacksteem.app',
