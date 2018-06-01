@@ -7,6 +7,7 @@ import Footer from '../../components/Footer/Footer';
 import Editor from '../Editor/Editor';
 
 class Home extends Component {
+
   getOathURL(){
     let api = sc2.Initialize({
         app: 'knacksteem.app',
