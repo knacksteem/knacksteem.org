@@ -3,6 +3,7 @@ import './Home.scss';
 import sc2 from 'sc2-sdk';
 
 import Header from '../../components/Header/Header';
+import Footer from '../../components/Footer/Footer';
 
 class Home extends Component {
   getOathURL(){
@@ -18,6 +19,7 @@ class Home extends Component {
       <div className="App">
         <Header/>
         <a href={this.getOathURL()}>Login</a>
+        <Footer/>
       </div>
     );
   }
