@@ -1,4 +1,4 @@
-const rewired = require('react-app-rewired')
+const rewired = require('react-app-rewired');
 
 function rewireSass(config) {
   const cssLoader = rewired.getLoader(

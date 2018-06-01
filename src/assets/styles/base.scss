@@ -1,0 +1,30 @@
+body,html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+a{
+  background-color: black;
+  color: white;
+  padding: 15px 30px;
+  font-size: 16px;
+  text-decoration: none;
+  display: block;
+  &:hover{
+    background-color: lighten(black, 10%);
+  }
+}
+
+.flexBox{
+  display: flex;
+}
+.flexWrap{
+  flex-wrap: wrap;
+}
+.row{
+  flex-direction: row;
+}
+.column{
+  flex-direction: column;
+}
