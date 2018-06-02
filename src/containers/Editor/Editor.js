@@ -1,20 +1,25 @@
 import React, { Component } from 'react';
+import {Editor, EditorState, RichUtils } from 'draft-js';
 import './Editor.scss';
 
-let mark = require('marked');
- state=
+class myEditor extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {editorState: EditorState.createEmpty()};
+    this.onChange = (editorState) => this.setState({editorState});
+  }
 
-
-class Editor extends Component {
   render() {
     return (
-        <div>
-          <form>
+     <div>
+        <Editor
+          editorState={this.state.editorState}
+          onChange={this.onChange}
+        />
 
-          </form>
-        </div>
+     </div>
     );
   }
 }
 
-export default Editor;
+export default myEditor;
