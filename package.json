@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "marked": "^0.4.0",
+    "draft-js": "^0.10.5",
     "history": "^4.7.2",
     "node-sass": "^4.9.0",
     "react": "^16.4.0",
