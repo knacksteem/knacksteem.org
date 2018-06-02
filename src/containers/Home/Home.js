@@ -4,6 +4,7 @@ import sc2 from 'sc2-sdk';
 
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
+import Editor from '../Editor/Editor';
 
 class Home extends Component {
 
@@ -15,12 +16,16 @@ class Home extends Component {
     });
     return api.getLoginURL();
   }
+
   render() {
     return (
       <div className="App">
+
         <Header/>
         <a href={this.getOathURL()}>Login</a>
+        <Editor/>
         <Footer/>
+
       </div>
     );
   }
