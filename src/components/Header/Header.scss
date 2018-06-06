@@ -1,0 +1,27 @@
+@import '../../assets/styles/vars.scss';
+
+.app-header{
+  background-color: $black;
+  padding: 10px;
+  .logo-wrapper{
+    img{
+      height: 30px;
+    }
+    small{
+      display: flex;
+      align-self: flex-end;
+      color: white;
+      padding-left: 3px;
+    }
+  }
+  input{
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0px 20px;
+    border: none;
+    background-color: rgba(255,255,255,.15);
+    width: 200px;
+    color: white;
+  }
+
+}

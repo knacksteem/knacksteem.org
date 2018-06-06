@@ -5,15 +5,11 @@ body,html {
   width: 100%;
 }
 a{
-  background-color: black;
   color: white;
   padding: 15px 30px;
   font-size: 16px;
   text-decoration: none;
   display: block;
-  &:hover{
-    background-color: lighten(black, 10%);
-  }
 }
 
 .flexBox{
@@ -27,4 +23,7 @@ a{
 }
 .column{
   flex-direction: column;
+}
+.container{
+
 }
