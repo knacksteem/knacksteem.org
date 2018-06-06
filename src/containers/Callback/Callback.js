@@ -22,7 +22,7 @@ class Home extends Component {
     this.getMe();
     return (
       <div className="App">
-        Loading...
+        Loading..
       </div>
     );
   }
