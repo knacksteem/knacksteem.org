@@ -1,0 +1,50 @@
+{
+	"parser": "babel-eslint",
+
+	"plugins": [
+		"react"
+	],
+
+	"extends": ["eslint:recommended", "plugin:react/recommended"],
+
+	//http://eslint.org/docs/rules/
+	"parserOptions": {
+		"ecmaVersion": 8,
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true,
+			"experimentalObjectRestSpread": true
+		}
+	},
+
+	"env": {
+		"browser": true,
+		"node": true,
+		"es6": true,
+		"jest": true
+	},
+
+	"globals": {
+		"FB": false,
+		"Raven": false,
+		"React": false
+	},
+
+	"rules": {
+		//0 - off, 1 - warn, 2 - error
+		"quotes": [2, "single"],
+		"indent": [2, 2, {"SwitchCase": 1}],
+		"max-statements": [1, 20],
+		"max-depth": [1, 3],
+		"complexity": [1, 10],
+		"no-unused-vars": [1, {"varsIgnorePattern": "styles|React"}],
+		"no-console": 2,
+		"semi": 2,
+		"no-empty": 1,
+		"react/prop-types": 1,
+		"react/no-array-index-key": 1,
+		"jsx-quotes": [2, "prefer-double"],
+		"no-multiple-empty-lines": [2, {"max": 1, "maxEOF": 1}],
+		"no-var": 2
+	}
+}
