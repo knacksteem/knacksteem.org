@@ -9,13 +9,13 @@ import Editor from '../Editor/Editor';
 class Home extends Component {
   getMe(){
     let api = sc2.Initialize({
-        app: 'knacksteem.app',
-        callbackURL: 'http://localhost:3000/callback',
-        accessToken: qs.parse(this.props.location.search)["?access_token"],
-        scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
+      app: 'knacksteem.app',
+      callbackURL: 'http://localhost:3000/callback',
+      accessToken: qs.parse(this.props.location.search)['?access_token'],
+      scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
     });
     api.me(function (err, res) {
-      console.log(err, res)
+      console.log(err, res);
     });
   }
   render() {

@@ -11,13 +11,13 @@ class myEditor extends Component {
 
   render() {
     return (
-     <div>
+      <div>
         <Editor
           editorState={this.state.editorState}
           onChange={this.onChange}
         />
 
-     </div>
+      </div>
     );
   }
 }

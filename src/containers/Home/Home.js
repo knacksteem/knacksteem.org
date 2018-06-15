@@ -10,9 +10,9 @@ class Home extends Component {
 
   getOathURL(){
     let api = sc2.Initialize({
-        app: 'knacksteem.app',
-        callbackURL: 'http://localhost:3000/callback',
-        scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
+      app: 'knacksteem.app',
+      callbackURL: 'http://localhost:3000/callback',
+      scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
     });
     return api.getLoginURL();
   }

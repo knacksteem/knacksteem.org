@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Route, Link } from 'react-router-dom'
-import Home from '../Home/Home'
-import About from '../About/About'
-import Callback from '../Callback/Callback'
+import { Route, Link } from 'react-router-dom';
+import Home from '../Home/Home';
+import About from '../About/About';
+import Callback from '../Callback/Callback';
 
 class ContainersWrapper extends Component {
   render() {
@@ -19,7 +19,7 @@ class ContainersWrapper extends Component {
           <Route exact path="/about-us" component={About} />
         </main>
       </div>
-    )
+    );
   }
 }
 
