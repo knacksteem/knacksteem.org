@@ -12,7 +12,7 @@ For now you just have to:
 
 ```
 
-npm i
-npm start
+yarn install
+yarn start
 
 ```

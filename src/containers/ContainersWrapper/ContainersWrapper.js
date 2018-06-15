@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Route, Link } from 'react-router-dom';
-import Home from '../Home/Home';
-import About from '../About/About';
-import Callback from '../Callback/Callback';
+//import { Route, Link } from 'react-router-dom';
+import { Layout } from 'antd';
+const { Header, Footer, Sider, Content } = Layout;
+//import Home from '../Home/Home';
+//import About from '../About/About';
+//import Callback from '../Callback/Callback';
 
 class ContainersWrapper extends Component {
   render() {
     return (
       <div>
-        <header>
+        {/*<header>
           <Link to="/">Home</Link>
           <Link to="/about-us">About</Link>
         </header>
@@ -17,7 +19,15 @@ class ContainersWrapper extends Component {
           <Route exact path="/" component={Home} />
           <Route exact path="/callback" component={Callback} />
           <Route exact path="/about-us" component={About} />
-        </main>
+        </main>*/}
+        <Layout>
+          <Sider>Sider</Sider>
+          <Layout>
+            <Header>Header</Header>
+            <Content>Content</Content>
+            <Footer>Footer</Footer>
+          </Layout>
+        </Layout>
       </div>
     );
   }
