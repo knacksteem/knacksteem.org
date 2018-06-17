@@ -1,0 +1,10 @@
+.ant-menu .ant-menu-item[role="menuitem"] {
+  line-height: 12px;
+  height: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.ant-menu-inline .ant-menu-item[role="menuitem"]:not(:last-child) {
+  margin-bottom: 0;
+}

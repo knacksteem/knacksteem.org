@@ -8,7 +8,6 @@ const { Header, Content } = Layout;
 class Home extends Component {
   constructor({history, location}) {
     super();
-    console.log(history, location);
   }
   getOathURL() {
     let api = sc2.Initialize({
@@ -17,6 +16,18 @@ class Home extends Component {
       scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
     });
     return api.getLoginURL();
+  }
+  componentDidMount() {
+    //TODO load data with redux action and fill store - connect this component to redux store to fill content element
+
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.location.pathname !== this.props.location.pathname) {
+
+      //location change detected, load new data
+      //TODO load data with redux action and fill store - connect this component to redux store to fill content element
+
+    }
   }
   render() {
     return (
@@ -29,7 +40,7 @@ class Home extends Component {
           </div>*/}
         </Header>
         <Content>
-          Content
+          {this.props.location.pathname}
         </Content>
         {/*<a href={this.getOathURL()}>Login</a>*/}
       </div>
