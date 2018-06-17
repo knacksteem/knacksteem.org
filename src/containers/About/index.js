@@ -1,19 +1,12 @@
-import React, { Component } from 'react';
-import './About.scss';
-import sc2 from 'sc2-sdk';
+import React from 'react';
+import './index.css';
 
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
+const About = () => {
+  return (
+    <div>
+      hi
+    </div>
+  );
+};
 
-class Home extends Component {
-
-  render() {
-    return (
-      <div>
-        hi
-      </div>
-    );
-  }
-}
-
-export default Home;
+export default About;

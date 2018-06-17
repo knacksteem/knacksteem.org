@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
-import './Home.scss';
+import './index.css';
 import sc2 from 'sc2-sdk';
 import { Layout } from 'antd';
 const { Header, Content } = Layout;

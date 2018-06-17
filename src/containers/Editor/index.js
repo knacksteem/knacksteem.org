@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Editor, EditorState, RichUtils } from 'draft-js';
-import './Editor.scss';
+import './index.css';
 
 class myEditor extends Component {
   constructor(props) {
