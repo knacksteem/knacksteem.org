@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
 import './index.css';
 import sc2 from 'sc2-sdk';
-import { Layout } from 'antd';
+import { Layout, Input } from 'antd';
+import Article from '../../components/Article';
 const { Header, Content } = Layout;
+const Search = Input.Search;
 
 class Home extends Component {
   constructor({history, location}) {
@@ -32,14 +34,15 @@ class Home extends Component {
     return (
       <div className="App">
         <Header>
-          Header
-          {/*<div className="flexBox row app-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>Here is a header</p>
-          </div>*/}
+          <Search
+            placeholder="Search through Knacksteem"
+            onSearch={value => console.log(value)}
+            style={{ width: 300 }}
+          />
         </Header>
         <Content>
-          {this.props.location.pathname}
+          {/*{this.props.location.pathname}*/}
+          <Article />
         </Content>
         {/*<a href={this.getOathURL()}>Login</a>*/}
       </div>

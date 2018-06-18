@@ -7,7 +7,9 @@
   display: flex;
   justify-content: flex-start;
   border-bottom: 1px solid #e6eaed;
-  padding: 0 24px;
+  padding: 10px 16px;
+  height: auto;
+  line-height: normal;
 }
 
 .ant-layout-sider {
@@ -16,4 +18,9 @@
 
 .ant-menu-dark {
   background-color: #283638;
+}
+
+.ant-layout-content {
+  padding: 16px;
+  margin: 0;
 }

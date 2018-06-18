@@ -8,13 +8,21 @@ const {Sider} = Layout;
 const menuElements = [
   {key: '/', name: 'All'},
   {key: '/categories/vlog', name: 'VLog'},
-  {key: '/categories/graphics', name: 'Graphics'}
+  {key: '/categories/graphics', name: 'Graphics'},
+  {key: '/categories/art', name: 'Art'},
+  {key: '/categories/knack', name: 'Knack'},
+  {key: '/categories/onealtruism', name: 'One Altruism'},
+  {key: '/categories/music', name: 'Music'},
+  {key: '/categories/humor', name: 'Joke/Humor'},
+  {key: '/categories/inspiring', name: 'Inspiring'},
+  {key: '/categories/visibility', name: 'Visibility'},
+  {key: '/categories/news', name: 'News'},
+  {key: '/categories/quotes', name: 'Quotes'},
+  {key: '/categories/techtrends', name: 'Tech Trends'},
+  {key: '/categories/blogposts', name: 'Blog Posts'}
 ];
 
 const CustomSidebar = ({history, location}) => {
-  const handleMenuClick = (evt) => {
-    //history.push(evt.key);
-  };
   return (
     <Sider
       width={200}
@@ -23,7 +31,7 @@ const CustomSidebar = ({history, location}) => {
       onCollapse={(collapsed, type) => {console.log(collapsed, type);}}
     >
       <div className="logo"><img src={logo} alt="Knacksteem Logo" /></div>
-      <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}} onClick={handleMenuClick}>
+      <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
         {menuElements.map((elem, index) => {
           return (
             <Menu.Item key={elem.key}>
