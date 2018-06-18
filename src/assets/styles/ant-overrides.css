@@ -1,3 +1,15 @@
+.ant-layout {
+  height: 100%;
+}
+
+.ant-layout-header {
+  background-color: white;
+  display: flex;
+  justify-content: flex-start;
+  border-bottom: 1px solid #e6eaed;
+  padding: 0 24px;
+}
+
 .ant-layout-sider {
   background-color: #283638;
 }

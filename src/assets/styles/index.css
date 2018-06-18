@@ -1,4 +1,16 @@
+body {
+  margin: 0;
+}
+
+div, p, span, img {
+  box-sizing: border-box;
+}
+
 img {
   width: 100%;
   height: auto;
+}
+
+#root {
+  height: 100%;
 }

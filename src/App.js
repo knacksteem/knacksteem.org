@@ -10,16 +10,14 @@ import './assets/styles/ant-overrides.css';
 
 const App = () => {
   return (
-    <div>
+    <Layout>
+      <Sidebar/>
       <Layout>
-        <Sidebar/>
-        <Layout>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/callback" component={Callback} />
-          <Route exact path="/categories/:category" component={Home} />
-        </Layout>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/callback" component={Callback} />
+        <Route exact path="/categories/:category" component={Home} />
       </Layout>
-    </div>
+    </Layout>
   );
 };
 
