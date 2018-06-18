@@ -23,7 +23,6 @@ class Home extends Component {
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.location.pathname !== this.props.location.pathname) {
-
       //location change detected, load new data
       //TODO load data with redux action and fill store - connect this component to redux store to fill content element
 
