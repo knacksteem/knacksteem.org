@@ -22,7 +22,7 @@ const CustomSidebar = ({history, location}) => {
       collapsedWidth="0"
       onCollapse={(collapsed, type) => {console.log(collapsed, type);}}
     >
-      <div className="logo"><img src={logo} /></div>
+      <div className="logo"><img src={logo} alt="Knacksteem Logo" /></div>
       <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}} onClick={handleMenuClick}>
         {menuElements.map((elem, index) => {
           return (
