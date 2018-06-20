@@ -6,7 +6,7 @@
   background-color: white;
   display: flex;
   justify-content: flex-start;
-  border-bottom: 1px solid #e6eaed;
+  /*border-bottom: 1px solid #e6eaed;*/
   padding: 10px 16px;
   height: auto;
   line-height: normal;
@@ -23,4 +23,8 @@
 .ant-layout-content {
   padding: 16px;
   margin: 0;
+}
+
+.ant-list-vertical .ant-list-item-meta {
+  margin-bottom: 0;
 }

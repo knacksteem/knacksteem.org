@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import { Layout } from 'antd';
 import Sidebar from './components/Sidebar';
 import Home from './containers/Home';
+import ArticleDetail from './containers/ArticleDetail';
 import Callback from './containers/Callback';
 import 'antd/dist/antd.min.css';
 import './assets/styles/index.css';
@@ -16,6 +17,7 @@ const App = () => {
         <Route exact path="/" component={Home} />
         <Route exact path="/callback" component={Callback} />
         <Route exact path="/categories/:category" component={Home} />
+        <Route exact path="/articles/:article" component={ArticleDetail} />
       </Layout>
     </Layout>
   );
