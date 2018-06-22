@@ -18,6 +18,12 @@ for (let i = 1; i < 23; i++) {
 }
 
 class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchString: ''
+    };
+  }
   getOathURL() {
     let api = sc2.Initialize({
       app: 'knacksteem.app',
@@ -40,21 +46,34 @@ class Home extends Component {
     }
   }
   render() {
+    const {searchString} = this.state;
     const {articles} = this.props;
+    let articlesData = articles.data;
+    if (searchString !== '') {
+      articlesData = articlesData.filter((elem) => {
+        if (elem.title.toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
+          return true;
+        }
+        if (elem.description.toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
+          return true;
+        }
+        return false;
+      });
+    }
 
     return (
       <div>
         <Header>
           <Search
             placeholder="Search through Knacksteem"
-            onSearch={value => console.log(value)}
+            onSearch={value => this.setState({searchString: value})}
             style={{width: 300}}
           />
         </Header>
         <Content>
           {/*{this.props.location.pathname}*/}
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={{display: 'flex', flexDirection: 'column'}}>
-            {articles.data.map((data, index) => {
+            {articlesData.map((data, index) => {
               return (
                 <ArticleListItem key={index} data={data} />
               );
