@@ -14,7 +14,7 @@ const ArticleListItem = ({data}) => {
   return (
     <div className="ant-list-item">
       <Link to="/articles/permalink1">
-        <div style={{width: 280, float: 'left', marginRight: 20}}><img src="http://placekitten.com/280/160"/></div>
+        <div style={{width: 280, float: 'left', marginRight: 20}}><img src="http://placekitten.com/280/160" alt="Article"/></div>
         <h2 className="ant-list-item-meta-title">{data.title}</h2>
         <div className="ant-list-item-content">{data.description}</div>
       </Link>

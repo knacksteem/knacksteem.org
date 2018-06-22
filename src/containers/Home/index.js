@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
 import './index.css';
 import sc2 from 'sc2-sdk';
 import {Layout, Input} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
+import {getArticlesByCategory} from '../../actions/articles';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
@@ -16,9 +18,6 @@ for (let i = 1; i < 23; i++) {
 }
 
 class Home extends Component {
-  constructor({history, location}) {
-    super();
-  }
   getOathURL() {
     let api = sc2.Initialize({
       app: 'knacksteem.app',
@@ -28,30 +27,34 @@ class Home extends Component {
     return api.getLoginURL();
   }
   componentDidMount() {
-    //TODO load data with redux action and fill store - connect this component to redux store to fill content element
+    const {dispatch, match} = this.props;
 
+    dispatch(getArticlesByCategory(match.params.category));
   }
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.location.pathname !== this.props.location.pathname) {
-      //location change detected, load new data
-      //TODO load data with redux action and fill store - connect this component to redux store to fill content element
+    const {dispatch, location, match} = this.props;
 
+    if (prevProps.location.pathname !== location.pathname) {
+      //location change detected, load new data
+      dispatch(getArticlesByCategory(match.params.category));
     }
   }
   render() {
+    const {articles} = this.props;
+
     return (
       <div>
         <Header>
           <Search
             placeholder="Search through Knacksteem"
             onSearch={value => console.log(value)}
-            style={{ width: 300 }}
+            style={{width: 300}}
           />
         </Header>
         <Content>
           {/*{this.props.location.pathname}*/}
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={{display: 'flex', flexDirection: 'column'}}>
-            {listData.map((data, index) => {
+            {articles.data.map((data, index) => {
               return (
                 <ArticleListItem key={index} data={data} />
               );
@@ -64,4 +67,9 @@ class Home extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  articles: state.articles
+});
+
+Home = connect(mapStateToProps)(Home);
 export default withRouter(Home);
