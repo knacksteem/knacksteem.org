@@ -21,8 +21,12 @@ class Callback extends Component {
     const {user, dispatch} = this.props;
 
     if (prevProps.user.username !== user.username) {
-      //redirect to homepage
-      dispatch(push('/'));
+      //redirect to user contributions or homepage
+      if (user.username) {
+        dispatch(push('/mycontributions'));
+      } else {
+        dispatch(push('/'));
+      }
     }
   }
   render() {

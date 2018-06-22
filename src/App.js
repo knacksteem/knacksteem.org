@@ -1,6 +1,7 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
-import { Layout } from 'antd';
+import {Route} from 'react-router-dom';
+import {Layout} from 'antd';
+import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Home from './containers/Home';
 import ArticleDetail from './containers/ArticleDetail';
@@ -14,8 +15,10 @@ const App = () => {
     <Layout>
       <Sidebar/>
       <Layout>
+        <Header/>
         <Route exact path="/" component={Home} />
         <Route exact path="/callback" component={Callback} />
+        <Route exact path="/mycontributions" component={Home} />
         <Route exact path="/categories/:category" component={Home} />
         <Route exact path="/articles/:article" component={ArticleDetail} />
       </Layout>

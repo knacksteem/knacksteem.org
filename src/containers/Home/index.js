@@ -3,10 +3,9 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import sc2 from 'sc2-sdk';
 import {Layout, Input} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import {getArticlesByCategory} from '../../actions/articles';
+import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
@@ -25,18 +24,16 @@ class Home extends Component {
       searchString: ''
     };
   }
-  getOathURL() {
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: 'http://localhost:3000/callback',
-      scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
-    });
-    return api.getLoginURL();
-  }
   componentDidMount() {
-    const {dispatch, match} = this.props;
+    const {location, dispatch, match} = this.props;
 
-    dispatch(getArticlesByCategory(match.params.category));
+    if (location.pathname === '/mycontributions') {
+      //load user contributions
+      dispatch(getArticlesByUser());
+    } else {
+      //load contributions by category
+      dispatch(getArticlesByCategory(match.params.category));
+    }
   }
   componentDidUpdate(prevProps, prevState) {
     const {dispatch, location, match} = this.props;
@@ -72,7 +69,6 @@ class Home extends Component {
           />
         </Header>
         <Content>
-          {/*{this.props.location.pathname}*/}
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={{display: 'flex', flexDirection: 'column'}}>
             {articlesData.map((data, index) => {
               return (
@@ -81,7 +77,6 @@ class Home extends Component {
             })}
           </div>
         </Content>
-        <a href={this.getOathURL()}>Login</a>
       </div>
     );
   }
