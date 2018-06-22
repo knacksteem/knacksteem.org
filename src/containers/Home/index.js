@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 import './index.css';
 import sc2 from 'sc2-sdk';
 import {Layout, Input} from 'antd';
@@ -85,6 +86,13 @@ class Home extends Component {
     );
   }
 }
+
+Home.propTypes = {
+  location: PropTypes.object,
+  match: PropTypes.object,
+  dispatch: PropTypes.func,
+  articles: PropTypes.object
+};
 
 const mapStateToProps = state => ({
   articles: state.articles

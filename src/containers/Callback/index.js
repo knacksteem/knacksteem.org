@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
+import PropTypes from 'prop-types';
 import qs from 'qs';
 import {userLogin} from '../../actions/user';
 
@@ -32,6 +33,12 @@ class Callback extends Component {
     );
   }
 }
+
+Callback.propTypes = {
+  location: PropTypes.object,
+  dispatch: PropTypes.func,
+  user: PropTypes.object
+};
 
 const mapStateToProps = state => ({
   user: state.user
