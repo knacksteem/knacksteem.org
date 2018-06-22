@@ -25,7 +25,6 @@ const menuElements = [
 ];
 
 const CustomSidebar = ({location, user}) => {
-  console.log(location.pathname);
   return (
     <Sider
       width={200}
