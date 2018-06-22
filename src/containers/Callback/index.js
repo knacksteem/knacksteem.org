@@ -1,27 +1,40 @@
-import React, { Component } from 'react';
-import sc2 from 'sc2-sdk';
+import React, {Component} from 'react';
+import {withRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {push} from 'react-router-redux';
 import qs from 'qs';
+import {userLogin} from '../../actions/user';
 
 class Callback extends Component {
-  getMe() {
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: 'http://localhost:3000/callback',
-      accessToken: qs.parse(this.props.location.search)['?access_token'],
-      scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
-    });
-    api.me(function (err, res) {
-      console.log(err, res);
-    });
+  constructor(props) {
+    super(props);
+    this.state = {
+
+    };
+  }
+  componentDidMount() {
+    const {location, dispatch} = this.props;
+    dispatch(userLogin(qs.parse(location.search)['?access_token']));
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const {user, dispatch} = this.props;
+
+    if (prevProps.user.username !== user.username) {
+      //redirect to homepage
+      dispatch(push('/'));
+    }
   }
   render() {
-    this.getMe();
     return (
-      <div className="App">
-        Loading..
+      <div>
+        Logging in...
       </div>
     );
   }
 }
 
-export default Callback;
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+export default withRouter(connect(mapStateToProps)(Callback));

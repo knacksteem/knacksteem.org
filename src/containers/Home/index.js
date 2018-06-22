@@ -80,7 +80,7 @@ class Home extends Component {
             })}
           </div>
         </Content>
-        {/*<a href={this.getOathURL()}>Login</a>*/}
+        <a href={this.getOathURL()}>Login</a>
       </div>
     );
   }
@@ -90,5 +90,4 @@ const mapStateToProps = state => ({
   articles: state.articles
 });
 
-Home = connect(mapStateToProps)(Home);
-export default withRouter(Home);
+export default withRouter(connect(mapStateToProps)(Home));

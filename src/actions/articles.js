@@ -1,7 +1,7 @@
 import * as types from './types';
 
 export const getArticlesByCategory = (category) => {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
       category: category
