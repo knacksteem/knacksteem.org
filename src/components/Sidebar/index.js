@@ -24,6 +24,7 @@ const menuElements = [
   {key: '/categories/blogposts', name: 'Blog Posts'}
 ];
 
+//Sidebar with category menu
 const CustomSidebar = ({location, user}) => {
   return (
     <Sider

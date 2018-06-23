@@ -7,6 +7,7 @@ import './index.css';
 import sc2 from 'sc2-sdk';
 const {Header} = Layout;
 
+//Header with login and user details
 const CustomHeader = ({user}) => {
   const getOathURL = () => {
     const api = sc2.Initialize({

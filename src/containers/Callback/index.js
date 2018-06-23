@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import {userLogin} from '../../actions/user';
 
+//Callback route for Steem Connect
 class Callback extends Component {
   constructor(props) {
     super(props);

@@ -23,7 +23,7 @@ export const getArticlesByCategory = (category) => {
   };
 };
 
-export const getArticlesByUser = (category) => {
+export const getArticlesByUser = () => {
   return (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
