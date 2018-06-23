@@ -1,0 +1,13 @@
+.ant-menu .ant-menu-item[role="menuitem"] {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.ant-menu-inline .ant-menu-item[role="menuitem"]:not(:last-child) {
+  margin-bottom: 0;
+}
+
+.ant-layout-sider .logo {
+  width: 150px;
+  margin: 20px;
+}

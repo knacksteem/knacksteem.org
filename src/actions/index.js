@@ -1,6 +1,7 @@
 import * as UserActions from './user';
-import * as types from './types';
+import * as ArticlesActions from './articles';
 
-export const ActionCreators = Object.assign({},
-  UserActions
-);
+export const ActionCreators = {
+  ...UserActions,
+  ...ArticlesActions
+};

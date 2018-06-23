@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Editor, EditorState, RichUtils } from 'draft-js';
-import './Editor.scss';
+import './index.css';
 
 class myEditor extends Component {
   constructor(props) {
@@ -11,13 +11,13 @@ class myEditor extends Component {
 
   render() {
     return (
-     <div>
+      <div>
         <Editor
           editorState={this.state.editorState}
           onChange={this.onChange}
         />
 
-     </div>
+      </div>
     );
   }
 }
