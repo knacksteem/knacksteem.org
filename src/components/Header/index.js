@@ -12,7 +12,7 @@ const CustomHeader = ({user}) => {
   const getOathURL = () => {
     const api = sc2.Initialize({
       app: 'knacksteem.app',
-      callbackURL: 'http://localhost:3000/callback',
+      callbackURL: (process.env.NODE_ENV === 'development') ? 'http://localhost:3000/callback' : 'http://knacksteem.org/callback',
       scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
     });
     return api.getLoginURL();
@@ -28,8 +28,6 @@ const CustomHeader = ({user}) => {
 };
 
 CustomHeader.propTypes = {
-  history: PropTypes.object,
-  location: PropTypes.object,
   user: PropTypes.object
 };
 

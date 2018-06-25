@@ -1,7 +1,19 @@
 import * as types from './types';
 import sc2 from 'sc2-sdk';
+import Cookies from 'js-cookie';
 
-//TODO store access token on client (cookie, maybe redux-persist?)
+//check if the user is logged in already (with a cookie)
+export const checkLoginData = () => {
+  return async (dispatch) => {
+    const accessToken = Cookies.get('accessToken');
+
+    if (accessToken) {
+      dispatch(userLogin(accessToken));
+    }
+  };
+};
+
+//initialize the login after steem connect callback
 export const userLogin = (accessToken) => {
   return async (dispatch) => {
     dispatch({
@@ -15,6 +27,10 @@ export const userLogin = (accessToken) => {
       scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
     });
     let response = await api.me();
+
+    //TODO error handling if the token does not work (anymore)
+
+    Cookies.set('accessToken', accessToken);
 
     dispatch({
       type: types.USER_GET,
