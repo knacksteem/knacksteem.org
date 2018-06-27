@@ -3,8 +3,10 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {push} from 'react-router-redux';
 import PropTypes from 'prop-types';
+import {Layout} from 'antd';
 import qs from 'qs';
 import {userLogin} from '../../actions/user';
+const {Content} = Layout;
 
 //Callback route for Steem Connect
 class Callback extends Component {
@@ -33,7 +35,9 @@ class Callback extends Component {
   render() {
     return (
       <div>
-        Logging in...
+        <Content>
+          Logging in...
+        </Content>
       </div>
     );
   }
