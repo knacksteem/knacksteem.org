@@ -15,7 +15,7 @@ class NewContribution extends Component {
       title: 'testtitle',
       value: RichTextEditor.createEmptyValue(),
       tags: ['knacksteem'],
-      inputVisible: false
+      inputTagsVisible: false
     };
   }
   onChange = (value) => {
@@ -31,23 +31,26 @@ class NewContribution extends Component {
     const tags = this.state.tags.filter(tag => tag !== removedTag);
     this.setState({tags});
   };
-  showInput = () => {
-    this.setState({inputVisible: true}, () => this.input.focus());
+  showInputTags = () => {
+    this.setState({inputTagsVisible: true}, () => this.inputTags.focus());
   };
-  handleInputChange = (e) => {
-    this.setState({inputValue: e.target.value});
+  handleInputTagsChange = (e) => {
+    this.setState({inputTagsValue: e.target.value});
+  };
+  handleInputTitleChange = (e) => {
+    this.setState({title: e.target.value});
   };
   handleInputConfirm = () => {
     const state = this.state;
-    const inputValue = state.inputValue;
+    const inputTagsValue = state.inputTagsValue;
     let tags = state.tags;
-    if (inputValue && tags.indexOf(inputValue) === -1) {
-      tags = [...tags, inputValue];
+    if (inputTagsValue && tags.indexOf(inputTagsValue) === -1) {
+      tags = [...tags, inputTagsValue];
     }
     this.setState({
       tags,
-      inputVisible: false,
-      inputValue: '',
+      inputTagsVisible: false,
+      inputTagsValue: ''
     });
   };
   //post article on blockchain and in backend db
@@ -56,17 +59,23 @@ class NewContribution extends Component {
     const {title, value, tags} = this.state;
     dispatch(postArticle(title, value.toString('markdown'), tags));
   };
-  saveInputRef = input => this.input = input;
+  refInputTags = input => this.inputTags = input;
   render() {
-    const {value, tags, inputVisible, inputValue} = this.state;
+    const {value, tags, inputTagsVisible, inputTagsValue} = this.state;
+    const {isPosting} = this.props.articles;
 
     return (
       <div className="editor">
         <Content>
+          <Input
+            placeholder="Title"
+            onChange={this.handleInputTitleChange}
+          />
           <RichTextEditor
             value={value}
             onChange={this.onChange}
             autoFocus={true}
+            className="editor-rte"
           />
           <div className="editor-tags">
             {tags.map((tag, index) => {
@@ -74,26 +83,26 @@ class NewContribution extends Component {
                 <Tag key={tag} closable={index !== 0} color={(index > 0 ? 'blue' : 'magenta')} afterClose={() => this.handleCloseTag(tag)}>{tag}</Tag>
               );
             })}
-            {inputVisible && (
+            {inputTagsVisible && (
               <Input
-                ref={this.saveInputRef}
+                ref={this.refInputTags}
                 type="text"
                 size="small"
                 style={{width: 200}}
-                value={inputValue}
-                onChange={this.handleInputChange}
+                value={inputTagsValue}
+                onChange={this.handleInputTagsChange}
                 onBlur={this.handleInputConfirm}
                 onPressEnter={this.handleInputConfirm}
               />
             )}
-            {!inputVisible && (tags.length < 5) && (
-              <Tag onClick={this.showInput} style={{background: '#fff', borderStyle: 'dashed'}}
+            {!inputTagsVisible && (tags.length < 5) && (
+              <Tag onClick={this.showInputTags} style={{background: '#fff', borderStyle: 'dashed'}}
               >
                 <Icon type="plus" /> Add Tag
               </Tag>
             )}
           </div>
-          <Button type="primary" onClick={this.onPostClick}>Post</Button>
+          <Button type="primary" onClick={this.onPostClick} loading={isPosting}>Post</Button>
         </Content>
       </div>
     );
@@ -102,7 +111,12 @@ class NewContribution extends Component {
 
 NewContribution.propTypes = {
   onChange: PropTypes.func,
-  dispatch: PropTypes.func
+  dispatch: PropTypes.func,
+  articles: PropTypes.object
 };
 
-export default withRouter(connect()(NewContribution));
+const mapStateToProps = state => ({
+  articles: state.articles
+});
+
+export default withRouter(connect(mapStateToProps)(NewContribution));

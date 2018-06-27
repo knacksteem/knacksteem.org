@@ -1,4 +1,4 @@
-import {ARTICLES_REQUEST, ARTICLES_GET} from '../actions/types';
+import {ARTICLES_REQUEST, ARTICLES_GET, ARTICLES_POSTING, ARTICLES_POSTED} from '../actions/types';
 
 const initialState = {
   currentCategory: '',
@@ -18,7 +18,8 @@ const initialState = {
     {key: 'quotes', name: 'Quotes'},
     {key: 'techtrends', name: 'Tech Trends'},
     {key: 'blogposts', name: 'Blog Posts'}
-  ]
+  ],
+  isPosting: false
 };
 
 const articles = (state = initialState, action) => {
@@ -33,6 +34,16 @@ const articles = (state = initialState, action) => {
       return {
         ...state,
         data: action.payload
+      };
+    case ARTICLES_POSTING:
+      return {
+        ...state,
+        isPosting: true
+      };
+    case ARTICLES_POSTED:
+      return {
+        ...state,
+        isPosting: false
       };
     default:
       return state;

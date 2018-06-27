@@ -1,5 +1,7 @@
+import {push} from 'react-router-redux';
 import * as types from './types';
 import {userLogout} from './user';
+import {getUniquePermalink} from '../services/functions';
 import sc2 from 'sc2-sdk';
 
 /**
@@ -75,9 +77,12 @@ export const postArticle = (title, body, tags) => {
     });
 
     try {
-      let response = await api.comment('', tags[0], store.user.username, tags[0], title, body, {tags: tags.join(' ')});
+      let response = await api.comment('', tags[0], store.user.username, getUniquePermalink(title), title, body, {tags: tags.join(' ')});
       console.log(response);
       //TODO successfully posted to blockchain, now posting to backend with permalink and category
+
+      //redirect to my contributions
+      dispatch(push('/mycontributions'));
     } catch (error) {
       //invalidate login
       dispatch(userLogout());
