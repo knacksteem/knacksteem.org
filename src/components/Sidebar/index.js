@@ -7,25 +7,8 @@ import './index.css';
 import logo from '../../assets/images/logo.png';
 const {Sider} = Layout;
 
-const menuElements = [
-  {key: '/', name: 'All'},
-  {key: '/categories/vlog', name: 'VLog'},
-  {key: '/categories/graphics', name: 'Graphics'},
-  {key: '/categories/art', name: 'Art'},
-  {key: '/categories/knack', name: 'Knack'},
-  {key: '/categories/onealtruism', name: 'One Altruism'},
-  {key: '/categories/music', name: 'Music'},
-  {key: '/categories/humor', name: 'Joke/Humor'},
-  {key: '/categories/inspiring', name: 'Inspiring'},
-  {key: '/categories/visibility', name: 'Visibility'},
-  {key: '/categories/news', name: 'News'},
-  {key: '/categories/quotes', name: 'Quotes'},
-  {key: '/categories/techtrends', name: 'Tech Trends'},
-  {key: '/categories/blogposts', name: 'Blog Posts'}
-];
-
 //Sidebar with category menu
-const CustomSidebar = ({location, user}) => {
+const CustomSidebar = ({location, user, articles}) => {
   return (
     <Sider
       width={200}
@@ -37,10 +20,13 @@ const CustomSidebar = ({location, user}) => {
       <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
         {user.username && <Menu.Item key="/mycontributions"><Link to="/mycontributions">My Contributions</Link></Menu.Item>}
         {user.username && <Menu.Item style={{height: 24}}><hr/></Menu.Item>}
-        {menuElements.map((elem) => {
+        <Menu.Item key="/">
+          <Link to="/">All</Link>
+        </Menu.Item>
+        {articles.categories.map((elem) => {
           return (
-            <Menu.Item key={elem.key}>
-              <Link to={elem.key}>{elem.name}</Link>
+            <Menu.Item key={`/categories/${elem.key}`}>
+              <Link to={`/categories/${elem.key}`}>{elem.name}</Link>
             </Menu.Item>
           );
         })}
@@ -51,11 +37,13 @@ const CustomSidebar = ({location, user}) => {
 
 CustomSidebar.propTypes = {
   location: PropTypes.object,
-  user: PropTypes.object
+  user: PropTypes.object,
+  articles: PropTypes.object
 };
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  articles: state.articles
 });
 
 export default withRouter(connect(mapStateToProps)(CustomSidebar));
