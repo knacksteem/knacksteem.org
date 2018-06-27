@@ -1,4 +1,5 @@
 import * as types from './types';
+import sc2 from 'sc2-sdk';
 
 export const getArticlesByCategory = (category) => {
   return (dispatch) => {
@@ -45,5 +46,36 @@ export const getArticlesByUser = () => {
       type: types.ARTICLES_GET,
       payload: data
     });
+  };
+};
+
+export const postArticle = (title, body, tags) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: types.ARTICLES_POSTING
+    });
+
+    const store = getState();
+
+    let api = sc2.Initialize({
+      app: 'knacksteem.app',
+      callbackURL: 'http://localhost:3000/callback',
+      accessToken: store.user.accessToken,
+      scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
+    });
+
+    try {
+      let response = await api.comment('', tags[0], store.user.username, tags[0], title, body, {tags: tags.join(' ')});
+      console.log(response);
+      //successfully posted to blockchain, now posting to backend with permalink and category
+      //TODO
+    } catch (error) {
+      //invalidate login
+
+    } finally {
+      dispatch({
+        type: types.ARTICLES_POSTED
+      });
+    }
   };
 };

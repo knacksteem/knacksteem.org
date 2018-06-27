@@ -1,4 +1,4 @@
-import {USER_AUTH, USER_GET} from '../actions/types';
+import {USER_AUTH, USER_GET, USER_LOGOUT} from '../actions/types';
 
 const initialState = {
   username: '',
@@ -12,7 +12,8 @@ const user = (state = initialState, action) => {
       return {
         ...state,
         username: '',
-        accessToken: ''
+        accessToken: '',
+        userObject: {}
       };
     case USER_GET:
       return {
@@ -20,6 +21,13 @@ const user = (state = initialState, action) => {
         username: action.username,
         userObject: action.userObject,
         accessToken: action.accessToken
+      };
+    case USER_LOGOUT:
+      return {
+        ...state,
+        username: '',
+        accessToken: '',
+        userObject: {}
       };
     default:
       return state;

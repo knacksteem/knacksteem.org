@@ -28,7 +28,9 @@ export const userLogin = (accessToken) => {
     });
     let response = await api.me();
 
-    //TODO error handling if the token does not work (anymore)
+    console.log(response);
+
+    //TODO error handling if the token does not work (anymore) - try/catch
 
     Cookies.set('accessToken', accessToken);
 

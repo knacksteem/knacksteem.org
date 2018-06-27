@@ -1,5 +1,5 @@
 import React from 'react';
-import {withRouter} from 'react-router-dom';
+import {withRouter, Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {Layout, Button} from 'antd';
 import PropTypes from 'prop-types';
@@ -21,7 +21,8 @@ const CustomHeader = ({user}) => {
   return (
     <Header>
       <div className="username-login">
-        {user.username || <a href={getOathURL()}><Button>Login</Button></a>}
+        {user.username && <Link to="/new"><Button>New Contribution</Button></Link>}
+        {!user.username && <a href={getOathURL()}><Button>Login</Button></a>}
       </div>
     </Header>
   );
