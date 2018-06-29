@@ -26,7 +26,7 @@ export const userLogin = (accessToken) => {
 
     let api = sc2.Initialize({
       app: 'knacksteem.app',
-      callbackURL: 'http://localhost:3000/callback',
+      callbackURL: (process.env.NODE_ENV === 'development') ? 'http://localhost:3000/callback' : 'http://knacksteem.org/callback',
       accessToken: accessToken,
       scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
     });
@@ -54,7 +54,7 @@ export const userLogout = () => {
 
     let api = sc2.Initialize({
       app: 'knacksteem.app',
-      callbackURL: 'http://localhost:3000/callback',
+      callbackURL: (process.env.NODE_ENV === 'development') ? 'http://localhost:3000/callback' : 'http://knacksteem.org/callback',
       accessToken: store.user.accessToken
     });
     api.revokeToken();

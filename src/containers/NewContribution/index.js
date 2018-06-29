@@ -8,6 +8,9 @@ import {postArticle} from '../../actions/articles';
 import './index.css';
 const {Content} = Layout;
 
+/**
+ * Route for adding a new article/contribution with rich text editor
+ */
 class NewContribution extends Component {
   constructor(props) {
     super(props);
@@ -18,6 +21,7 @@ class NewContribution extends Component {
       inputTagsVisible: false
     };
   }
+  //will be called whenever the content of the editor changes
   onChange = (value) => {
     this.setState({value});
     if (this.props.onChange) {
@@ -27,10 +31,12 @@ class NewContribution extends Component {
       );
     }
   };
+  //callbcack for removing a tag
   handleCloseTag = (removedTag) => {
     const tags = this.state.tags.filter(tag => tag !== removedTag);
     this.setState({tags});
   };
+  //will get called when you click the "add tag" button, to show the input field for a new tag
   showInputTags = () => {
     //show input field for new tag and set focus to input or autocomplete (autocomplete for category tag)
     this.setState({inputTagsVisible: true}, () => {
@@ -52,9 +58,11 @@ class NewContribution extends Component {
     }
     this.setState({inputTagsValue: e.target ? e.target.value : e});
   };
+  //callback for changing the value of the title input
   handleInputTitleChange = (e) => {
     this.setState({title: e.target.value});
   };
+  //callback for confirming a new tag, will get called on enter, mouse click (autocomplete input) and on blur
   handleInputConfirm = (value) => {
     const {inputTagsValue, tags} = this.state;
     const {categories} = this.props.articles;
@@ -87,7 +95,9 @@ class NewContribution extends Component {
     const {title, value, tags} = this.state;
     dispatch(postArticle(title, value.toString('markdown'), tags));
   };
+  //reference to default input for new tags
   refInputTags = input => this.inputTags = input;
+  //reference to autocomplete input for second tag (category)
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
     const {value, tags, inputTagsVisible, inputTagsValue} = this.state;

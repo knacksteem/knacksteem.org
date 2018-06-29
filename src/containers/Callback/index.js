@@ -8,7 +8,9 @@ import qs from 'qs';
 import {userLogin} from '../../actions/user';
 const {Content} = Layout;
 
-//Callback route for Steem Connect
+/**
+ * Callback route for Steem Connect
+ */
 class Callback extends Component {
   constructor(props) {
     super(props);

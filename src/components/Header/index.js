@@ -12,9 +12,7 @@ const {Header} = Layout;
  * Header with login and user details
  */
 const CustomHeader = ({user, dispatch}) => {
-  /**
-   * get OAuth URL for Steem Connect
-   */
+  //get OAuth URL for Steem Connect
   const getOathURL = () => {
     const api = sc2.Initialize({
       app: 'knacksteem.app',
@@ -23,9 +21,7 @@ const CustomHeader = ({user, dispatch}) => {
     });
     return api.getLoginURL();
   };
-  /**
-   * dispatch logout action
-   */
+  //dispatch logout action
   const onLogoutClick = () => {
     dispatch(userLogout());
   };
