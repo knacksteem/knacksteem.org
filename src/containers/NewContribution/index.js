@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import RichTextEditor from 'react-rte';
-import {Layout, Input, Tag, Icon, Button} from 'antd';
+import {Layout, Input, AutoComplete, Tag, Icon, Button} from 'antd';
 import {postArticle} from '../../actions/articles';
 import './index.css';
 const {Content} = Layout;
@@ -32,23 +32,44 @@ class NewContribution extends Component {
     this.setState({tags});
   };
   showInputTags = () => {
-    this.setState({inputTagsVisible: true}, () => this.inputTags.focus());
+    //show input field for new tag and set focus to input or autocomplete (autocomplete for category tag)
+    this.setState({inputTagsVisible: true}, () => {
+      if (this.inputTags) {
+        this.inputTags.focus();
+      } else {
+        this.inputTagsAutoComplete.focus();
+      }
+    });
   };
   handleInputTagsChange = (e) => {
-    this.setState({inputTagsValue: e.target.value});
+    //store input change in state - autocomplete input only sends the value as parameter
+    this.setState({inputTagsValue: e.target ? e.target.value : e});
   };
   handleInputTitleChange = (e) => {
     this.setState({title: e.target.value});
   };
-  handleInputConfirm = () => {
-    const state = this.state;
-    const inputTagsValue = state.inputTagsValue;
-    let tags = state.tags;
-    if (inputTagsValue && tags.indexOf(inputTagsValue) === -1) {
-      tags = [...tags, inputTagsValue];
+  handleInputConfirm = (value) => {
+    const {inputTagsValue, tags} = this.state;
+    const {categories} = this.props.articles;
+    let newTags = tags;
+    const categoriesFlat = categories.map(elem => elem.key);
+    const newTagValue = this.inputTags ? inputTagsValue : value;
+
+    //check if second tag is one of the categories and do not allow to add tag if it is not
+    if (tags.length === 1 && categoriesFlat.indexOf(newTagValue) === -1) {
+      this.setState({
+        tags: newTags,
+        inputTagsVisible: false,
+        inputTagsValue: ''
+      });
+      return;
+    }
+
+    if (newTagValue && tags.indexOf(newTagValue) === -1) {
+      newTags = [...newTags, newTagValue];
     }
     this.setState({
-      tags,
+      tags: newTags,
       inputTagsVisible: false,
       inputTagsValue: ''
     });
@@ -60,9 +81,10 @@ class NewContribution extends Component {
     dispatch(postArticle(title, value.toString('markdown'), tags));
   };
   refInputTags = input => this.inputTags = input;
+  refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
     const {value, tags, inputTagsVisible, inputTagsValue} = this.state;
-    const {isPosting} = this.props.articles;
+    const {isPosting, categories} = this.props.articles;
 
     return (
       <div className="editor">
@@ -83,7 +105,7 @@ class NewContribution extends Component {
                 <Tag key={tag} closable={index !== 0} color={(index > 0 ? 'blue' : 'magenta')} afterClose={() => this.handleCloseTag(tag)}>{tag}</Tag>
               );
             })}
-            {inputTagsVisible && (
+            {inputTagsVisible && (tags.length >= 2) && (
               <Input
                 ref={this.refInputTags}
                 type="text"
@@ -93,6 +115,18 @@ class NewContribution extends Component {
                 onChange={this.handleInputTagsChange}
                 onBlur={this.handleInputConfirm}
                 onPressEnter={this.handleInputConfirm}
+              />
+            )}
+            {inputTagsVisible && (tags.length === 1) && (
+              <AutoComplete
+                ref={this.refInputTagsAutoComplete}
+                dataSource={categories.map(elem => elem.key)}
+                style={{width: 200}}
+                value={inputTagsValue}
+                filterOption={(inputValue, option) => option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+                onChange={this.handleInputTagsChange}
+                onBlur={this.handleInputConfirm}
+                onSelect={this.handleInputConfirm}
               />
             )}
             {!inputTagsVisible && (tags.length < 5) && (
