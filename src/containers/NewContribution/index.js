@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import RichTextEditor from 'react-rte';
-import {Layout, Input, AutoComplete, Tag, Icon, Button} from 'antd';
+import {Layout, Input, AutoComplete, Tag, Icon, Button, Divider} from 'antd';
 import {postArticle} from '../../actions/articles';
 import './index.css';
 const {Content} = Layout;
@@ -18,12 +18,16 @@ class NewContribution extends Component {
       title: 'testtitle',
       value: RichTextEditor.createEmptyValue(),
       tags: ['knacksteem'],
-      inputTagsVisible: false
+      inputTagsVisible: false,
+      previewHtml: ''
     };
   }
   //will be called whenever the content of the editor changes
   onChange = (value) => {
-    this.setState({value});
+    this.setState({
+      value,
+      previewHtml: value.toString('html')
+    });
     if (this.props.onChange) {
       //TODO create a preview below the editor?
       this.props.onChange(
@@ -100,7 +104,7 @@ class NewContribution extends Component {
   //reference to autocomplete input for second tag (category)
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
-    const {value, tags, inputTagsVisible, inputTagsValue} = this.state;
+    const {value, tags, inputTagsVisible, inputTagsValue, previewHtml} = this.state;
     const {isPosting, categories} = this.props.articles;
 
     return (
@@ -154,6 +158,8 @@ class NewContribution extends Component {
             )}
           </div>
           <Button type="primary" onClick={this.onPostClick} loading={isPosting}>Post</Button>
+          <Divider />
+          <div dangerouslySetInnerHTML={{__html: previewHtml}}/>
         </Content>
       </div>
     );
