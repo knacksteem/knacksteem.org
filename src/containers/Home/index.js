@@ -9,6 +9,7 @@ import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
+//Article Overview
 class Home extends Component {
   constructor(props) {
     super(props);

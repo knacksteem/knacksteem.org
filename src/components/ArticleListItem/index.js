@@ -10,6 +10,7 @@ const IconText = ({type, text}) => (
   </span>
 );
 
+//Single Item for Article Overview
 const ArticleListItem = ({data}) => {
   return (
     <div className="ant-list-item">

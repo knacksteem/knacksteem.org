@@ -1,35 +1,44 @@
 import React from 'react';
-import {withRouter} from 'react-router-dom';
+import {withRouter, Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {Layout, Button} from 'antd';
 import PropTypes from 'prop-types';
+import {userLogout} from '../../actions/user';
 import './index.css';
 import sc2 from 'sc2-sdk';
 const {Header} = Layout;
 
-const CustomHeader = ({user}) => {
+/**
+ * Header with login and user details
+ */
+const CustomHeader = ({user, dispatch}) => {
+  //get OAuth URL for Steem Connect
   const getOathURL = () => {
     const api = sc2.Initialize({
       app: 'knacksteem.app',
-      callbackURL: 'http://localhost:3000/callback',
+      callbackURL: (process.env.NODE_ENV === 'development') ? 'http://localhost:3000/callback' : 'http://knacksteem.org/callback',
       scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
     });
     return api.getLoginURL();
   };
-
+  //dispatch logout action
+  const onLogoutClick = () => {
+    dispatch(userLogout());
+  };
   return (
     <Header>
       <div className="username-login">
-        {user.username || <a href={getOathURL()}><Button>Login</Button></a>}
+        {user.username && <Link to="/new"><Button>New Contribution</Button></Link>}
+        {!user.username && <a href={getOathURL()}><Button>Login</Button></a>}
+        {user.username && <Link to="/"><Button onClick={onLogoutClick}>Logout</Button></Link>}
       </div>
     </Header>
   );
 };
 
 CustomHeader.propTypes = {
-  history: PropTypes.object,
-  location: PropTypes.object,
-  user: PropTypes.object
+  user: PropTypes.object,
+  dispatch: PropTypes.func
 };
 
 const mapStateToProps = state => ({
