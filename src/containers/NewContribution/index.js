@@ -77,7 +77,6 @@ class NewContribution extends Component {
     //check if second tag is one of the categories and do not allow to add tag if it is not
     if (tags.length === 1 && categoriesFlat.indexOf(newTagValue) === -1) {
       this.setState({
-        tags: newTags,
         inputTagsVisible: false,
         inputTagsValue: ''
       });
