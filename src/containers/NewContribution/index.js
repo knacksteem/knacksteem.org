@@ -41,8 +41,15 @@ class NewContribution extends Component {
       }
     });
   };
+  //store input change in state - autocomplete input only sends the value as parameter
   handleInputTagsChange = (e) => {
-    //store input change in state - autocomplete input only sends the value as parameter
+    const {tags} = this.state;
+    const {categories} = this.props.articles;
+
+    //if second tag not in categories list, do not allow to add character
+    if (tags.length === 1 && !e.target && !categories.filter((elem) => elem.key.indexOf(e.toLowerCase()) !== -1).length) {
+      return;
+    }
     this.setState({inputTagsValue: e.target ? e.target.value : e});
   };
   handleInputTitleChange = (e) => {
