@@ -83,11 +83,12 @@ export const postArticle = (title, body, tags) => {
       const newPermLink = getUniquePermalink(title);
 
       //post to blockchain
-      await api.comment('', tags[0], store.user.username, getUniquePermalink(title), title, body, {tags: tags.join(' ')});
+      await api.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags.join(' ')});
 
       //successfully posted to blockchain, now posting to backend with permalink and category
       await apiPost('/posts/create', {
-        permlink: `https://steemit.com/${tags[0]}/@${store.user.username}/${newPermLink}`,
+        author: store.user.username,
+        permlink: newPermLink,
         access_token: store.user.accessToken,
         category: tags[1]
       });
