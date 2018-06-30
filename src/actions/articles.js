@@ -3,6 +3,8 @@ import * as types from './types';
 import {userLogout} from './user';
 import {getUniquePermalink} from '../services/functions';
 import sc2 from 'sc2-sdk';
+import {apiPost} from '../services/api';
+import Config from '../config';
 
 /**
  * get articles by category from backend
@@ -71,19 +73,29 @@ export const postArticle = (title, body, tags) => {
 
     let api = sc2.Initialize({
       app: 'knacksteem.app',
-      callbackURL: 'http://localhost:3000/callback',
+      callbackURL: Config.SteemConnect.callbackURL,
       accessToken: store.user.accessToken,
-      scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
+      scope: Config.SteemConnect.scope
     });
 
     try {
-      let response = await api.comment('', tags[0], store.user.username, getUniquePermalink(title), title, body, {tags: tags.join(' ')});
-      console.log(response);
-      //TODO successfully posted to blockchain, now posting to backend with permalink and category
+      //generate unique permalink for new article
+      const newPermLink = getUniquePermalink(title);
+
+      //post to blockchain
+      await api.comment('', tags[0], store.user.username, getUniquePermalink(title), title, body, {tags: tags.join(' ')});
+
+      //successfully posted to blockchain, now posting to backend with permalink and category
+      await apiPost('/posts/create', {
+        permlink: `https://steemit.com/${tags[0]}/@${store.user.username}/${newPermLink}`,
+        access_token: store.user.accessToken,
+        category: tags[1]
+      });
 
       //redirect to my contributions
       dispatch(push('/mycontributions'));
     } catch (error) {
+      console.log(error);
       //invalidate login
       dispatch(userLogout());
     } finally {

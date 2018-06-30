@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {userLogout} from '../../actions/user';
 import './index.css';
 import sc2 from 'sc2-sdk';
+import Config from '../../config';
 const {Header} = Layout;
 
 /**
@@ -16,8 +17,8 @@ const CustomHeader = ({user, dispatch}) => {
   const getOathURL = () => {
     const api = sc2.Initialize({
       app: 'knacksteem.app',
-      callbackURL: (process.env.NODE_ENV === 'development') ? 'http://localhost:3000/callback' : 'http://knacksteem.org/callback',
-      scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
+      callbackURL: Config.SteemConnect.callbackURL,
+      scope: Config.SteemConnect.scope
     });
     return api.getLoginURL();
   };

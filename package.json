@@ -4,6 +4,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "antd": "^3.6.4",
+    "axios": "^0.18.0",
     "history": "^4.7.2",
     "js-cookie": "^2.2.0",
     "prop-types": "^15.6.2",
@@ -26,8 +27,8 @@
     "lint": "eslint src"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-plugin-react": "^7.9.1",
+    "eslint": "^5.0.1",
+    "eslint-plugin-react": "^7.10.0",
     "react-app-rewired": "^1.5.2",
     "react-scripts": "1.1.4",
     "redux-devtools-extension": "^2.13.5"
