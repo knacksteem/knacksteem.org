@@ -33,7 +33,7 @@ export const apiGet = async (url, data) => {
     let response = await axios({
       method: 'get',
       url: (process.env.NODE_ENV === 'development') ? `http://localhost:3030/v1${url}` : `https://knacksteem.org/v1${url}`,
-      data: data,
+      params: data,
       responseType: 'json'
     });
     return response;
