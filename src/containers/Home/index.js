@@ -40,6 +40,7 @@ class Home extends Component {
     const {searchString} = this.state;
     const {articles} = this.props;
 
+    //show spinner/loader while loading articles from the backend
     if (articles.isBusy) {
       return (
         <div><Content><Spin/></Content></div>

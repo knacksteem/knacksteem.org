@@ -40,6 +40,7 @@ class ArticleDetail extends Component {
   render() {
     const {data, isLoading} = this.state;
 
+    //show spinner/loader while loading article from the backend
     if (isLoading) {
       return (
         <div><Content><Spin/></Content></div>
