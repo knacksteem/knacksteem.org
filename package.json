@@ -11,6 +11,7 @@
     "qs": "^6.5.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-markdown": "^3.3.4",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
     "react-router-redux": "^5.0.0-alpha.9",

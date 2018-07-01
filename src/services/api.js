@@ -16,7 +16,7 @@ export const apiPost = async (url, data) => {
   try {
     let response = await axios({
       method: 'post',
-      url: (process.env.NODE_ENV === 'development') ? `http://localhost:3030/v1${url}` : `http://knacksteem.org/v1${url}`,
+      url: (process.env.NODE_ENV === 'development') ? `http://localhost:3030/v1${url}` : `https://knacksteem.org/v1${url}`,
       data: data,
       responseType: 'json'
     });
@@ -32,7 +32,7 @@ export const apiGet = async (url, data) => {
   try {
     let response = await axios({
       method: 'get',
-      url: (process.env.NODE_ENV === 'development') ? `http://localhost:3030/v1${url}` : `http://knacksteem.org/v1${url}`,
+      url: (process.env.NODE_ENV === 'development') ? `http://localhost:3030/v1${url}` : `https://knacksteem.org/v1${url}`,
       data: data,
       responseType: 'json'
     });
