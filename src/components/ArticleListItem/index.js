@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {Divider, Tag} from 'antd';
 import IconText from './IconText';
+import {prettyDate} from '../../services/functions';
 import './index.css';
 
 //Single Item for Article Overview
@@ -14,7 +15,7 @@ const ArticleListItem = ({data}) => {
         <div className="ant-list-item-content">{data.description}</div>
       </Link>
       <div>
-        <IconText type="clock-circle-o" text={data.postedAt} />
+        <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
         <Divider type="vertical" />
         <IconText type="message" text={data.commentsCount} />
         <Divider type="vertical" />

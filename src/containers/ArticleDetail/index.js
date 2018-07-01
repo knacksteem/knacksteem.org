@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import IconText from '../../components/ArticleListItem/IconText';
 import './index.css';
 import {apiGet} from '../../services/api';
+import {prettyDate} from '../../services/functions';
 const {Content} = Layout;
 
 //Article Detail route
@@ -59,7 +60,7 @@ class ArticleDetail extends Component {
           <Divider/>
           <ReactMarkdown source={data.body} />
           <div>
-            <IconText type="clock-circle-o" text={data.created} />
+            <IconText type="clock-circle-o" text={prettyDate(data.created)} />
             <Divider type="vertical" />
             <IconText type="message" text={data.replies.length} />
             <Divider type="vertical" />
