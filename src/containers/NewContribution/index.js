@@ -104,7 +104,7 @@ class NewContribution extends Component {
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
     const {value, tags, inputTagsVisible, inputTagsValue, previewHtml} = this.state;
-    const {isPosting, categories} = this.props.articles;
+    const {isBusy, categories} = this.props.articles;
 
     return (
       <div className="editor">
@@ -156,7 +156,7 @@ class NewContribution extends Component {
               </Tag>
             )}
           </div>
-          <Button type="primary" onClick={this.onPostClick} loading={isPosting}>Post</Button>
+          <Button type="primary" onClick={this.onPostClick} loading={isBusy}>Post</Button>
           <Divider />
           <div dangerouslySetInnerHTML={{__html: previewHtml}}/>
         </Content>

@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Input} from 'antd';
+import {Layout, Input, Spin} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
 const {Header, Content} = Layout;
@@ -39,6 +39,13 @@ class Home extends Component {
   render() {
     const {searchString} = this.state;
     const {articles} = this.props;
+
+    if (articles.isBusy) {
+      return (
+        <div><Content><Spin/></Content></div>
+      );
+    }
+
     let articlesData = articles.data;
     if (searchString !== '') {
       articlesData = articlesData.filter((elem) => {
