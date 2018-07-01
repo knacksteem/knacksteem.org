@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {Tag} from 'antd';
+import {Divider, Tag} from 'antd';
 import IconText from './IconText';
 import './index.css';
 
@@ -13,11 +13,13 @@ const ArticleListItem = ({data}) => {
         <h2 className="ant-list-item-meta-title">{data.title}</h2>
         <div className="ant-list-item-content">{data.description}</div>
       </Link>
-      <ul className="ant-list-item-action">
-        <li><IconText type="clock-circle-o" text={data.postedAt} /><em className="ant-list-item-action-split" /></li>
-        <li><IconText type="message" text={data.commentsCount} /><em className="ant-list-item-action-split" /></li>
-        <li><IconText type="up-circle-o" text={data.votesCount} /></li>
-      </ul>
+      <div>
+        <IconText type="clock-circle-o" text={data.postedAt} />
+        <Divider type="vertical" />
+        <IconText type="message" text={data.commentsCount} />
+        <Divider type="vertical" />
+        <IconText type="up-circle-o" text={data.votesCount} />
+      </div>
       {/*<div className="article-tags">
         {data.tags.map((tag, index) => {
           return (

@@ -47,6 +47,9 @@ class ArticleDetail extends Component {
       );
     }
 
+    //split tags string into array
+    const tags = data.json_metadata.tags.split(' ');
+
     return (
       <div>
         <Content>
@@ -55,18 +58,20 @@ class ArticleDetail extends Component {
           <div className="article-category">Category: {data.category}</div>
           <Divider/>
           <ReactMarkdown source={data.body} />
-          <ul className="ant-list-item-action">
-            <li><IconText type="clock-circle-o" text={data.created} /><em className="ant-list-item-action-split" /></li>
-            <li><IconText type="message" text={data.replies.length} /><em className="ant-list-item-action-split" /></li>
-            <li><IconText type="up-circle-o" text={data.net_votes} /></li>
-          </ul>
-          {/*<div className="article-tags">
-            {data.tags.map((tag, index) => {
+          <div>
+            <IconText type="clock-circle-o" text={data.created} />
+            <Divider type="vertical" />
+            <IconText type="message" text={data.replies.length} />
+            <Divider type="vertical" />
+            <IconText type="up-circle-o" text={data.net_votes} />
+          </div>
+          <div className="article-tags">
+            {tags.map((tag, index) => {
               return (
                 <Tag key={tag} closable={false} color={(index > 0 ? 'blue' : 'magenta')}>{tag}</Tag>
               );
             })}
-          </div>*/}
+          </div>
         </Content>
       </div>
     );
