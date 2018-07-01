@@ -29,13 +29,13 @@ const articles = (state = initialState, action) => {
         ...state,
         isBusy: true,
         currentCategory: action.category,
-        data: []
+        data: action.skip ? state.data : [] //if lazyloading detected, keep data
       };
     case ARTICLES_GET:
       return {
         ...state,
         isBusy: false,
-        data: action.payload
+        data: action.skip ? [...state.data, ...action.payload] : action.payload //if lazy loading, combine arrays
       };
     case ARTICLES_POSTING:
       return {

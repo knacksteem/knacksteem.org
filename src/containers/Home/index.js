@@ -17,6 +17,20 @@ class Home extends Component {
       searchString: ''
     };
   }
+  //scroll handler for lazy loading
+  onScroll = () => {
+    const {dispatch, match, articles} = this.props;
+
+    //if in loading process, don´t do anything
+    if (articles.isBusy) {
+      return;
+    }
+    //if user hits bottom, load next batch of items
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
+      dispatch(getArticlesByCategory(match.params.category, articles.data.length));
+    }
+  };
   componentDidMount() {
     const {location, dispatch, match} = this.props;
 
@@ -27,6 +41,13 @@ class Home extends Component {
       //load contributions by category
       dispatch(getArticlesByCategory(match.params.category));
     }
+
+    //on scroll, load the next batch of articles
+    window.addEventListener('scroll', this.onScroll);
+  }
+  componentWillUnmount() {
+    //remove scroll event again when hitting another route
+    window.removeEventListener('scroll', this.onScroll);
   }
   componentDidUpdate(prevProps, prevState) {
     const {dispatch, location, match} = this.props;
@@ -39,13 +60,6 @@ class Home extends Component {
   render() {
     const {searchString} = this.state;
     const {articles} = this.props;
-
-    //show spinner/loader while loading articles from the backend
-    if (articles.isBusy) {
-      return (
-        <div><Content><Spin/></Content></div>
-      );
-    }
 
     let articlesData = articles.data;
     if (searchString !== '') {
@@ -77,6 +91,7 @@ class Home extends Component {
               );
             })}
           </div>
+          {articles.isBusy && <Spin/>}
         </Content>
       </div>
     );

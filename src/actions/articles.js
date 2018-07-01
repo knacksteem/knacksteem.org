@@ -9,20 +9,23 @@ import Config from '../config';
 /**
  * get articles by category from backend
  */
-export const getArticlesByCategory = (category) => {
+export const getArticlesByCategory = (category, skip) => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
       category: category
     });
 
     //get articles by category from server
     try {
       let response = await apiGet('/posts', {
-        category: category || undefined
+        category: category || undefined,
+        skip: skip || undefined //skip elements for paging
       });
       dispatch({
         type: types.ARTICLES_GET,
+        skip: skip || undefined,
         payload: response.data.results
       });
     } catch (error) {
@@ -38,10 +41,11 @@ export const getArticlesByCategory = (category) => {
 /**
  * get articles by user from backend
  */
-export const getArticlesByUser = () => {
+export const getArticlesByUser = (skip) => {
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
       category: ''
     });
 
@@ -50,10 +54,12 @@ export const getArticlesByUser = () => {
     //get user articles from server
     try {
       let response = await apiGet('/posts', {
-        author: store.user.username
+        author: store.user.username,
+        skip: skip || undefined //skip elements for paging
       });
       dispatch({
         type: types.ARTICLES_GET,
+        skip: skip || undefined,
         payload: response.data.results
       });
     } catch (error) {
