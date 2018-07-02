@@ -22,7 +22,7 @@ const App = () => {
         <Route exact path="/mycontributions" component={Home} />
         <Route exact path="/new" component={NewContribution} />
         <Route exact path="/categories/:category" component={Home} />
-        <Route exact path="/articles/:article" component={ArticleDetail} />
+        <Route exact path="/articles/:author/:permlink" component={ArticleDetail} />
       </Layout>
     </Layout>
   );

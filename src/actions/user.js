@@ -1,6 +1,8 @@
 import * as types from './types';
 import sc2 from 'sc2-sdk';
 import Cookies from 'js-cookie';
+import {push} from 'react-router-redux';
+import Config from '../config';
 
 /**
  * check if the user is logged in already (with a cookie)
@@ -26,9 +28,9 @@ export const userLogin = (accessToken) => {
 
     let api = sc2.Initialize({
       app: 'knacksteem.app',
-      callbackURL: (process.env.NODE_ENV === 'development') ? 'http://localhost:3000/callback' : 'http://knacksteem.org/callback',
+      callbackURL: Config.SteemConnect.callbackURL,
       accessToken: accessToken,
-      scope: ['login', 'custom_json', 'claim_reward_balance', 'vote', 'comment']
+      scope: Config.SteemConnect.scope
     });
     let response = await api.me();
 
@@ -54,8 +56,9 @@ export const userLogout = () => {
 
     let api = sc2.Initialize({
       app: 'knacksteem.app',
-      callbackURL: (process.env.NODE_ENV === 'development') ? 'http://localhost:3000/callback' : 'http://knacksteem.org/callback',
-      accessToken: store.user.accessToken
+      callbackURL: Config.SteemConnect.callbackURL,
+      accessToken: store.user.accessToken,
+      scope: Config.SteemConnect.scope
     });
     api.revokeToken();
 
@@ -64,5 +67,6 @@ export const userLogout = () => {
     dispatch({
       type: types.USER_LOGOUT
     });
+    dispatch(push('/'));
   };
 };

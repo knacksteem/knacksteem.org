@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Input} from 'antd';
+import {Layout, Input, Spin} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
 const {Header, Content} = Layout;
@@ -17,6 +17,20 @@ class Home extends Component {
       searchString: ''
     };
   }
+  //scroll handler for lazy loading
+  onScroll = () => {
+    const {dispatch, match, articles} = this.props;
+
+    //if in loading process, don´t do anything
+    if (articles.isBusy) {
+      return;
+    }
+    //if user hits bottom, load next batch of items
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
+      dispatch(getArticlesByCategory(match.params.category, articles.data.length));
+    }
+  };
   componentDidMount() {
     const {location, dispatch, match} = this.props;
 
@@ -27,6 +41,13 @@ class Home extends Component {
       //load contributions by category
       dispatch(getArticlesByCategory(match.params.category));
     }
+
+    //on scroll, load the next batch of articles
+    window.addEventListener('scroll', this.onScroll);
+  }
+  componentWillUnmount() {
+    //remove scroll event again when hitting another route
+    window.removeEventListener('scroll', this.onScroll);
   }
   componentDidUpdate(prevProps, prevState) {
     const {dispatch, location, match} = this.props;
@@ -39,6 +60,7 @@ class Home extends Component {
   render() {
     const {searchString} = this.state;
     const {articles} = this.props;
+
     let articlesData = articles.data;
     if (searchString !== '') {
       articlesData = articlesData.filter((elem) => {
@@ -69,6 +91,7 @@ class Home extends Component {
               );
             })}
           </div>
+          {articles.isBusy && <Spin/>}
         </Content>
       </div>
     );

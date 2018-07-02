@@ -1,77 +1,44 @@
 import axios from 'axios';
 
-const basicDelete = async (url, data) => {
-  let cookies = new Cookies();
-  return await axios({
-    method: 'delete',
-    url: url,
-    data: data,
-    auth: {
-      username: cookies.get('username') || '',
-      password: cookies.get('password') || ''
-    },
-    timeout: 10000
-  }).then(response => {
+//set some default settings for axios to handle backend api correctly
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.transformRequest = [(data, headers) => {
+  let str = [];
+  for(let p in data)
+    if (data.hasOwnProperty(p) && data[p]) {
+      str.push(`${encodeURIComponent(p)}=${encodeURIComponent(data[p])}`);
+    }
+  return str.join('&');
+}];
+
+//basic post request to backend api
+export const apiPost = async (url, data) => {
+  try {
+    let response = await axios({
+      method: 'post',
+      url: (process.env.NODE_ENV === 'development') ? `http://localhost:3030/v1${url}` : `https://knacksteem.org/v1${url}`,
+      data: data,
+      responseType: 'json'
+    });
     return response;
-  }).catch(error => {
+  } catch (error) {
     console.log(error);
-  });
+    return false;
+  }
 };
 
-const basicPOST = async (url, data) => {
-  let cookies = new Cookies();
-  return await axios({
-    method: 'post',
-    url: url,
-    data: data,
-    auth: {
-      username: cookies.get('username') || '',
-      password: cookies.get('password') || ''
-    },
-    timeout: 10000
-  }).then(response => {
+//basic get request to backend api
+export const apiGet = async (url, data) => {
+  try {
+    let response = await axios({
+      method: 'get',
+      url: (process.env.NODE_ENV === 'development') ? `http://localhost:3030/v1${url}` : `https://knacksteem.org/v1${url}`,
+      params: data,
+      responseType: 'json'
+    });
     return response;
-  }).catch(error => {
+  } catch (error) {
     console.log(error);
-  });
-};
-
-const basicPUT = async (url, data) => {
-  let cookies = new Cookies();
-  return await axios({
-    method: 'put',
-    url: url,
-    data: data,
-    auth: {
-      username: cookies.get('username') || '',
-      password: cookies.get('password') || ''
-    },
-    timeout: 10000
-  }).then(response => {
-    return response;
-  }).catch(error => {
-    console.log(error);
-  });
-};
-
-const basicGET = async (url, data) => {
-  let cookies = new Cookies();
-  //timestamp to avoid caching
-  data = data || {};
-  data.ts = Date.now();
-  return await axios({
-    method: 'get',
-    url: url,
-    responseType: 'json',
-    params: data,
-    auth: {
-      username: cookies.get('username') || '',
-      password: cookies.get('password') || ''
-    },
-    timeout: 10000
-  }).then(response => {
-    return response;
-  }).catch(error => {
-    console.log(error);
-  });
+    return false;
+  }
 };

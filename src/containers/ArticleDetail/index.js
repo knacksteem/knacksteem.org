@@ -1,19 +1,91 @@
-import React from 'react';
-import {Layout} from 'antd';
+import React, {Component} from 'react';
+import {withRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {Layout, Divider, Spin, Tag} from 'antd';
+import PropTypes from 'prop-types';
+import ReactMarkdown from 'react-markdown';
+import IconText from '../../components/ArticleListItem/IconText';
 import './index.css';
+import {apiGet} from '../../services/api';
+import {prettyDate} from '../../services/functions';
 const {Content} = Layout;
 
 //Article Detail route
-const ArticleDetail = () => {
-  return (
-    <div>
-      <Content>
-        <div>
-          ArticleDetail
-        </div>
-      </Content>
-    </div>
-  );
+class ArticleDetail extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: {},
+      isLoading: true
+    };
+  }
+  componentDidMount() {
+    this.getArticle();
+  }
+  getArticle = async () => {
+    const {match} = this.props;
+    try {
+      let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`);
+      this.setState({
+        data: response.data,
+        isLoading: false
+      });
+    } catch (error) {
+      console.log(error);
+      this.setState({
+        data: {},
+        isLoading: false
+      });
+    }
+  };
+  render() {
+    const {data, isLoading} = this.state;
+
+    //show spinner/loader while loading article from the backend
+    if (isLoading) {
+      return (
+        <div><Content><Spin/></Content></div>
+      );
+    }
+
+    //split tags string into array
+    const tags = data.json_metadata.tags.split(' ');
+
+    return (
+      <div>
+        <Content>
+          <h1>{data.title}</h1>
+          <div className="article-author">Author: {data.author}</div>
+          <div className="article-category">Category: {data.category}</div>
+          <Divider/>
+          <ReactMarkdown source={data.body} />
+          <div>
+            <IconText type="clock-circle-o" text={prettyDate(data.created)} />
+            <Divider type="vertical" />
+            <IconText type="message" text={data.replies.length} />
+            <Divider type="vertical" />
+            <IconText type="up-circle-o" text={data.net_votes} />
+          </div>
+          <div className="article-tags">
+            {tags.map((tag, index) => {
+              return (
+                <Tag key={tag} closable={false} color={(index > 0 ? 'blue' : 'magenta')}>{tag}</Tag>
+              );
+            })}
+          </div>
+        </Content>
+      </div>
+    );
+  }
+}
+
+ArticleDetail.propTypes = {
+  match: PropTypes.object
 };
 
-export default ArticleDetail;
+const mapStateToProps = state => ({
+  /*articles: state.articles,
+  user: state.user*/
+});
+
+export default withRouter(connect(mapStateToProps)(ArticleDetail));

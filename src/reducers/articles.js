@@ -1,6 +1,7 @@
 import {ARTICLES_REQUEST, ARTICLES_GET, ARTICLES_POSTING, ARTICLES_POSTED} from '../actions/types';
 
 const initialState = {
+  isBusy: false,
   currentCategory: '',
   searchString: '',
   data: [],
@@ -18,8 +19,7 @@ const initialState = {
     {key: 'quotes', name: 'Quotes'},
     {key: 'techtrends', name: 'Tech Trends'},
     {key: 'blogposts', name: 'Blog Posts'}
-  ],
-  isPosting: false
+  ]
 };
 
 const articles = (state = initialState, action) => {
@@ -27,23 +27,25 @@ const articles = (state = initialState, action) => {
     case ARTICLES_REQUEST:
       return {
         ...state,
+        isBusy: true,
         currentCategory: action.category,
-        data: []
+        data: action.skip ? state.data : [] //if lazyloading detected, keep data
       };
     case ARTICLES_GET:
       return {
         ...state,
-        data: action.payload
+        isBusy: false,
+        data: action.skip ? [...state.data, ...action.payload] : action.payload //if lazy loading, combine arrays
       };
     case ARTICLES_POSTING:
       return {
         ...state,
-        isPosting: true
+        isBusy: true
       };
     case ARTICLES_POSTED:
       return {
         ...state,
-        isPosting: false
+        isBusy: false
       };
     default:
       return state;
