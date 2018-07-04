@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
-import {Divider, Tag} from 'antd';
+import {Divider} from 'antd';
 import IconText from './IconText';
 import {prettyDate} from '../../services/functions';
 import './index.css';
@@ -30,6 +31,10 @@ const ArticleListItem = ({data}) => {
       </div>*/}
     </div>
   );
+};
+
+ArticleListItem.propTypes = {
+  data: PropTypes.object
 };
 
 export default ArticleListItem;

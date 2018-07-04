@@ -16,3 +16,5 @@ yarn install
 yarn start
 
 ```
+
+Make sure the Backend Server/API is running: https://github.com/knacksteem/knacksteem-api

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 //set some default settings for axios to handle backend api correctly
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.defaults.transformRequest = [(data, headers) => {
+axios.defaults.transformRequest = [(data) => {
   let str = [];
   for(let p in data)
     if (data.hasOwnProperty(p) && data[p]) {

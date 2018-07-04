@@ -73,6 +73,37 @@ export const getArticlesByUser = (skip) => {
 };
 
 /**
+ * get pending articles, waiting for moderation
+ */
+export const getArticlesPending = (skip) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
+      category: ''
+    });
+
+    //get articles by category from server
+    try {
+      let response = await apiGet('/stats/moderation/pending', {
+        skip: skip || undefined //skip elements for paging
+      });
+      dispatch({
+        type: types.ARTICLES_GET,
+        skip: skip || undefined,
+        payload: response.data.results
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: types.ARTICLES_GET,
+        payload: []
+      });
+    }
+  };
+};
+
+/**
  * post article to blockchain and knacksteem backend
  */
 export const postArticle = (title, body, tags) => {
