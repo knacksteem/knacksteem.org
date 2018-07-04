@@ -51,8 +51,6 @@ class Review extends Component {
     const {searchString} = this.state;
     const {articles} = this.props;
 
-    console.log(articles.data);
-
     let articlesData = articles.data;
     if (searchString !== '') {
       articlesData = articlesData.filter((elem) => {
