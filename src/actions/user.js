@@ -3,6 +3,7 @@ import sc2 from 'sc2-sdk';
 import Cookies from 'js-cookie';
 import {push} from 'react-router-redux';
 import Config from '../config';
+import {apiGet} from '../services/api';
 
 /**
  * check if the user is logged in already (with a cookie)
@@ -37,6 +38,13 @@ export const userLogin = (accessToken) => {
     //TODO error handling if the token does not work (anymore) - try/catch
 
     Cookies.set('accessToken', accessToken);
+
+    //get user details from database
+    let userData = await apiGet('/stats/users', {
+      username: response.user
+    });
+
+    console.log(userData);
 
     dispatch({
       type: types.USER_GET,

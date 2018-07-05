@@ -64,7 +64,7 @@ class ArticleDetail extends Component {
             <IconText type="up-circle-o" text={data.votesCount} />
           </div>
           <div className="article-tags">
-            {data.tags.map((tag, index) => {
+            {data.tags.join(',').map((tag, index) => {
               return (
                 <Tag key={tag} closable={false} color={(index > 0 ? 'blue' : 'magenta')}>{tag}</Tag>
               );

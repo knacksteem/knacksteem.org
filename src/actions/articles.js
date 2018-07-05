@@ -133,7 +133,8 @@ export const postArticle = (title, body, tags) => {
         author: store.user.username,
         permlink: newPermLink,
         access_token: store.user.accessToken,
-        category: tags[1]
+        category: tags[1],
+        tags: tags
       });
 
       //redirect to my contributions
