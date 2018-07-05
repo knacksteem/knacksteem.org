@@ -126,7 +126,7 @@ export const postArticle = (title, body, tags) => {
       const newPermLink = getUniquePermalink(title);
 
       //post to blockchain
-      await api.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags.join(' ')});
+      await api.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags});
 
       //successfully posted to blockchain, now posting to backend with permalink and category
       await apiPost('/posts/create', {
