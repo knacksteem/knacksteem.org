@@ -3,32 +3,30 @@ import {USER_AUTH, USER_GET, USER_LOGOUT} from '../actions/types';
 const initialState = {
   username: '',
   userObject: {},
-  accessToken: ''
+  userObjectSteemit: {},
+  accessToken: '',
+  isContributor: false,
+  isModerator: false,
+  isSupervisor: false
 };
 
 const user = (state = initialState, action) => {
   switch (action.type) {
     case USER_AUTH:
-      return {
-        ...state,
-        username: '',
-        accessToken: '',
-        userObject: {}
-      };
+      return initialState;
     case USER_GET:
       return {
         ...state,
         username: action.username,
         userObject: action.userObject,
-        accessToken: action.accessToken
+        userObjectSteemit: action.userObjectSteemit,
+        accessToken: action.accessToken,
+        isContributor: action.userObject.roles && action.userObject.roles.indexOf('contributor') !== -1,
+        isModerator: action.userObject.roles && action.userObject.roles.indexOf('moderator') !== -1,
+        isSupervisor: action.userObject.roles && action.userObject.roles.indexOf('supervisor') !== -1
       };
     case USER_LOGOUT:
-      return {
-        ...state,
-        username: '',
-        accessToken: '',
-        userObject: {}
-      };
+      return initialState;
     default:
       return state;
   }

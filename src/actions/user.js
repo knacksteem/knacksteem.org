@@ -39,17 +39,16 @@ export const userLogin = (accessToken) => {
 
     Cookies.set('accessToken', accessToken);
 
-    //get user details from database
+    //get user details from database, including the user role (supervisor, moderator, contributor)
     let userData = await apiGet('/stats/users', {
       username: response.user
     });
 
-    console.log(userData);
-
     dispatch({
       type: types.USER_GET,
       username: response.user,
-      userObject: response,
+      userObject: (userData.data && userData.data.results) ? userData.data.results[0] : {},
+      userObjectSteemit: response,
       accessToken: accessToken
     });
   };
