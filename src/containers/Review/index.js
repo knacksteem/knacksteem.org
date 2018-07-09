@@ -80,6 +80,7 @@ class Review extends Component {
                 <ArticleListItem key={index} data={data} status="pending" />
               );
             })}
+            {(!articlesData.length && !articles.isBusy) && <div>No pending articles...</div>}
           </div>
           {articles.isBusy && <Spin/>}
         </Content>
