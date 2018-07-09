@@ -77,7 +77,7 @@ class Review extends Component {
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articlesData.map((data, index) => {
               return (
-                <ArticleListItem key={index} data={data} />
+                <ArticleListItem key={index} data={data} status="pending" />
               );
             })}
           </div>
