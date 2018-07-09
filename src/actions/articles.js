@@ -173,3 +173,26 @@ export const approveArticle = (permlink) => {
     }
   };
 };
+
+/**
+ * reject article by mod
+ */
+export const rejectArticle = (permlink) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    try {
+      //approve article with permalink and status
+      await apiPost('/moderation/moderate', {
+        permlink: permlink,
+        approved: false,
+        access_token: store.user.accessToken
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      //reload pending articles after approval
+      dispatch(getArticlesPending());
+    }
+  };
+};

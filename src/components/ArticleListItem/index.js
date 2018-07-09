@@ -6,13 +6,17 @@ import {Divider, Button} from 'antd';
 import IconText from './IconText';
 import {prettyDate} from '../../services/functions';
 import './index.css';
-import {approveArticle} from '../../actions/articles';
+import {approveArticle, rejectArticle} from '../../actions/articles';
 
 //Single Item for Article Overview
 const ArticleListItem = ({data, status, dispatch}) => {
   //approve the current article with an api call and reload the pending articles for redux
   const onApproveClick = () => {
     dispatch(approveArticle(data.permlink));
+  };
+  //reject the current article
+  const onRejectClick = () => {
+    dispatch(rejectArticle(data.permlink));
   };
   return (
     <div className="ant-list-item">
@@ -28,9 +32,12 @@ const ArticleListItem = ({data, status, dispatch}) => {
         <Divider type="vertical" />
         <IconText type="up-circle-o" text={data.votesCount} />
       </div>
-      <div className="mod-functions">
-        {(status === 'pending') && <Button size="small" type="primary" onClick={onApproveClick}>Approve</Button>}
-      </div>
+      {(status === 'pending') &&
+        <div className="mod-functions">
+          <Button size="small" type="primary" onClick={onApproveClick}>Approve</Button>
+          <Button size="small" type="danger" onClick={onRejectClick}>Reject</Button>
+        </div>
+      }
     </div>
   );
 };
