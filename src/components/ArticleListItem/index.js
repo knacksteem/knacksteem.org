@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {Divider, Button} from 'antd';
-import IconText from './IconText';
+import IconText from '../Common/IconText';
 import {prettyDate} from '../../services/functions';
 import './index.css';
 import {approveArticle, rejectArticle} from '../../actions/articles';

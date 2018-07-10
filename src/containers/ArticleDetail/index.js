@@ -4,10 +4,11 @@ import {connect} from 'react-redux';
 import {Layout, Divider, Spin, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import IconText from '../../components/ArticleListItem/IconText';
+import IconText from '../../components/Common/IconText';
 import './index.css';
 import {apiGet} from '../../services/api';
 import {prettyDate} from '../../services/functions';
+import Comments from '../../components/Comments';
 const {Content} = Layout;
 
 //Article Detail route
@@ -70,6 +71,8 @@ class ArticleDetail extends Component {
               );
             })}
           </div>
+          <Divider/>
+          <Comments data={data.comments} />
         </Content>
       </div>
     );
