@@ -73,6 +73,37 @@ export const getArticlesByUser = (skip) => {
 };
 
 /**
+ * get pending articles, waiting for moderation
+ */
+export const getArticlesPending = (skip) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
+      category: ''
+    });
+
+    //get articles by category from server
+    try {
+      let response = await apiGet('/stats/moderation/pending', {
+        skip: skip || undefined //skip elements for paging
+      });
+      dispatch({
+        type: types.ARTICLES_GET,
+        skip: skip || undefined,
+        payload: response.data.results
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: types.ARTICLES_GET,
+        payload: []
+      });
+    }
+  };
+};
+
+/**
  * post article to blockchain and knacksteem backend
  */
 export const postArticle = (title, body, tags) => {
@@ -95,14 +126,15 @@ export const postArticle = (title, body, tags) => {
       const newPermLink = getUniquePermalink(title);
 
       //post to blockchain
-      await api.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags.join(' ')});
+      await api.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags});
 
       //successfully posted to blockchain, now posting to backend with permalink and category
       await apiPost('/posts/create', {
         author: store.user.username,
         permlink: newPermLink,
         access_token: store.user.accessToken,
-        category: tags[1]
+        category: tags[1],
+        tags: tags
       });
 
       //redirect to my contributions
@@ -115,6 +147,52 @@ export const postArticle = (title, body, tags) => {
       dispatch({
         type: types.ARTICLES_POSTED
       });
+    }
+  };
+};
+
+/**
+ * approve article by mod
+ */
+export const approveArticle = (permlink) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    try {
+      //approve article with permalink and status
+      await apiPost('/moderation/moderate', {
+        permlink: permlink,
+        approved: true,
+        access_token: store.user.accessToken
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      //reload pending articles after approval
+      dispatch(getArticlesPending());
+    }
+  };
+};
+
+/**
+ * reject article by mod
+ */
+export const rejectArticle = (permlink) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    try {
+      //approve article with permalink and status
+      await apiPost('/moderation/moderate', {
+        permlink: permlink,
+        approved: false,
+        access_token: store.user.accessToken
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      //reload pending articles after approval
+      dispatch(getArticlesPending());
     }
   };
 };

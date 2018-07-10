@@ -3,6 +3,7 @@ import sc2 from 'sc2-sdk';
 import Cookies from 'js-cookie';
 import {push} from 'react-router-redux';
 import Config from '../config';
+import {apiGet} from '../services/api';
 
 /**
  * check if the user is logged in already (with a cookie)
@@ -38,10 +39,16 @@ export const userLogin = (accessToken) => {
 
     Cookies.set('accessToken', accessToken);
 
+    //get user details from database, including the user role (supervisor, moderator, contributor)
+    let userData = await apiGet('/stats/users', {
+      username: response.user
+    });
+
     dispatch({
       type: types.USER_GET,
       username: response.user,
-      userObject: response,
+      userObject: (userData.data && userData.data.results) ? userData.data.results[0] : {},
+      userObjectSteemit: response,
       accessToken: accessToken
     });
   };

@@ -7,7 +7,7 @@ export const getUniquePermalink = (title) => {
 //convert timestamp into pretty human readable date
 export const prettyDate = (time) => {
   const date = new Date(time),
-    diff = (((new Date()).getTime() - date.getTime()) / 1000),
+    diff = (((new Date()).getTime() - date.getTime()) / 1000) + date.getTimezoneOffset() * 60,
     day_diff = Math.floor(diff / 86400);
 
   if (day_diff === 0) {

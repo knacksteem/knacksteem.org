@@ -27,7 +27,7 @@ class ArticleDetail extends Component {
     try {
       let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`);
       this.setState({
-        data: response.data,
+        data: response.data.results,
         isLoading: false
       });
     } catch (error) {
@@ -48,9 +48,6 @@ class ArticleDetail extends Component {
       );
     }
 
-    //split tags string into array
-    const tags = data.json_metadata.tags.split(' ');
-
     return (
       <div>
         <Content>
@@ -58,16 +55,16 @@ class ArticleDetail extends Component {
           <div className="article-author">Author: {data.author}</div>
           <div className="article-category">Category: {data.category}</div>
           <Divider/>
-          <ReactMarkdown source={data.body} />
+          <ReactMarkdown source={data.description} />
           <div>
-            <IconText type="clock-circle-o" text={prettyDate(data.created)} />
+            <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
             <Divider type="vertical" />
-            <IconText type="message" text={data.replies.length} />
+            <IconText type="message" text={data.commentsCount} />
             <Divider type="vertical" />
-            <IconText type="up-circle-o" text={data.net_votes} />
+            <IconText type="up-circle-o" text={data.votesCount} />
           </div>
           <div className="article-tags">
-            {tags.map((tag, index) => {
+            {data.tags.map((tag, index) => {
               return (
                 <Tag key={tag} closable={false} color={(index > 0 ? 'blue' : 'magenta')}>{tag}</Tag>
               );

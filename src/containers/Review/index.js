@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import './index.css';
 import {Layout, Input, Spin} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
+import {getArticlesPending} from '../../actions/articles';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
@@ -13,8 +13,8 @@ const styles = {
   articlesList: {display: 'flex', flexDirection: 'column'}
 };
 
-//Article Overview
-class Home extends Component {
+//Review Overview
+class Review extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,7 +23,7 @@ class Home extends Component {
   }
   //scroll handler for lazy loading
   onScroll = () => {
-    const {dispatch, match, articles} = this.props;
+    const {dispatch, articles} = this.props;
 
     //if in loading process, don´t do anything
     if (articles.isBusy) {
@@ -32,19 +32,13 @@ class Home extends Component {
     //if user hits bottom, load next batch of items
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      dispatch(getArticlesByCategory(match.params.category, articles.data.length));
+      dispatch(getArticlesPending(articles.data.length));
     }
   };
   componentDidMount() {
-    const {location, dispatch, match} = this.props;
+    const {dispatch} = this.props;
 
-    if (location.pathname === '/mycontributions') {
-      //load user contributions
-      dispatch(getArticlesByUser());
-    } else {
-      //load contributions by category
-      dispatch(getArticlesByCategory(match.params.category));
-    }
+    dispatch(getArticlesPending());
 
     //on scroll, load the next batch of articles
     window.addEventListener('scroll', this.onScroll);
@@ -52,14 +46,6 @@ class Home extends Component {
   componentWillUnmount() {
     //remove scroll event again when hitting another route
     window.removeEventListener('scroll', this.onScroll);
-  }
-  componentDidUpdate(prevProps, prevState) {
-    const {dispatch, location, match} = this.props;
-
-    if (prevProps.location.pathname !== location.pathname) {
-      //location change detected, load new data
-      dispatch(getArticlesByCategory(match.params.category));
-    }
   }
   render() {
     const {searchString} = this.state;
@@ -91,9 +77,10 @@ class Home extends Component {
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articlesData.map((data, index) => {
               return (
-                <ArticleListItem key={index} data={data} />
+                <ArticleListItem key={index} data={data} status="pending" />
               );
             })}
+            {(!articlesData.length && !articles.isBusy) && <div>No pending articles...</div>}
           </div>
           {articles.isBusy && <Spin/>}
         </Content>
@@ -102,7 +89,7 @@ class Home extends Component {
   }
 }
 
-Home.propTypes = {
+Review.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
@@ -113,4 +100,4 @@ const mapStateToProps = state => ({
   articles: state.articles
 });
 
-export default withRouter(connect(mapStateToProps)(Home));
+export default withRouter(connect(mapStateToProps)(Review));

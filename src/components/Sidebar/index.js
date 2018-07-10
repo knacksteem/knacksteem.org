@@ -1,7 +1,7 @@
 import React from 'react';
 import {withRouter, Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {Layout, Menu} from 'antd';
+import {Layout, Menu, Divider} from 'antd';
 import PropTypes from 'prop-types';
 import './index.css';
 import logo from '../../assets/images/logo.png';
@@ -18,8 +18,9 @@ const CustomSidebar = ({location, user, articles}) => {
     >
       <div className="logo"><img src={logo} alt="Knacksteem Logo" /></div>
       <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
-        {user.username && <Menu.Item key="/mycontributions"><Link to="/mycontributions">My Contributions</Link></Menu.Item>}
-        {user.username && <Menu.Item style={{height: 24}}><hr/></Menu.Item>}
+        {user.username && user.isContributor && <Menu.Item key="/mycontributions"><Link to="/mycontributions">My Contributions</Link></Menu.Item>}
+        {/*{user.isModerator && */}<Menu.Item key="/review"><Link to="/review">Review</Link></Menu.Item>{/*}*/}
+        {user.username && <Menu.Item><Divider/></Menu.Item>}
         <Menu.Item key="/">
           <Link to="/">All</Link>
         </Menu.Item>
