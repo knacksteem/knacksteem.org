@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import SingleComment from './SingleComment';
 import './index.css';
 
-//Single Item for Article Overview
+//stateless component for article comments
 const Comments = ({data}) => {
   return (
     <div>
