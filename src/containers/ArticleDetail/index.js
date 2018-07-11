@@ -63,6 +63,8 @@ class ArticleDetail extends Component {
             <IconText type="message" text={data.commentsCount} />
             <Divider type="vertical" />
             <IconText type="up-circle-o" text={data.votesCount} />
+            <Divider type="vertical" />
+            <IconText type="wallet" text={`$${data.totalPayout}`} />
           </div>
           <div className="article-tags">
             {data.tags.map((tag, index) => {

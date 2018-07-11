@@ -18,18 +18,20 @@ class SingleComment extends React.Component {
   render() {
     const {data} = this.props;
 
+    console.log(data);
+
     return (
       <div className="ant-list-item comment">
         <div>
-          <Avatar src={data.authorImage} />
-          <span>{data.author}</span>
+          <Avatar src={data.authorImage} className="comment-avatar" />
+          <span>{data.author} ({data.authorReputation})</span>
           <ReactMarkdown source={data.description} />
           <div>
             <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
             <Divider type="vertical" />
-            <IconText type="message" text={data.repliesCount} />
-            <Divider type="vertical" />
             <IconText type="up-circle-o" text={data.votesCount} />
+            <Divider type="vertical" />
+            <IconText type="wallet" text={`$${data.totalPayout}`} />
           </div>
         </div>
         <div className="replies">
