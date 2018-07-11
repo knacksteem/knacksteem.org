@@ -196,3 +196,18 @@ export const rejectArticle = (permlink) => {
     }
   };
 };
+
+export const upvoteElement = (author, permlink, weight) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    let api = sc2.Initialize({
+      app: 'knacksteem.app',
+      callbackURL: Config.SteemConnect.callbackURL,
+      accessToken: store.user.accessToken,
+      scope: Config.SteemConnect.scope
+    });
+
+    return await api.vote(store.user.username, author, permlink, weight);
+  };
+};

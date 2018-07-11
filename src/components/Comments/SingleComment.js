@@ -6,6 +6,7 @@ import {Divider, Avatar} from 'antd';
 import IconText from '../Common/IconText';
 import {prettyDate} from '../../services/functions';
 import './index.css';
+import {upvoteElement} from '../../actions/articles';
 
 //single comment with all the info and data - can be a comment or a reply comment
 class SingleComment extends React.Component {
@@ -15,10 +16,15 @@ class SingleComment extends React.Component {
       isEditMode: false
     };
   }
+  //upvote this article
+  onUpvoteClick = async () => {
+    const {dispatch, data} = this.props;
+    //upvote with 10000 - which equals 100%
+    let response = await dispatch(upvoteElement(data.author, data.permlink, 10000));
+    console.log(response);
+  };
   render() {
     const {data} = this.props;
-
-    console.log(data);
 
     return (
       <div className="ant-list-item comment">
@@ -29,7 +35,7 @@ class SingleComment extends React.Component {
           <div>
             <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
             <Divider type="vertical" />
-            <IconText type="up-circle-o" text={data.votesCount} />
+            <span className="upvote" onClick={this.onUpvoteClick}><IconText type="up-circle-o" text={data.votesCount} /></span>
             <Divider type="vertical" />
             <IconText type="wallet" text={`$${data.totalPayout}`} />
           </div>

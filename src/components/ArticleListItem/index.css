@@ -6,3 +6,11 @@
 .mod-functions button {
   margin-right: 7px;
 }
+
+.upvote {
+  cursor: pointer;
+}
+
+.upvote:hover {
+  color: #1890ff;
+}

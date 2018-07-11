@@ -9,6 +9,7 @@ import './index.css';
 import {apiGet} from '../../services/api';
 import {prettyDate} from '../../services/functions';
 import Comments from '../../components/Comments';
+import {upvoteElement} from '../../actions/articles';
 const {Content} = Layout;
 
 //Article Detail route
@@ -39,6 +40,14 @@ class ArticleDetail extends Component {
       });
     }
   };
+  //upvote this article
+  onUpvoteClick = async () => {
+    const {dispatch} = this.props;
+    const {data} = this.state;
+    //upvote with 10000 - which equals 100%
+    let response = await dispatch(upvoteElement(data.author, data.permlink, 10000));
+    console.log(response);
+  };
   render() {
     const {data, isLoading} = this.state;
 
@@ -62,7 +71,7 @@ class ArticleDetail extends Component {
             <Divider type="vertical" />
             <IconText type="message" text={data.commentsCount} />
             <Divider type="vertical" />
-            <IconText type="up-circle-o" text={data.votesCount} />
+            <span className="upvote" onClick={this.onUpvoteClick}><IconText type="up-circle-o" text={data.votesCount} /></span>
             <Divider type="vertical" />
             <IconText type="wallet" text={`$${data.totalPayout}`} />
           </div>
@@ -82,6 +91,7 @@ class ArticleDetail extends Component {
 }
 
 ArticleDetail.propTypes = {
+  dispatch: PropTypes.func,
   match: PropTypes.object
 };
 
