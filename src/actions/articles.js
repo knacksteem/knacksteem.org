@@ -201,6 +201,12 @@ export const rejectArticle = (permlink) => {
   };
 };
 
+/**
+ * upvote article or comment
+ * @param author author of the article or comment
+ * @param permlink permalink of the article of comment
+ * @param weight weight of the upvote (10000 is 100%)
+ */
 export const upvoteElement = (author, permlink, weight) => {
   return async (dispatch, getState) => {
     const store = getState();
@@ -213,5 +219,32 @@ export const upvoteElement = (author, permlink, weight) => {
     });
 
     return await api.vote(store.user.username, author, permlink, weight);
+  };
+};
+
+/**
+ * delete article or comment
+ * @param author author of the article or comment
+ * @param permlink permalink of the article of comment
+ */
+export const deleteElement = (author, permlink) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    let api = sc2.Initialize({
+      app: 'knacksteem.app',
+      callbackURL: Config.SteemConnect.callbackURL,
+      accessToken: store.user.accessToken,
+      scope: Config.SteemConnect.scope
+    });
+
+    //TODO use broadcast operation to delete comment
+    /*return await api.broadcast({
+      type: 'delete_comment',
+      operation: {store.user.username, permlink},
+      confirm: tt('g.are_you_sure'),
+    });*/
+
+    //return await api.delete(store.user.username, author, permlink);
   };
 };

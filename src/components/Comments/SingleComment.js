@@ -23,7 +23,7 @@ class SingleComment extends React.Component {
           <Avatar src={data.authorImage} className="comment-avatar" />
           <span>{data.author} ({data.authorReputation})</span>
           <ReactMarkdown source={data.description} />
-          <ArticleMetaBottom data={data} onUpvoteSuccess={onUpvoteSuccess} isComment />
+          <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} isComment />
         </div>
         <div className="replies">
           {data.replies.map((elem) => {

@@ -58,7 +58,7 @@ class ArticleDetail extends Component {
           <div className="article-category">Category: {data.category}</div>
           <Divider/>
           <ReactMarkdown source={data.description} />
-          <ArticleMetaBottom data={data} onUpvoteSuccess={this.getArticle} isArticleDetail />
+          <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail />
           <div className="article-tags">
             {data.tags.map((tag, index) => {
               return (

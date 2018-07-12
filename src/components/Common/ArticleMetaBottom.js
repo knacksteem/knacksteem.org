@@ -4,19 +4,19 @@ import {connect} from 'react-redux';
 import {Divider} from 'antd';
 import IconText from '../Common/IconText';
 import {prettyDate} from '../../services/functions';
-import {upvoteElement} from '../../actions/articles';
+import {upvoteElement, deleteElement} from '../../actions/articles';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
 
 /**
  * article meta info for the bottom of every article in every view
  * @param data article data
- * @param onUpvoteSuccess callback function that gets called after a successful upvote
+ * @param onUpdate callback function that gets called after a successful operation (upvote, delete, ...)
  * @param dispatch redux dispatcher
  * @param isComment boolean specifying if the parent component is a comment
  * @param isArticleDetail boolean specifying if the parent component is an article detail page
  */
-const ArticleMetaBottom = ({data, onUpvoteSuccess, dispatch, isComment, isArticleDetail}) => {
+const ArticleMetaBottom = ({data, onUpdate, dispatch, isComment, isArticleDetail}) => {
   const onUpvoteClick = async () => {
     //if already voted, immediately return - maybe implement unvoting later, if needed
     if (data.isVoted) {
@@ -26,7 +26,16 @@ const ArticleMetaBottom = ({data, onUpvoteSuccess, dispatch, isComment, isArticl
     try {
       await dispatch(upvoteElement(data.author, data.permlink, 10000));
       //on successful update, reload article or article list
-      onUpvoteSuccess();
+      onUpdate();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const onDeleteClick = async () => {
+    try {
+      await dispatch(deleteElement(data.author, data.permlink));
+      //on successful update, reload article or article list
+      onUpdate();
     } catch (err) {
       console.log(err);
     }
@@ -35,16 +44,16 @@ const ArticleMetaBottom = ({data, onUpvoteSuccess, dispatch, isComment, isArticl
   const isAuthor = (Cookies.get('username') === data.author);
   const commentCount = isComment ? data.replies.length : data.commentsCount;
 
-  const actionsArray = [<a>Reply</a>];
+  const actionsArray = [<a key="action-reply">Reply</a>];
   if (isComment || isArticleDetail) {
     if (isAuthor) {
       actionsArray.push(
-        <a>Edit</a>
+        <a key="action-edit">Edit</a>
       );
     }
     if (isAuthor && !commentCount && !data.votesCount) {
       actionsArray.push(
-        <a>Delete</a>
+        <a key="action-delete" onClick={onDeleteClick}>Delete</a>
       );
     }
   }
@@ -69,7 +78,7 @@ const ArticleMetaBottom = ({data, onUpvoteSuccess, dispatch, isComment, isArticl
 ArticleMetaBottom.propTypes = {
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.object.isRequired,
-  onUpvoteSuccess: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func.isRequired,
   isComment: PropTypes.bool,
   isArticleDetail: PropTypes.bool
 };

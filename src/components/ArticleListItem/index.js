@@ -24,7 +24,7 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
         <h2 className="ant-list-item-meta-title">{data.title}</h2>
         <div className="ant-list-item-content">{data.description}</div>
       </Link>
-      <ArticleMetaBottom data={data} onUpvoteSuccess={onUpvoteSuccess} />
+      <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
       {(status === 'pending') &&
         <div className="mod-functions">
           <Button size="small" type="primary" onClick={onApproveClick}>Approve</Button>
