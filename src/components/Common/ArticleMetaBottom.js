@@ -13,7 +13,7 @@ import './ArticleMetaBottom.css';
  * @param onUpvoteSuccess callback function that gets called after a successful upvote
  * @param dispatch redux dispatcher
  */
-const ArticleMetaBottom = ({data, onUpvoteSuccess, dispatch}) => {
+const ArticleMetaBottom = ({data, onUpvoteSuccess, dispatch, isComment}) => {
   const onUpvoteClick = async () => {
     //if already voted, immediately return - maybe implement unvoting later, if needed
     if (data.isVoted) {
@@ -32,7 +32,7 @@ const ArticleMetaBottom = ({data, onUpvoteSuccess, dispatch}) => {
     <div>
       <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
       <Divider type="vertical" />
-      <IconText type="message" text={data.commentsCount} />
+      <IconText type="message" text={isComment ? data.replies.length : data.commentsCount} />
       <Divider type="vertical" />
       <span className={`upvote ${data.isVoted ? 'active' : ''}`} onClick={onUpvoteClick}><IconText type={data.isVoted ? 'up-circle' : 'up-circle-o'} text={data.votesCount} /></span>
       <Divider type="vertical" />
@@ -44,7 +44,12 @@ const ArticleMetaBottom = ({data, onUpvoteSuccess, dispatch}) => {
 ArticleMetaBottom.propTypes = {
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.object.isRequired,
-  onUpvoteSuccess: PropTypes.func.isRequired
+  onUpvoteSuccess: PropTypes.func.isRequired,
+  isComment: PropTypes.bool
+};
+
+ArticleMetaBottom.defaultProps = {
+  isComment: false
 };
 
 export default connect()(ArticleMetaBottom);

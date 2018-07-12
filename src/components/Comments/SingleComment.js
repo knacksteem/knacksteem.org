@@ -17,13 +17,14 @@ class SingleComment extends React.Component {
   render() {
     const {data, onUpvoteSuccess} = this.props;
 
+    console.log(data);
     return (
       <div className="ant-list-item comment">
         <div>
           <Avatar src={data.authorImage} className="comment-avatar" />
           <span>{data.author} ({data.authorReputation})</span>
           <ReactMarkdown source={data.description} />
-          <ArticleMetaBottom data={data} onUpvoteSuccess={onUpvoteSuccess} />
+          <ArticleMetaBottom data={data} onUpvoteSuccess={onUpvoteSuccess} isComment />
         </div>
         <div className="replies">
           {data.replies.map((elem) => {
