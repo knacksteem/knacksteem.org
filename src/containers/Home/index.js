@@ -36,15 +36,7 @@ class Home extends Component {
     }
   };
   componentDidMount() {
-    const {location, dispatch, match} = this.props;
-
-    if (location.pathname === '/mycontributions') {
-      //load user contributions
-      dispatch(getArticlesByUser());
-    } else {
-      //load contributions by category
-      dispatch(getArticlesByCategory(match.params.category));
-    }
+    this.loadArticles();
 
     //on scroll, load the next batch of articles
     window.addEventListener('scroll', this.onScroll);
@@ -61,6 +53,17 @@ class Home extends Component {
       dispatch(getArticlesByCategory(match.params.category));
     }
   }
+  loadArticles = () => {
+    const {location, dispatch, match} = this.props;
+
+    if (location.pathname === '/mycontributions') {
+      //load user contributions
+      dispatch(getArticlesByUser());
+    } else {
+      //load contributions by category
+      dispatch(getArticlesByCategory(match.params.category));
+    }
+  };
   render() {
     const {searchString} = this.state;
     const {articles} = this.props;
@@ -91,7 +94,7 @@ class Home extends Component {
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articlesData.map((data, index) => {
               return (
-                <ArticleListItem key={index} data={data} />
+                <ArticleListItem key={index} data={data} onUpvoteSuccess={this.loadArticles} />
               );
             })}
           </div>

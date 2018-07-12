@@ -4,12 +4,12 @@ import SingleComment from './SingleComment';
 import './index.css';
 
 //stateless component for article comments
-const Comments = ({data}) => {
+const Comments = ({data, onUpvoteSuccess}) => {
   return (
     <div>
       {data.map((elem) => {
         return (
-          <SingleComment key={elem.permlink} data={elem} />
+          <SingleComment key={elem.permlink} data={elem} onUpvoteSuccess={onUpvoteSuccess} />
         );
       })}
     </div>
@@ -17,7 +17,8 @@ const Comments = ({data}) => {
 };
 
 Comments.propTypes = {
-  data: PropTypes.array //array of comments
+  data: PropTypes.array, //array of comments
+  onUpvoteSuccess: PropTypes.func.isRequired
 };
 
 export default Comments;

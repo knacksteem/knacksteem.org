@@ -12,11 +12,3 @@
 .ant-avatar.comment-avatar {
   margin-right: 5px;
 }
-
-.upvote {
-  cursor: pointer;
-}
-
-.upvote:hover {
-  color: #1890ff;
-}

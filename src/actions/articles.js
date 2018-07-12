@@ -5,6 +5,7 @@ import {getUniquePermalink} from '../services/functions';
 import sc2 from 'sc2-sdk';
 import {apiPost, apiGet} from '../services/api';
 import Config from '../config';
+import Cookies from 'js-cookie';
 
 /**
  * get articles by category from backend
@@ -20,6 +21,7 @@ export const getArticlesByCategory = (category, skip) => {
     //get articles by category from server
     try {
       let response = await apiGet('/posts', {
+        username: Cookies.get('username') || undefined,
         category: category || undefined,
         skip: skip || undefined //skip elements for paging
       });
@@ -54,6 +56,7 @@ export const getArticlesByUser = (skip) => {
     //get user articles from server
     try {
       let response = await apiGet('/posts', {
+        username: Cookies.get('username') || undefined,
         author: store.user.username,
         skip: skip || undefined //skip elements for paging
       });
@@ -86,6 +89,7 @@ export const getArticlesPending = (skip) => {
     //get articles by category from server
     try {
       let response = await apiGet('/stats/moderation/pending', {
+        username: Cookies.get('username') || undefined,
         skip: skip || undefined //skip elements for paging
       });
       dispatch({

@@ -1,15 +1,14 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
+import Cookies from 'js-cookie';
 import {Layout, Divider, Spin, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import IconText from '../../components/Common/IconText';
-import './index.css';
+import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {apiGet} from '../../services/api';
-import {prettyDate} from '../../services/functions';
 import Comments from '../../components/Comments';
-import {upvoteElement} from '../../actions/articles';
+import './index.css';
 const {Content} = Layout;
 
 //Article Detail route
@@ -27,7 +26,8 @@ class ArticleDetail extends Component {
   getArticle = async () => {
     const {match} = this.props;
     try {
-      let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`);
+      //TODO load username from cookies
+      let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`, {username: Cookies.get('username') || undefined});
       this.setState({
         data: response.data.results,
         isLoading: false
@@ -39,14 +39,6 @@ class ArticleDetail extends Component {
         isLoading: false
       });
     }
-  };
-  //upvote this article
-  onUpvoteClick = async () => {
-    const {dispatch} = this.props;
-    const {data} = this.state;
-    //upvote with 10000 - which equals 100%
-    let response = await dispatch(upvoteElement(data.author, data.permlink, 10000));
-    console.log(response);
   };
   render() {
     const {data, isLoading} = this.state;
@@ -66,15 +58,7 @@ class ArticleDetail extends Component {
           <div className="article-category">Category: {data.category}</div>
           <Divider/>
           <ReactMarkdown source={data.description} />
-          <div>
-            <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
-            <Divider type="vertical" />
-            <IconText type="message" text={data.commentsCount} />
-            <Divider type="vertical" />
-            <span className="upvote" onClick={this.onUpvoteClick}><IconText type="up-circle-o" text={data.votesCount} /></span>
-            <Divider type="vertical" />
-            <IconText type="wallet" text={`$${data.totalPayout}`} />
-          </div>
+          <ArticleMetaBottom data={data} onUpvoteSuccess={this.getArticle} />
           <div className="article-tags">
             {data.tags.map((tag, index) => {
               return (
@@ -83,7 +67,7 @@ class ArticleDetail extends Component {
             })}
           </div>
           <Divider/>
-          <Comments data={data.comments} />
+          <Comments data={data.comments} onUpvoteSuccess={this.getArticle} />
         </Content>
       </div>
     );
@@ -96,8 +80,7 @@ ArticleDetail.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  /*articles: state.articles,
-  user: state.user*/
+  /*user: state.user*/
 });
 
 export default withRouter(connect(mapStateToProps)(ArticleDetail));

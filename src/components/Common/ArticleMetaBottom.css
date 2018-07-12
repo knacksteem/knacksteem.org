@@ -1,0 +1,7 @@
+.upvote {
+  cursor: pointer;
+}
+
+.upvote:hover, .upvote.active {
+  color: #1890ff;
+}
