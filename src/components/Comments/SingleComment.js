@@ -17,7 +17,6 @@ class SingleComment extends React.Component {
   render() {
     const {data, onUpvoteSuccess} = this.props;
 
-    console.log(data);
     return (
       <div className="ant-list-item comment">
         <div>
