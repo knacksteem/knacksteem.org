@@ -224,10 +224,9 @@ export const upvoteElement = (author, permlink, weight) => {
 
 /**
  * delete article or comment
- * @param author author of the article or comment
  * @param permlink permalink of the article of comment
  */
-export const deleteElement = (author, permlink) => {
+export const deleteElement = (permlink) => {
   return async (dispatch, getState) => {
     const store = getState();
 
@@ -238,13 +237,13 @@ export const deleteElement = (author, permlink) => {
       scope: Config.SteemConnect.scope
     });
 
-    //TODO use broadcast operation to delete comment
-    /*return await api.broadcast({
-      type: 'delete_comment',
-      operation: {store.user.username, permlink},
-      confirm: tt('g.are_you_sure'),
-    });*/
-
-    //return await api.delete(store.user.username, author, permlink);
+    //use broadcast operation to delete comment
+    return await api.broadcast([
+      "delete_comment",
+      {
+        "author": store.user.username,
+        "permlink": permlink
+      }
+    ]);
   };
 };

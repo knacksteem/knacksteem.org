@@ -33,7 +33,7 @@ const ArticleMetaBottom = ({data, onUpdate, dispatch, isComment, isArticleDetail
   };
   const onDeleteClick = async () => {
     try {
-      await dispatch(deleteElement(data.author, data.permlink));
+      await dispatch(deleteElement(data.permlink));
       //on successful update, reload article or article list
       onUpdate();
     } catch (err) {
