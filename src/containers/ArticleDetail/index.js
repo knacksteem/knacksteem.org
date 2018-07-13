@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import {Layout, Divider, Spin, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
+import RichTextEditor from 'react-rte';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {apiGet} from '../../services/api';
 import Comments from '../../components/Comments';

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import ReactMarkdown from 'react-markdown';
 import RichTextEditor from 'react-rte';
 import {Layout, Input, AutoComplete, Tag, Icon, Button, Divider} from 'antd';
 import {postArticle} from '../../actions/articles';
@@ -19,21 +20,15 @@ class NewContribution extends Component {
       value: RichTextEditor.createEmptyValue(),
       tags: ['knacksteem'],
       inputTagsVisible: false,
-      previewHtml: ''
+      previewMarkdown: ''
     };
   }
   //will be called whenever the content of the editor changes
   onChange = (value) => {
     this.setState({
       value,
-      previewHtml: value.toString('html')
+      previewMarkdown: value.toString('markdown')
     });
-    if (this.props.onChange) {
-      //TODO create a preview below the editor?
-      this.props.onChange(
-        value.toString('html')
-      );
-    }
   };
   //callbcack for removing a tag
   handleCloseTag = (removedTag) => {
@@ -103,7 +98,7 @@ class NewContribution extends Component {
   //reference to autocomplete input for second tag (category)
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
-    const {value, tags, inputTagsVisible, inputTagsValue, previewHtml} = this.state;
+    const {value, tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
     const {isBusy, categories} = this.props.articles;
 
     return (
@@ -158,7 +153,7 @@ class NewContribution extends Component {
           </div>
           <Button type="primary" onClick={this.onPostClick} loading={isBusy}>Post</Button>
           <Divider />
-          <div dangerouslySetInnerHTML={{__html: previewHtml}}/>
+          <ReactMarkdown source={previewMarkdown} />
         </Content>
       </div>
     );
@@ -166,7 +161,6 @@ class NewContribution extends Component {
 }
 
 NewContribution.propTypes = {
-  onChange: PropTypes.func,
   dispatch: PropTypes.func,
   articles: PropTypes.object
 };
