@@ -40,15 +40,21 @@ const ArticleMetaBottom = ({data, onUpdate, dispatch, isComment, isArticleDetail
       console.log(err);
     }
   };
+  const onEditClick = async () => {
+    //TODO open markdown editor, prefilled with current content
+  };
+  const onReplyClick = async () => {
+    //TODO open markdown editor for new comment at the correct position
+  };
 
   const isAuthor = (Cookies.get('username') === data.author);
   const commentCount = isComment ? data.replies.length : data.commentsCount;
 
-  const actionsArray = [<a key="action-reply">Reply</a>];
+  const actionsArray = [<a key="action-reply" onClick={onReplyClick}>Reply</a>];
   if (isComment || isArticleDetail) {
     if (isAuthor) {
       actionsArray.push(
-        <a key="action-edit">Edit</a>
+        <a key="action-edit" onClick={onEditClick}>Edit</a>
       );
     }
     if (isAuthor && !commentCount && !data.votesCount) {
