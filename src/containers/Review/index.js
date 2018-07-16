@@ -23,7 +23,7 @@ class Review extends Component {
   }
   //scroll handler for lazy loading
   onScroll = () => {
-    const {dispatch, articles} = this.props;
+    const {articles} = this.props;
 
     //if in loading process, don´t do anything
     if (articles.isBusy) {
@@ -32,13 +32,11 @@ class Review extends Component {
     //if user hits bottom, load next batch of items
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      dispatch(getArticlesPending(articles.data.length));
+      this.loadArticles(articles.data.length);
     }
   };
   componentDidMount() {
-    const {dispatch} = this.props;
-
-    dispatch(getArticlesPending());
+    this.loadArticles();
 
     //on scroll, load the next batch of articles
     window.addEventListener('scroll', this.onScroll);
@@ -47,6 +45,11 @@ class Review extends Component {
     //remove scroll event again when hitting another route
     window.removeEventListener('scroll', this.onScroll);
   }
+  loadArticles = (skip = 0) => {
+    const {dispatch} = this.props;
+
+    dispatch(getArticlesPending(skip));
+  };
   render() {
     const {searchString} = this.state;
     const {articles} = this.props;
@@ -77,7 +80,7 @@ class Review extends Component {
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articlesData.map((data, index) => {
               return (
-                <ArticleListItem key={index} data={data} status="pending" />
+                <ArticleListItem key={index} data={data} status="pending" onUpvoteSuccess={this.loadArticles} />
               );
             })}
             {(!articlesData.length && !articles.isBusy) && <div>No pending articles...</div>}
