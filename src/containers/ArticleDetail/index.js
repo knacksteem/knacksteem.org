@@ -27,7 +27,6 @@ class ArticleDetail extends Component {
   getArticle = async () => {
     const {match} = this.props;
     try {
-      //TODO load username from cookies
       let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`, {username: Cookies.get('username') || undefined});
       this.setState({
         data: response.data.results,
