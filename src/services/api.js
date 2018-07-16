@@ -32,3 +32,18 @@ export const apiGet = async (url, data) => {
     return false;
   }
 };
+
+//basic put (update) request to backend api
+export const apiPut = async (url, data) => {
+  try {
+    return await axios({
+      method: 'put',
+      url: (process.env.NODE_ENV === 'development') ? `http://localhost:3030/v1${url}` : `https://knacksteem.org/v1${url}`,
+      data: data,
+      responseType: 'json'
+    });
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};

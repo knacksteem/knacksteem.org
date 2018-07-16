@@ -1,9 +1,8 @@
 import {push} from 'react-router-redux';
 import * as types from './types';
-import {userLogout} from './user';
 import {getUniquePermalink} from '../services/functions';
 import sc2 from 'sc2-sdk';
-import {apiPost, apiGet} from '../services/api';
+import {apiPost, apiGet, apiPut} from '../services/api';
 import Config from '../config';
 import Cookies from 'js-cookie';
 
@@ -145,8 +144,47 @@ export const postArticle = (title, body, tags) => {
       dispatch(push('/mycontributions'));
     } catch (error) {
       console.log(error);
-      //invalidate login
-      dispatch(userLogout());
+    } finally {
+      dispatch({
+        type: types.ARTICLES_POSTED
+      });
+    }
+  };
+};
+
+/**
+ * edit article on blockchain - knacksteem backend changes are only for tags
+ */
+export const editArticle = (title, body, tags, articleData) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: types.ARTICLES_POSTING
+    });
+
+    const store = getState();
+
+    let api = sc2.Initialize({
+      app: 'knacksteem.app',
+      callbackURL: Config.SteemConnect.callbackURL,
+      accessToken: store.user.accessToken,
+      scope: Config.SteemConnect.scope
+    });
+
+    try {
+      //edit post on blockchain
+      await api.comment('', tags[0], store.user.username, articleData.permlink, title, body, {tags: tags});
+
+      //successfully edited post on blockchain, now editing tags on backend
+      await apiPut('/posts/update', {
+        permlink: articleData.permlink,
+        access_token: store.user.accessToken,
+        tags: tags
+      });
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     } finally {
       dispatch({
         type: types.ARTICLES_POSTED
@@ -239,11 +277,10 @@ export const deleteElement = (permlink) => {
 
     //use broadcast operation to delete comment
     return await api.broadcast([
-      "delete_comment",
-      {
-        "author": store.user.username,
-        "permlink": permlink
-      }
+      ['delete_comment', {
+        'author': store.user.username,
+        'permlink': permlink
+      }]
     ]);
   };
 };
