@@ -1,10 +1,10 @@
 import {push} from 'react-router-redux';
 import * as types from './types';
-import {userLogout} from './user';
 import {getUniquePermalink} from '../services/functions';
 import sc2 from 'sc2-sdk';
-import {apiPost, apiGet} from '../services/api';
+import {apiPost, apiGet, apiPut} from '../services/api';
 import Config from '../config';
+import Cookies from 'js-cookie';
 
 /**
  * get articles by category from backend
@@ -20,6 +20,7 @@ export const getArticlesByCategory = (category, skip) => {
     //get articles by category from server
     try {
       let response = await apiGet('/posts', {
+        username: Cookies.get('username') || undefined,
         category: category || undefined,
         skip: skip || undefined //skip elements for paging
       });
@@ -54,6 +55,7 @@ export const getArticlesByUser = (skip) => {
     //get user articles from server
     try {
       let response = await apiGet('/posts', {
+        username: Cookies.get('username') || undefined,
         author: store.user.username,
         skip: skip || undefined //skip elements for paging
       });
@@ -86,6 +88,7 @@ export const getArticlesPending = (skip) => {
     //get articles by category from server
     try {
       let response = await apiGet('/stats/moderation/pending', {
+        username: Cookies.get('username') || undefined,
         skip: skip || undefined //skip elements for paging
       });
       dispatch({
@@ -141,8 +144,47 @@ export const postArticle = (title, body, tags) => {
       dispatch(push('/mycontributions'));
     } catch (error) {
       console.log(error);
-      //invalidate login
-      dispatch(userLogout());
+    } finally {
+      dispatch({
+        type: types.ARTICLES_POSTED
+      });
+    }
+  };
+};
+
+/**
+ * edit article on blockchain - knacksteem backend changes are only for tags
+ */
+export const editArticle = (title, body, tags, articleData) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: types.ARTICLES_POSTING
+    });
+
+    const store = getState();
+
+    let api = sc2.Initialize({
+      app: 'knacksteem.app',
+      callbackURL: Config.SteemConnect.callbackURL,
+      accessToken: store.user.accessToken,
+      scope: Config.SteemConnect.scope
+    });
+
+    try {
+      //edit post on blockchain
+      await api.comment('', tags[0], store.user.username, articleData.permlink, title, body, {tags: tags});
+
+      //successfully edited post on blockchain, now editing tags on backend
+      await apiPut('/posts/update', {
+        permlink: articleData.permlink,
+        access_token: store.user.accessToken,
+        tags: tags
+      });
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     } finally {
       dispatch({
         type: types.ARTICLES_POSTED
@@ -194,5 +236,51 @@ export const rejectArticle = (permlink) => {
       //reload pending articles after approval
       dispatch(getArticlesPending());
     }
+  };
+};
+
+/**
+ * upvote article or comment
+ * @param author author of the article or comment
+ * @param permlink permalink of the article of comment
+ * @param weight weight of the upvote (10000 is 100%)
+ */
+export const upvoteElement = (author, permlink, weight) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    let api = sc2.Initialize({
+      app: 'knacksteem.app',
+      callbackURL: Config.SteemConnect.callbackURL,
+      accessToken: store.user.accessToken,
+      scope: Config.SteemConnect.scope
+    });
+
+    return await api.vote(store.user.username, author, permlink, weight);
+  };
+};
+
+/**
+ * delete article or comment
+ * @param permlink permalink of the article of comment
+ */
+export const deleteElement = (permlink) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    let api = sc2.Initialize({
+      app: 'knacksteem.app',
+      callbackURL: Config.SteemConnect.callbackURL,
+      accessToken: store.user.accessToken,
+      scope: Config.SteemConnect.scope
+    });
+
+    //use broadcast operation to delete comment
+    return await api.broadcast([
+      ['delete_comment', {
+        'author': store.user.username,
+        'permlink': permlink
+      }]
+    ]);
   };
 };

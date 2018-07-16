@@ -1,0 +1,14 @@
+.ant-list-item.comment {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  margin-top: 15px;
+}
+
+.ant-list-item.comment .replies {
+  margin-left: 30px;
+}
+
+.ant-avatar.comment-avatar {
+  margin-right: 5px;
+}

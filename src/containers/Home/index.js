@@ -23,7 +23,7 @@ class Home extends Component {
   }
   //scroll handler for lazy loading
   onScroll = () => {
-    const {dispatch, match, articles} = this.props;
+    const {match, articles, location} = this.props;
 
     //if in loading process, don´t do anything
     if (articles.isBusy) {
@@ -32,18 +32,20 @@ class Home extends Component {
     //if user hits bottom, load next batch of items
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      dispatch(getArticlesByCategory(match.params.category, articles.data.length));
+      if (location.pathname === '/mycontributions') {
+        this.loadArticlesUser(articles.data.length);
+      } else {
+        this.loadArticles(match.params.category, articles.data.length);
+      }
     }
   };
   componentDidMount() {
-    const {location, dispatch, match} = this.props;
+    const {location} = this.props;
 
     if (location.pathname === '/mycontributions') {
-      //load user contributions
-      dispatch(getArticlesByUser());
+      this.loadArticlesUser();
     } else {
-      //load contributions by category
-      dispatch(getArticlesByCategory(match.params.category));
+      this.loadArticles();
     }
 
     //on scroll, load the next batch of articles
@@ -54,13 +56,29 @@ class Home extends Component {
     window.removeEventListener('scroll', this.onScroll);
   }
   componentDidUpdate(prevProps, prevState) {
-    const {dispatch, location, match} = this.props;
+    const {location, match} = this.props;
 
     if (prevProps.location.pathname !== location.pathname) {
       //location change detected, load new data
-      dispatch(getArticlesByCategory(match.params.category));
+      if (location.pathname === '/mycontributions') {
+        this.loadArticlesUser();
+      } else {
+        this.loadArticles(match.params.category);
+      }
     }
   }
+  //load general articles
+  loadArticles = (category = 'all', skip = 0) => {
+    const {dispatch, match} = this.props;
+
+    dispatch(getArticlesByCategory(match.params.category, skip));
+  };
+  //load own contributions
+  loadArticlesUser = (skip = 0) => {
+    const {dispatch} = this.props;
+
+    dispatch(getArticlesByUser(skip));
+  };
   render() {
     const {searchString} = this.state;
     const {articles} = this.props;
@@ -91,7 +109,7 @@ class Home extends Component {
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articlesData.map((data, index) => {
               return (
-                <ArticleListItem key={index} data={data} />
+                <ArticleListItem key={index} data={data} onUpvoteSuccess={this.loadArticles} />
               );
             })}
           </div>

@@ -38,6 +38,7 @@ export const userLogin = (accessToken) => {
     //TODO error handling if the token does not work (anymore) - try/catch
 
     Cookies.set('accessToken', accessToken);
+    Cookies.set('username', response.user);
 
     //get user details from database, including the user role (supervisor, moderator, contributor)
     let userData = await apiGet('/stats/users', {
@@ -70,6 +71,7 @@ export const userLogout = () => {
     api.revokeToken();
 
     Cookies.remove('accessToken');
+    Cookies.remove('username');
 
     dispatch({
       type: types.USER_LOGOUT
