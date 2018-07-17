@@ -14,12 +14,12 @@ import './index.css';
 class Editor extends Component {
   constructor(props) {
     super(props);
-    const {articleData} = props;
+    const {articleData, isComment} = props;
 
     this.state = {
-      title: articleData ? articleData.title : '',
-      value: articleData ? articleData.description : RichTextEditor.createEmptyValue(),
-      tags: articleData ? articleData.tags : ['knacksteem'],
+      title: (articleData && !isComment) ? articleData.title : '',
+      value: articleData ? RichTextEditor.createValueFromString(articleData.description, 'markdown') : RichTextEditor.createEmptyValue(),
+      tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
       inputTagsVisible: false,
       previewMarkdown: ''
     };
@@ -89,13 +89,20 @@ class Editor extends Component {
     });
   };
   //post article on blockchain and in backend db
-  onPostClick = () => {
-    const {dispatch, isComment, isEdit, articleData} = this.props;
+  onPostClick = async () => {
+    const {dispatch, isComment, isEdit, articleData, onDone} = this.props;
     const {title, value, tags} = this.state;
-    if (isEdit) {
-      dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment));
-    } else {
-      dispatch(postArticle(title, value.toString('markdown'), tags, isComment));
+    try {
+      if (isEdit) {
+        await dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment));
+      } else {
+        await dispatch(postArticle(title, value.toString('markdown'), tags, isComment));
+      }
+      if (onDone) {
+        onDone();
+      }
+    } catch(err) {
+      console.log(err);
     }
   };
   //reference to default input for new tags
@@ -104,15 +111,12 @@ class Editor extends Component {
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
     const {value, tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
-    const {isComment, isEdit} = this.props;
+    const {isComment, isEdit, onCancel} = this.props;
     const {isBusy, categories} = this.props.articles;
 
     return (
       <div className="editor">
-        <Input
-          placeholder="Title"
-          onChange={this.handleInputTitleChange}
-        />
+        {!isComment && <Input placeholder="Title" onChange={this.handleInputTitleChange} />}
         <RichTextEditor
           value={value}
           onChange={this.onChange}
@@ -158,7 +162,8 @@ class Editor extends Component {
             )}
           </div>
         }
-        <Button type="primary" onClick={this.onPostClick} loading={isBusy}>Post</Button>
+        <Button type="primary" onClick={this.onPostClick} loading={isBusy}>{isEdit ? 'Update' : 'Post'}</Button>
+        {onCancel && <Button type="secondary" onClick={onCancel} loading={isBusy} className="button-cancel">Cancel</Button>}
         <Divider />
         <ReactMarkdown source={previewMarkdown} />
       </div>
@@ -171,7 +176,9 @@ Editor.propTypes = {
   articles: PropTypes.object,
   isComment: PropTypes.bool,
   isEdit: PropTypes.bool,
-  articleData: PropTypes.object
+  articleData: PropTypes.object,
+  onCancel: PropTypes.func,
+  onDone: PropTypes.func
 };
 
 Editor.defaultProps = {

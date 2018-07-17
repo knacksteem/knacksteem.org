@@ -142,8 +142,10 @@ export const postArticle = (title, body, tags) => {
 
       //redirect to my contributions
       dispatch(push('/mycontributions'));
+      return true;
     } catch (error) {
       console.log(error);
+      return false;
     } finally {
       dispatch({
         type: types.ARTICLES_POSTED

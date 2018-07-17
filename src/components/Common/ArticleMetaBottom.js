@@ -15,6 +15,9 @@ import Cookies from 'js-cookie';
  * @param dispatch redux dispatcher
  * @param isComment boolean specifying if the parent component is a comment
  * @param isArticleDetail boolean specifying if the parent component is an article detail page
+ * @param isEditMode boolean to determine if the component is in edit mode right now
+ * @param onEditClick callback function when the user clicks on the edit link
+ * @param onReplyClick callback function when the user clicks on the reply link
  */
 const ArticleMetaBottom = ({data, onUpdate, dispatch, isComment, isArticleDetail, isEditMode, onEditClick, onReplyClick}) => {
   const onUpvoteClick = async () => {

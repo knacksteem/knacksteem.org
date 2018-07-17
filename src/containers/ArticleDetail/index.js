@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
+import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
 import {Layout, Divider, Spin, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import RichTextEditor from 'react-rte';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {apiGet} from '../../services/api';
 import Comments from '../../components/Comments';
@@ -25,19 +25,21 @@ class ArticleDetail extends Component {
     this.getArticle();
   }
   getArticle = async () => {
-    const {match} = this.props;
+    const {match, dispatch} = this.props;
     try {
       let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`, {username: Cookies.get('username') || undefined});
-      this.setState({
-        data: response.data.results,
-        isLoading: false
-      });
+      //no article found, go back to main route
+      if (response && response.data && response.data.results) {
+        this.setState({
+          data: response.data.results,
+          isLoading: false
+        });
+      } else {
+        dispatch(push('/'));
+      }
     } catch (error) {
       console.log(error);
-      this.setState({
-        data: {},
-        isLoading: false
-      });
+      dispatch(push('/'));
     }
   };
   render() {
@@ -67,7 +69,7 @@ class ArticleDetail extends Component {
             })}
           </div>
           <Divider/>
-          <Comments data={data.comments} onUpvoteSuccess={this.getArticle} />
+          <Comments data={data.comments} onUpdate={this.getArticle} />
         </Content>
       </div>
     );
