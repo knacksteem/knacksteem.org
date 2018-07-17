@@ -16,7 +16,7 @@ import Cookies from 'js-cookie';
  * @param isComment boolean specifying if the parent component is a comment
  * @param isArticleDetail boolean specifying if the parent component is an article detail page
  */
-const ArticleMetaBottom = ({data, onUpdate, dispatch, isComment, isArticleDetail}) => {
+const ArticleMetaBottom = ({data, onUpdate, dispatch, isComment, isArticleDetail, isEditMode, onEditClick, onReplyClick}) => {
   const onUpvoteClick = async () => {
     //if already voted, immediately return - maybe implement unvoting later, if needed
     if (data.isVoted) {
@@ -39,12 +39,6 @@ const ArticleMetaBottom = ({data, onUpdate, dispatch, isComment, isArticleDetail
     } catch (err) {
       console.log(err);
     }
-  };
-  const onEditClick = async () => {
-    //TODO open markdown editor, prefilled with current content
-  };
-  const onReplyClick = async () => {
-    //TODO open markdown editor for new comment at the correct position
   };
 
   const isAuthor = (Cookies.get('username') === data.author);
@@ -75,7 +69,7 @@ const ArticleMetaBottom = ({data, onUpdate, dispatch, isComment, isArticleDetail
       <IconText type="wallet" text={`$${data.totalPayout}`} />
       <Divider type="vertical" />
       <span className="action-links">
-        {actionsArray}
+        {!isEditMode && actionsArray}
       </span>
     </div>
   );
@@ -86,12 +80,16 @@ ArticleMetaBottom.propTypes = {
   data: PropTypes.object.isRequired,
   onUpdate: PropTypes.func.isRequired,
   isComment: PropTypes.bool,
-  isArticleDetail: PropTypes.bool
+  isArticleDetail: PropTypes.bool,
+  isEditMode: PropTypes.bool,
+  onEditClick: PropTypes.func,
+  onReplyClick: PropTypes.func
 };
 
 ArticleMetaBottom.defaultProps = {
   isComment: false,
-  isArticleDetail: false
+  isArticleDetail: false,
+  isEditMode: false
 };
 
 export default connect()(ArticleMetaBottom);

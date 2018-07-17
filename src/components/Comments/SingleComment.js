@@ -14,7 +14,18 @@ class SingleComment extends React.Component {
       isEditMode: false
     };
   }
+  onEditClick = () => {
+    this.setState({
+      isEditMode: true
+    });
+  };
+  onReplyClick = () => {
+    this.setState({
+      isEditMode: true
+    });
+  };
   render() {
+    const {isEditMode} = this.state;
     const {data, onUpvoteSuccess} = this.props;
 
     return (
@@ -23,7 +34,7 @@ class SingleComment extends React.Component {
           <Avatar src={data.authorImage} className="comment-avatar" />
           <span>{data.author} ({data.authorReputation})</span>
           <ReactMarkdown source={data.description} />
-          <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} isComment />
+          <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isComment isEditMode={isEditMode} />
         </div>
         <div className="replies">
           {data.replies.map((elem) => {
