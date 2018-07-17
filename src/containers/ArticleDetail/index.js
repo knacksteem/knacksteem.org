@@ -9,6 +9,7 @@ import ReactMarkdown from 'react-markdown';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {apiGet} from '../../services/api';
 import Comments from '../../components/Comments';
+import Editor from '../../components/Editor';
 import './index.css';
 const {Content} = Layout;
 
@@ -18,7 +19,8 @@ class ArticleDetail extends Component {
     super(props);
     this.state = {
       data: {},
-      isLoading: true
+      isLoading: true,
+      isEditMode: false
     };
   }
   componentDidMount() {
@@ -42,8 +44,27 @@ class ArticleDetail extends Component {
       dispatch(push('/'));
     }
   };
+  onEditClick = () => {
+    this.setState({
+      isEditMode: true
+    });
+  };
+  onReplyClick = () => {
+    //TODO open a new editor window that includes details about eh comment to reply on
+  };
+  onCancelEditorClick = () => {
+    this.setState({
+      isEditMode: false
+    });
+  };
+  onDoneEditorClick = () => {
+    //TODO reload
+    this.setState({
+      isEditMode: false
+    });
+  };
   render() {
-    const {data, isLoading} = this.state;
+    const {data, isLoading, isEditMode} = this.state;
 
     //show spinner/loader while loading article from the backend
     if (isLoading) {
@@ -59,8 +80,9 @@ class ArticleDetail extends Component {
           <div className="article-author">Author: {data.author}</div>
           <div className="article-category">Category: {data.category}</div>
           <Divider/>
-          <ReactMarkdown source={data.description} />
-          <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail />
+          {isEditMode && <Editor isEdit={true} isComment={true} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
+          {!isEditMode && <ReactMarkdown source={data.description} />}
+          <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
           <div className="article-tags">
             {data.tags.map((tag, index) => {
               return (
