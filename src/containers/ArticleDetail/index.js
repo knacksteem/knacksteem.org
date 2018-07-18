@@ -58,10 +58,12 @@ class ArticleDetail extends Component {
     });
   };
   onDoneEditorClick = () => {
-    //TODO reload
     this.setState({
-      isEditMode: false
+      isEditMode: false,
+      isLoading: true
     });
+    //reload article after update
+    this.getArticle();
   };
   render() {
     const {data, isLoading, isEditMode} = this.state;

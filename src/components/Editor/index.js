@@ -162,7 +162,7 @@ class Editor extends Component {
           </div>
         }
         <Button type="primary" onClick={this.onPostClick} loading={isBusy}>{isEdit ? 'Update' : 'Post'}</Button>
-        {onCancel && <Button type="secondary" onClick={onCancel} loading={isBusy} className="button-cancel">Cancel</Button>}
+        {onCancel && <Button type="secondary" onClick={onCancel} className="button-cancel">Cancel</Button>}
         <Divider />
         <ReactMarkdown source={previewMarkdown} />
       </div>
