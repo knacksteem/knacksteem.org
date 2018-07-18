@@ -89,13 +89,13 @@ class Editor extends Component {
   };
   //post article on blockchain and in backend db
   onPostClick = async () => {
-    const {dispatch, isComment, isEdit, articleData, onDone} = this.props;
+    const {dispatch, isComment, isEdit, articleData, onDone, parentPermlink, parentAuthor} = this.props;
     const {title, value, tags} = this.state;
     try {
       if (isEdit) {
-        await dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment));
+        await dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment, parentPermlink, parentAuthor));
       } else {
-        await dispatch(postArticle(title, value.toString('markdown'), tags, isComment));
+        await dispatch(postArticle(title, value.toString('markdown'), tags, isComment, parentPermlink, parentAuthor));
       }
       if (onDone) {
         onDone();
@@ -177,7 +177,9 @@ Editor.propTypes = {
   isEdit: PropTypes.bool, //editor is for editing a post or for creating a new one
   articleData: PropTypes.object, //data of existing article for editing
   onCancel: PropTypes.func, //will get called on cancel click
-  onDone: PropTypes.func //will get called on post/update click
+  onDone: PropTypes.func, //will get called on post/update click
+  parentPermlink: PropTypes.string,
+  parentAuthor: PropTypes.string
 };
 
 Editor.defaultProps = {

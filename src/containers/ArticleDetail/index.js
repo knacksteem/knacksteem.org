@@ -29,6 +29,9 @@ class ArticleDetail extends Component {
   getArticle = async () => {
     const {match, dispatch} = this.props;
     try {
+      this.setState({
+        isLoading: true
+      });
       let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`, {username: Cookies.get('username') || undefined});
       //no article found, go back to main route
       if (response && response.data && response.data.results) {
@@ -62,7 +65,7 @@ class ArticleDetail extends Component {
       isEditMode: false,
       isLoading: true
     });
-    //reload article after update
+    //reload after update
     this.getArticle();
   };
   render() {
@@ -93,7 +96,7 @@ class ArticleDetail extends Component {
             })}
           </div>
           <Divider/>
-          <Comments data={data.comments} onUpdate={this.getArticle} />
+          <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
         </Content>
       </div>
     );

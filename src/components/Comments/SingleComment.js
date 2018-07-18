@@ -29,28 +29,30 @@ class SingleComment extends React.Component {
     });
   };
   onDoneEditorClick = () => {
-    //TODO reload
+    const {onUpdate} = this.props;
+
     this.setState({
       isEditMode: false
     });
+    onUpdate();
   };
   render() {
     const {isEditMode} = this.state;
-    const {data, onUpdate} = this.props;
+    const {data, onUpdate, parentPermlink, parentAuthor} = this.props;
 
     return (
       <div className="ant-list-item comment">
         <div>
           <Avatar src={data.authorImage} className="comment-avatar" />
           <span>{data.author} ({data.authorReputation})</span>
-          {isEditMode && <Editor isEdit={true} isComment={true} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
+          {isEditMode && <Editor isEdit={true} isComment={true} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={parentPermlink} parentAuthor={parentAuthor} />}
           {!isEditMode && <ReactMarkdown source={data.description} />}
           <ArticleMetaBottom data={data} onUpdate={onUpdate} onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isComment isEditMode={isEditMode} />
         </div>
         <div className="replies">
           {data.replies.map((elem) => {
             return (
-              <SingleComment key={elem.permlink} data={elem} isReply onUpdate={onUpdate} />
+              <SingleComment key={elem.permlink} data={elem} isReply parentPermlink={data.permlink} parentAuthor={data.author} onUpdate={onUpdate} />
             );
           })}
         </div>
@@ -63,7 +65,9 @@ SingleComment.propTypes = {
   dispatch: PropTypes.func,
   data: PropTypes.object, //JSON object for the comment data
   isReply: PropTypes.bool,
-  onUpdate: PropTypes.func.isRequired
+  onUpdate: PropTypes.func.isRequired,
+  parentPermlink: PropTypes.string.isRequired,
+  parentAuthor: PropTypes.string.isRequired
 };
 
 SingleComment.defaultProps = {
