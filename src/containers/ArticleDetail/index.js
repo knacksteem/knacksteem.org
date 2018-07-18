@@ -76,7 +76,7 @@ class ArticleDetail extends Component {
     return (
       <div>
         <Content>
-          <h1>{data.title}</h1>
+          {!isEditMode && <h1>{data.title}</h1>}
           <div className="article-author">Author: {data.author}</div>
           <div className="article-category">Category: {data.category}</div>
           <Divider/>

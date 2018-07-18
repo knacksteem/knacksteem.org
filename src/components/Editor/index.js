@@ -15,7 +15,6 @@ class Editor extends Component {
   constructor(props) {
     super(props);
     const {articleData, isComment} = props;
-
     this.state = {
       title: (articleData && !isComment) ? articleData.title : '',
       value: articleData ? RichTextEditor.createValueFromString(articleData.description, 'markdown') : RichTextEditor.createEmptyValue(),
@@ -110,13 +109,13 @@ class Editor extends Component {
   //reference to autocomplete input for second tag (category)
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
-    const {value, tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
+    const {title, value, tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
     const {isComment, isEdit, onCancel} = this.props;
     const {isBusy, categories} = this.props.articles;
 
     return (
       <div className="editor">
-        {!isComment && <Input placeholder="Title" onChange={this.handleInputTitleChange} />}
+        {!isComment && <Input placeholder="Title" onChange={this.handleInputTitleChange} value={title} />}
         <RichTextEditor
           value={value}
           onChange={this.onChange}
