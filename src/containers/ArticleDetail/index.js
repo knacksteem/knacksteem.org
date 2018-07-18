@@ -80,7 +80,7 @@ class ArticleDetail extends Component {
           <div className="article-author">Author: {data.author}</div>
           <div className="article-category">Category: {data.category}</div>
           <Divider/>
-          {isEditMode && <Editor isEdit={true} isComment={true} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
+          {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
           {!isEditMode && <ReactMarkdown source={data.description} />}
           <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
           <div className="article-tags">

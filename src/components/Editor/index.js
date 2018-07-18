@@ -127,7 +127,7 @@ class Editor extends Component {
           <div className="editor-tags">
             {tags.map((tag, index) => {
               return (
-                <Tag key={tag} closable={index !== 0} color={(index > 0 ? 'blue' : 'magenta')} afterClose={() => this.handleCloseTag(tag)}>{tag}</Tag>
+                <Tag key={tag} closable={index > 1 || (index === 1 && !isEdit)} color={(index > 0 ? 'blue' : 'magenta')} afterClose={() => this.handleCloseTag(tag)}>{tag}</Tag>
               );
             })}
             {inputTagsVisible && (tags.length >= 2) && (
@@ -173,12 +173,12 @@ class Editor extends Component {
 
 Editor.propTypes = {
   dispatch: PropTypes.func,
-  articles: PropTypes.object,
-  isComment: PropTypes.bool,
-  isEdit: PropTypes.bool,
-  articleData: PropTypes.object,
-  onCancel: PropTypes.func,
-  onDone: PropTypes.func
+  articles: PropTypes.object, //access to articles reducer
+  isComment: PropTypes.bool, //is comment or article (which is a comment too in the blockchain, to be specific)
+  isEdit: PropTypes.bool, //editor is for editing a post or for creating a new one
+  articleData: PropTypes.object, //data of existing article for editing
+  onCancel: PropTypes.func, //will get called on cancel click
+  onDone: PropTypes.func //will get called on post/update click
 };
 
 Editor.defaultProps = {
