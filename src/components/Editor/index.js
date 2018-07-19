@@ -91,6 +91,7 @@ class Editor extends Component {
   onPostClick = async () => {
     const {dispatch, isComment, isEdit, articleData, onDone, parentPermlink, parentAuthor} = this.props;
     const {title, value, tags} = this.state;
+
     try {
       if (isEdit) {
         await dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment, parentPermlink, parentAuthor));

@@ -12,7 +12,8 @@ class SingleComment extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isEditMode: false
+      isEditMode: false,
+      isReplyMode: false
     };
   }
   onEditClick = () => {
@@ -21,23 +22,27 @@ class SingleComment extends React.Component {
     });
   };
   onReplyClick = () => {
-    //TODO open a new editor window that includes details about eh comment to reply on
+    this.setState({
+      isReplyMode: true
+    });
   };
   onCancelEditorClick = () => {
     this.setState({
-      isEditMode: false
+      isEditMode: false,
+      isReplyMode: false
     });
   };
   onDoneEditorClick = () => {
     const {onUpdate} = this.props;
 
     this.setState({
-      isEditMode: false
+      isEditMode: false,
+      isReplyMode: false
     });
     onUpdate();
   };
   render() {
-    const {isEditMode} = this.state;
+    const {isEditMode, isReplyMode} = this.state;
     const {data, onUpdate, parentPermlink, parentAuthor} = this.props;
 
     return (
@@ -50,6 +55,7 @@ class SingleComment extends React.Component {
           <ArticleMetaBottom data={data} onUpdate={onUpdate} onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isComment isEditMode={isEditMode} />
         </div>
         <div className="replies">
+          {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
           {data.replies.map((elem) => {
             return (
               <SingleComment key={elem.permlink} data={elem} isReply parentPermlink={data.permlink} parentAuthor={data.author} onUpdate={onUpdate} />

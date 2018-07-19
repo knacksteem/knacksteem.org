@@ -129,7 +129,7 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
       if (isComment) {
         //generate unique permalink for new comment
         const newPermLink = getUniquePermalinkComment(parentPermlink);
-        await api.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body);
+        await api.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body, {});
       } else {
         //generate unique permalink for new article
         const newPermLink = getUniquePermalink(title);
@@ -145,8 +145,10 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
         });
       }
 
-      //redirect to my contributions
-      dispatch(push('/mycontributions'));
+      if (!isComment) {
+        //redirect to my contributions
+        dispatch(push('/mycontributions'));
+      }
       return true;
     } catch (error) {
       console.log(error);

@@ -20,7 +20,8 @@ class ArticleDetail extends Component {
     this.state = {
       data: {},
       isLoading: true,
-      isEditMode: false
+      isEditMode: false,
+      isReplyMode: false
     };
   }
   componentDidMount() {
@@ -53,23 +54,27 @@ class ArticleDetail extends Component {
     });
   };
   onReplyClick = () => {
-    //TODO open a new editor window that includes details about eh comment to reply on
+    this.setState({
+      isReplyMode: true
+    });
   };
   onCancelEditorClick = () => {
     this.setState({
-      isEditMode: false
+      isEditMode: false,
+      isReplyMode: false
     });
   };
   onDoneEditorClick = () => {
     this.setState({
       isEditMode: false,
+      isReplyMode: false,
       isLoading: true
     });
     //reload after update
     this.getArticle();
   };
   render() {
-    const {data, isLoading, isEditMode} = this.state;
+    const {data, isLoading, isEditMode, isReplyMode} = this.state;
 
     //show spinner/loader while loading article from the backend
     if (isLoading) {
@@ -96,6 +101,7 @@ class ArticleDetail extends Component {
             })}
           </div>
           <Divider/>
+          {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
           <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
         </Content>
       </div>
