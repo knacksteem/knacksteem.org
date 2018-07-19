@@ -1,6 +1,6 @@
 import {push} from 'react-router-redux';
 import * as types from './types';
-import {getUniquePermalink} from '../services/functions';
+import {getUniquePermalink, getUniquePermalinkComment} from '../services/functions';
 import sc2 from 'sc2-sdk';
 import {apiPost, apiGet, apiPut} from '../services/api';
 import Config from '../config';
@@ -109,7 +109,7 @@ export const getArticlesPending = (skip) => {
 /**
  * post article to blockchain and knacksteem backend
  */
-export const postArticle = (title, body, tags) => {
+export const postArticle = (title, body, tags, isComment, parentPermlink, parentAuthor) => {
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_POSTING
@@ -125,25 +125,34 @@ export const postArticle = (title, body, tags) => {
     });
 
     try {
-      //generate unique permalink for new article
-      const newPermLink = getUniquePermalink(title);
-
       //post to blockchain
-      await api.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags});
+      if (isComment) {
+        //generate unique permalink for new comment
+        const newPermLink = getUniquePermalinkComment(parentPermlink);
+        await api.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body, {});
+      } else {
+        //generate unique permalink for new article
+        const newPermLink = getUniquePermalink(title);
+        await api.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags});
 
-      //successfully posted to blockchain, now posting to backend with permalink and category
-      await apiPost('/posts/create', {
-        author: store.user.username,
-        permlink: newPermLink,
-        access_token: store.user.accessToken,
-        category: tags[1],
-        tags: tags
-      });
+        //successfully posted to blockchain, now posting to backend with permalink and category
+        await apiPost('/posts/create', {
+          author: store.user.username,
+          permlink: newPermLink,
+          access_token: store.user.accessToken,
+          category: tags[1],
+          tags: tags
+        });
+      }
 
-      //redirect to my contributions
-      dispatch(push('/mycontributions'));
+      if (!isComment) {
+        //redirect to my contributions
+        dispatch(push('/mycontributions'));
+      }
+      return true;
     } catch (error) {
       console.log(error);
+      return false;
     } finally {
       dispatch({
         type: types.ARTICLES_POSTED
@@ -155,7 +164,7 @@ export const postArticle = (title, body, tags) => {
 /**
  * edit article on blockchain - knacksteem backend changes are only for tags
  */
-export const editArticle = (title, body, tags, articleData) => {
+export const editArticle = (title, body, tags, articleData, isComment, parentPermlink, parentAuthor) => {
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_POSTING
@@ -171,15 +180,20 @@ export const editArticle = (title, body, tags, articleData) => {
     });
 
     try {
-      //edit post on blockchain
-      await api.comment('', tags[0], store.user.username, articleData.permlink, title, body, {tags: tags});
+      if (isComment) {
+        //edit comment on blockchain
+        await api.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
+      } else {
+        //edit post on blockchain
+        await api.comment('', tags[0], store.user.username, articleData.permlink, title, body, {tags: tags});
 
-      //successfully edited post on blockchain, now editing tags on backend
-      await apiPut('/posts/update', {
-        permlink: articleData.permlink,
-        access_token: store.user.accessToken,
-        tags: tags
-      });
+        //successfully edited post on blockchain, now editing tags on backend
+        await apiPut('/posts/update', {
+          permlink: articleData.permlink,
+          access_token: store.user.accessToken,
+          tags: tags
+        });
+      }
 
       return true;
     } catch (error) {

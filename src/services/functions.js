@@ -1,7 +1,12 @@
-//generate unique permalink for blockchain
+//generate unique permalink for articles
 export const getUniquePermalink = (title) => {
   const permlink = title.replace(/[^\w\s]/gi, '').replace(/\s\s+/g, '-').replace(/\s/g, '-').toLowerCase();
   return `${permlink}-id-${Math.random().toString(36).substr(2, 16)}`;
+};
+
+//generate unique permalink for comments
+export const getUniquePermalinkComment = (permlink) => {
+  return `re-${permlink}-${Math.random().toString(36).substr(2, 16)}`;
 };
 
 //convert timestamp into pretty human readable date

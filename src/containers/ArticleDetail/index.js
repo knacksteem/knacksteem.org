@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
+import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
 import {Layout, Divider, Spin, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import RichTextEditor from 'react-rte';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {apiGet} from '../../services/api';
 import Comments from '../../components/Comments';
+import Editor from '../../components/Editor';
 import './index.css';
 const {Content} = Layout;
 
@@ -18,30 +19,62 @@ class ArticleDetail extends Component {
     super(props);
     this.state = {
       data: {},
-      isLoading: true
+      isLoading: true,
+      isEditMode: false,
+      isReplyMode: false
     };
   }
   componentDidMount() {
     this.getArticle();
   }
   getArticle = async () => {
-    const {match} = this.props;
+    const {match, dispatch} = this.props;
     try {
-      let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`, {username: Cookies.get('username') || undefined});
       this.setState({
-        data: response.data.results,
-        isLoading: false
+        isLoading: true
       });
+      let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`, {username: Cookies.get('username') || undefined});
+      //no article found, go back to main route
+      if (response && response.data && response.data.results) {
+        this.setState({
+          data: response.data.results,
+          isLoading: false
+        });
+      } else {
+        dispatch(push('/'));
+      }
     } catch (error) {
       console.log(error);
-      this.setState({
-        data: {},
-        isLoading: false
-      });
+      dispatch(push('/'));
     }
   };
+  onEditClick = () => {
+    this.setState({
+      isEditMode: true
+    });
+  };
+  onReplyClick = () => {
+    this.setState({
+      isReplyMode: true
+    });
+  };
+  onCancelEditorClick = () => {
+    this.setState({
+      isEditMode: false,
+      isReplyMode: false
+    });
+  };
+  onDoneEditorClick = () => {
+    this.setState({
+      isEditMode: false,
+      isReplyMode: false,
+      isLoading: true
+    });
+    //reload after update
+    this.getArticle();
+  };
   render() {
-    const {data, isLoading} = this.state;
+    const {data, isLoading, isEditMode, isReplyMode} = this.state;
 
     //show spinner/loader while loading article from the backend
     if (isLoading) {
@@ -53,12 +86,13 @@ class ArticleDetail extends Component {
     return (
       <div>
         <Content>
-          <h1>{data.title}</h1>
+          {!isEditMode && <h1>{data.title}</h1>}
           <div className="article-author">Author: {data.author}</div>
           <div className="article-category">Category: {data.category}</div>
           <Divider/>
-          <ReactMarkdown source={data.description} />
-          <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail />
+          {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
+          {!isEditMode && <ReactMarkdown source={data.description} />}
+          <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
           <div className="article-tags">
             {data.tags.map((tag, index) => {
               return (
@@ -67,7 +101,8 @@ class ArticleDetail extends Component {
             })}
           </div>
           <Divider/>
-          <Comments data={data.comments} onUpvoteSuccess={this.getArticle} />
+          {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
+          <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
         </Content>
       </div>
     );

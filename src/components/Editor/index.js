@@ -14,12 +14,11 @@ import './index.css';
 class Editor extends Component {
   constructor(props) {
     super(props);
-    const {articleData} = props;
-
+    const {articleData, isComment} = props;
     this.state = {
-      title: articleData ? articleData.title : '',
-      value: articleData ? articleData.description : RichTextEditor.createEmptyValue(),
-      tags: articleData ? articleData.tags : ['knacksteem'],
+      title: (articleData && !isComment) ? articleData.title : '',
+      value: articleData ? RichTextEditor.createValueFromString(articleData.description, 'markdown') : RichTextEditor.createEmptyValue(),
+      tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
       inputTagsVisible: false,
       previewMarkdown: ''
     };
@@ -89,13 +88,21 @@ class Editor extends Component {
     });
   };
   //post article on blockchain and in backend db
-  onPostClick = () => {
-    const {dispatch, isComment, isEdit, articleData} = this.props;
+  onPostClick = async () => {
+    const {dispatch, isComment, isEdit, articleData, onDone, parentPermlink, parentAuthor} = this.props;
     const {title, value, tags} = this.state;
-    if (isEdit) {
-      dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment));
-    } else {
-      dispatch(postArticle(title, value.toString('markdown'), tags, isComment));
+
+    try {
+      if (isEdit) {
+        await dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment, parentPermlink, parentAuthor));
+      } else {
+        await dispatch(postArticle(title, value.toString('markdown'), tags, isComment, parentPermlink, parentAuthor));
+      }
+      if (onDone) {
+        onDone();
+      }
+    } catch(err) {
+      console.log(err);
     }
   };
   //reference to default input for new tags
@@ -103,16 +110,13 @@ class Editor extends Component {
   //reference to autocomplete input for second tag (category)
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
-    const {value, tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
-    const {isComment, isEdit} = this.props;
+    const {title, value, tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
+    const {isComment, isEdit, onCancel} = this.props;
     const {isBusy, categories} = this.props.articles;
 
     return (
       <div className="editor">
-        <Input
-          placeholder="Title"
-          onChange={this.handleInputTitleChange}
-        />
+        {!isComment && <Input placeholder="Title" onChange={this.handleInputTitleChange} value={title} />}
         <RichTextEditor
           value={value}
           onChange={this.onChange}
@@ -123,7 +127,7 @@ class Editor extends Component {
           <div className="editor-tags">
             {tags.map((tag, index) => {
               return (
-                <Tag key={tag} closable={index !== 0} color={(index > 0 ? 'blue' : 'magenta')} afterClose={() => this.handleCloseTag(tag)}>{tag}</Tag>
+                <Tag key={tag} closable={index > 1 || (index === 1 && !isEdit)} color={(index > 0 ? 'blue' : 'magenta')} afterClose={() => this.handleCloseTag(tag)}>{tag}</Tag>
               );
             })}
             {inputTagsVisible && (tags.length >= 2) && (
@@ -158,7 +162,8 @@ class Editor extends Component {
             )}
           </div>
         }
-        <Button type="primary" onClick={this.onPostClick} loading={isBusy}>Post</Button>
+        <Button type="primary" onClick={this.onPostClick} loading={isBusy}>{isEdit ? 'Update' : 'Post'}</Button>
+        {onCancel && <Button type="secondary" onClick={onCancel} className="button-cancel">Cancel</Button>}
         <Divider />
         <ReactMarkdown source={previewMarkdown} />
       </div>
@@ -168,10 +173,14 @@ class Editor extends Component {
 
 Editor.propTypes = {
   dispatch: PropTypes.func,
-  articles: PropTypes.object,
-  isComment: PropTypes.bool,
-  isEdit: PropTypes.bool,
-  articleData: PropTypes.object
+  articles: PropTypes.object, //access to articles reducer
+  isComment: PropTypes.bool, //is comment or article (which is a comment too in the blockchain, to be specific)
+  isEdit: PropTypes.bool, //editor is for editing a post or for creating a new one
+  articleData: PropTypes.object, //data of existing article for editing
+  onCancel: PropTypes.func, //will get called on cancel click
+  onDone: PropTypes.func, //will get called on post/update click
+  parentPermlink: PropTypes.string,
+  parentAuthor: PropTypes.string
 };
 
 Editor.defaultProps = {

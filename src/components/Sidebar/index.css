@@ -11,3 +11,8 @@
   width: 150px;
   margin: 20px;
 }
+
+.ant-layout-sider .logo img {
+  width: 100%;
+  height: auto;
+}
