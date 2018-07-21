@@ -8,6 +8,7 @@ import NewContribution from './containers/NewContribution';
 import ArticleDetail from './containers/ArticleDetail';
 import Callback from './containers/Callback';
 import Review from './containers/Review';
+import Users from './containers/Users';
 import 'antd/dist/antd.min.css';
 import './assets/styles/index.css';
 import './assets/styles/ant-overrides.css';
@@ -20,6 +21,7 @@ const App = () => {
         <Header/>
         <Route exact path="/" component={Home} />
         <Route exact path="/review" component={Review} />
+        <Route exact path="/users" component={Users} />
         <Route exact path="/callback" component={Callback} />
         <Route exact path="/mycontributions" component={Home} />
         <Route exact path="/new" component={NewContribution} />

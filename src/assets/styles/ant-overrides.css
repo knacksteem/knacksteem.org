@@ -28,3 +28,8 @@
 .ant-list-vertical .ant-list-item-meta {
   margin-bottom: 0;
 }
+
+.ant-layout-sider-zero-width-trigger {
+  top: 10px;
+  z-index: 1000;
+}
