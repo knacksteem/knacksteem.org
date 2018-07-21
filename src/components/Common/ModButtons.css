@@ -1,0 +1,12 @@
+.mod-buttons button {
+  margin-right: 7px;
+  margin-bottom: 7px;
+}
+
+.mod-modal-input {
+  margin-bottom: 7px;
+}
+
+.mod-modal-error {
+  color: red;
+}

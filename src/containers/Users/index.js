@@ -2,12 +2,14 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import './index.css';
-import {Layout, Input, Spin, Tag, List, Button, Avatar} from 'antd';
+import {Layout, Input, Spin, Tag, List, Avatar} from 'antd';
 import {getUserList} from '../../actions/stats';
+import ModButtons from '../../components/Common/ModButtons';
+import './index.css';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
+//title of list entry - user, avatar, link and tags
 const Title = ({username, roles, isBanned, bannedBy, bannedReason, bannedUntil}) => {
   //TODO show bannedBy, bannedReason and bannedUntil in tooltip on banned tag hover
   return (
@@ -25,7 +27,7 @@ const Title = ({username, roles, isBanned, bannedBy, bannedReason, bannedUntil})
   );
 };
 
-//Review Overview
+//user list for moderative actions
 class Users extends Component {
   constructor(props) {
     super(props);
@@ -66,7 +68,7 @@ class Users extends Component {
   render() {
     //TODO implement search (here and in redux action)
     const {searchString} = this.state;
-    const {stats, user} = this.props;
+    const {stats} = this.props;
     const {users} = stats;
 
     return (
@@ -89,14 +91,7 @@ class Users extends Component {
                     title={<Title username={item.username} roles={item.roles} isBanned={item.isBanned} bannedBy={item.bannedBy} bannedReason={item.bannedReasons} bannedUntil={item.bannedUntil} />}
                     description={`Contributions: ${item.contributions || 0}`}
                   />
-                  <div className="mod-buttons">
-                    {(user.username === 'knowledges' && item.roles.indexOf('supervisor') === -1) && <Button size="small">Make Supervisor</Button>}
-                    {(user.username === 'knowledges' && item.roles.indexOf('supervisor') !== -1) && <Button size="small">Remove Supervisor</Button>}
-                    {(user.isSupervisor && item.roles.indexOf('moderator') === -1) && <Button size="small">Make Mod</Button>}
-                    {(user.isSupervisor && item.roles.indexOf('moderator') !== -1) && <Button size="small">Remove Mod</Button>}
-                    {(user.isModerator && !item.isBanned) && <Button size="small">Ban</Button>}
-                    {(user.isModerator && item.isBanned) && <Button size="small">Unban</Button>}
-                  </div>
+                  <ModButtons item={item} />
                 </List.Item>
               );
             }}
@@ -113,12 +108,10 @@ Users.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
-  user: PropTypes.object,
   stats: PropTypes.object
 };
 
 const mapStateToProps = state => ({
-  user: state.user,
   stats: state.stats
 });
 
