@@ -14,7 +14,7 @@ const Title = ({username, roles, isBanned, bannedBy, bannedReason, bannedUntil})
   //TODO show bannedBy, bannedReason and bannedUntil in tooltip on banned tag hover
   return (
     <div>
-      <a href={`https://www.steemit.com/${username}`}>{username}</a>
+      <a href={`https://www.steemit.com/@${username}`}>{username}</a>
       <div className="mod-tags">
         {roles.filter(role => role !== 'contributor').map((role) => {
           return (
@@ -44,8 +44,7 @@ class Users extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchString: '',
-      banned: false
+      searchString: ''
     };
   }
   //scroll handler for lazy loading
@@ -72,14 +71,24 @@ class Users extends Component {
     //remove scroll event again when hitting another route
     window.removeEventListener('scroll', this.onScroll);
   }
-  loadUsers = (skip = 0) => {
+  componentDidUpdate(prevProps, prevState) {
+    const {searchString} = this.state;
+
+    if (searchString !== prevState.searchString) {
+      this.loadUsers(0, false, searchString);
+    }
+  }
+  loadUsers = (skip = 0, banned = false, search) => {
     const {dispatch} = this.props;
 
-    dispatch(getUserList(skip));
+    dispatch(getUserList(skip, banned, search));
+  };
+  onChangeSearchString = (value) => {
+    this.setState({
+      searchString: value
+    });
   };
   render() {
-    //TODO implement search (here and in redux action)
-    const {searchString} = this.state;
     const {stats} = this.props;
     const {users} = stats;
 
@@ -87,8 +96,8 @@ class Users extends Component {
       <div>
         <Header>
           <Search
-            placeholder="Search through Knacksteem"
-            onSearch={value => this.setState({searchString: value})}
+            placeholder="Search for users"
+            onSearch={this.onChangeSearchString}
             style={{width: 300}}
           />
         </Header>
