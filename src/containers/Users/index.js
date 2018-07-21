@@ -27,6 +27,18 @@ const Title = ({username, roles, isBanned, bannedBy, bannedReason, bannedUntil})
   );
 };
 
+Title.propTypes = {
+  username: PropTypes.string.isRequired,
+  roles: PropTypes.array.isRequired,
+  isBanned: PropTypes.bool,
+  bannedBy: PropTypes.string,
+  bannedReason: PropTypes.string,
+  bannedUntil: PropTypes.number
+};
+Title.defaultProps = {
+  isBanned: false
+};
+
 //user list for moderative actions
 class Users extends Component {
   constructor(props) {
