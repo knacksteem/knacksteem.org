@@ -8,7 +8,8 @@ import {getUserList} from '../../actions/stats';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
-const UserItemTitle = ({username, roles, isBanned}) => {
+const Title = ({username, roles, isBanned, bannedBy, bannedReason, bannedUntil}) => {
+  //TODO show bannedBy, bannedReason and bannedUntil in tooltip on banned tag hover
   return (
     <div>
       <a href={`https://www.steemit.com/${username}`}>{username}</a>
@@ -18,24 +19,9 @@ const UserItemTitle = ({username, roles, isBanned}) => {
             <Tag key={`${username}-${role}`} color={(role === 'supervisor') ? 'magenta' : 'blue'}>{role}</Tag>
           );
         })}
-        {/*isBanned && */<Tag color="red">banned</Tag>}
+        {isBanned && <Tag color="red">banned</Tag>}
       </div>
     </div>
-  );
-};
-
-const UserItem = (item) => {
-  return (
-    <List.Item>
-      <List.Item.Meta
-        avatar={<Avatar src={`https://steemitimages.com/u/${item.username}/avatar`} />}
-        title={<UserItemTitle username={item.username} roles={item.roles} isBanned={item.isBanned} />}
-        description={`Contributions: ${item.contributions || 0}`}
-      />
-      <div className="mod-buttons">
-        <Button size="small">Ban</Button>
-      </div>
-    </List.Item>
   );
 };
 
@@ -78,8 +64,9 @@ class Users extends Component {
     dispatch(getUserList(skip));
   };
   render() {
+    //TODO implement search (here and in redux action)
     const {searchString} = this.state;
-    const {stats} = this.props;
+    const {stats, user} = this.props;
     const {users} = stats;
 
     return (
@@ -94,7 +81,25 @@ class Users extends Component {
         <Content>
           <List
             dataSource={users}
-            renderItem={UserItem}
+            renderItem={item => {
+              return (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar src={`https://steemitimages.com/u/${item.username}/avatar`} />}
+                    title={<Title username={item.username} roles={item.roles} isBanned={item.isBanned} bannedBy={item.bannedBy} bannedReason={item.bannedReasons} bannedUntil={item.bannedUntil} />}
+                    description={`Contributions: ${item.contributions || 0}`}
+                  />
+                  <div className="mod-buttons">
+                    {(user.username === 'knowledges' && item.roles.indexOf('supervisor') === -1) && <Button size="small">Make Supervisor</Button>}
+                    {(user.username === 'knowledges' && item.roles.indexOf('supervisor') !== -1) && <Button size="small">Remove Supervisor</Button>}
+                    {(user.isSupervisor && item.roles.indexOf('moderator') === -1) && <Button size="small">Make Mod</Button>}
+                    {(user.isSupervisor && item.roles.indexOf('moderator') !== -1) && <Button size="small">Remove Mod</Button>}
+                    {(user.isModerator && !item.isBanned) && <Button size="small">Ban</Button>}
+                    {(user.isModerator && item.isBanned) && <Button size="small">Unban</Button>}
+                  </div>
+                </List.Item>
+              );
+            }}
           />
           {(!users.length && !stats.isBusy) && <div>No users...</div>}
           {stats.isBusy && <Spin/>}
@@ -108,10 +113,12 @@ Users.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
+  user: PropTypes.object,
   stats: PropTypes.object
 };
 
 const mapStateToProps = state => ({
+  user: state.user,
   stats: state.stats
 });
 
