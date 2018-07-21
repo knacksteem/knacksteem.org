@@ -36,3 +36,12 @@ export const prettyDate = (time) => {
     return Math.ceil(day_diff / 7) + ' weeks ago';
   }
 };
+
+//return date string from timestamp (YYYY-MM-DD)
+export const timestampToDate = (timestamp) => {
+  if (!timestamp) {
+    return '';
+  }
+  const date = new Date(timestamp);
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+};

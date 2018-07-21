@@ -2,16 +2,23 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {Layout, Input, Spin, Tag, List, Avatar} from 'antd';
+import {Layout, Input, Spin, Tag, List, Avatar, Popover} from 'antd';
 import {getUserList} from '../../actions/stats';
 import ModButtons from '../../components/Common/ModButtons';
+import {timestampToDate} from '../../services/functions';
 import './index.css';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
 //title of list entry - user, avatar, link and tags
 const Title = ({username, roles, isBanned, bannedBy, bannedReason, bannedUntil}) => {
-  //TODO show bannedBy, bannedReason and bannedUntil in tooltip on banned tag hover
+  const bannedPopover = (
+    <div>
+      <p>Reason: {bannedReason}</p>
+      <p>Banned Until: {timestampToDate(bannedUntil)}</p>
+      <p>Banned By: {bannedBy}</p>
+    </div>
+  );
   return (
     <div>
       <a href={`https://www.steemit.com/@${username}`}>{username}</a>
@@ -21,7 +28,7 @@ const Title = ({username, roles, isBanned, bannedBy, bannedReason, bannedUntil})
             <Tag key={`${username}-${role}`} color={(role === 'supervisor') ? 'magenta' : 'blue'}>{role}</Tag>
           );
         })}
-        {isBanned && <Tag color="red">banned</Tag>}
+        {isBanned && <Popover content={bannedPopover} title="Ban Details"><Tag color="red">banned</Tag></Popover>}
       </div>
     </div>
   );
