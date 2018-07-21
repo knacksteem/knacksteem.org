@@ -20,7 +20,7 @@ const CustomSidebar = ({location, user, articles}) => {
       <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
         {user.username && user.isContributor && <Menu.Item key="/mycontributions"><Link to="/mycontributions">My Contributions</Link></Menu.Item>}
         {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item key="/review"><Link to="/review">Review</Link></Menu.Item>}
-        {(user.isSupervisor || process.env.NODE_ENV === 'development') && <Menu.Item key="/users"><Link to="/users">Users</Link></Menu.Item>}
+        {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item key="/users"><Link to="/users">Users</Link></Menu.Item>}
         {user.username && <Menu.Item><Divider/></Menu.Item>}
         <Menu.Item key="/">
           <Link to="/">All</Link>
