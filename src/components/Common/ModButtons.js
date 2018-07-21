@@ -35,6 +35,10 @@ class ModButtons extends Component {
     const {dispatch, item} = this.props;
     dispatch(moderateUser(item.username, 'removeModerator'));
   };
+  onUnbanClick = () => {
+    const {dispatch, item} = this.props;
+    dispatch(moderateUser(item.username, 'unban'));
+  };
   //this just opens the modal, where you can enter a reason for the ban and an end date
   onBanClick = () => {
     this.setState({
@@ -95,6 +99,7 @@ class ModButtons extends Component {
         {(user.isSupervisor && item.roles.indexOf('moderator') === -1) && <Button type="primary" size="small" onClick={this.onMakeModClick}>Make Mod</Button>}
         {(user.isSupervisor && item.roles.indexOf('moderator') !== -1) && <Button type="primary" size="small" onClick={this.onRemoveModClick}>Remove Mod</Button>}
         {(user.isModerator && !item.isBanned) && <Button type="primary" size="small" onClick={this.onBanClick}>Ban</Button>}
+        {(user.isModerator && item.isBanned) && <Button type="primary" size="small" onClick={this.onUnbanClick}>Unban</Button>}
         <Modal
           title="Ban User"
           visible={showBanModal}

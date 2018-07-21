@@ -43,7 +43,8 @@ export const moderateUser = (username, action, banReason, bannedUntil) => {
       removeSupervisor: '/moderation/remove/supervisor',
       addModerator: '/moderation/add/moderator',
       removeModerator: '/moderation/remove/moderator',
-      ban: '/moderation/ban'
+      ban: '/moderation/ban',
+      unban: '/moderation/unban'
     };
     try {
       await apiPost(modEndpoints[action], {
