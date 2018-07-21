@@ -3,13 +3,40 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Input, Spin} from 'antd';
+import {Layout, Input, Spin, Tag, List, Button, Avatar} from 'antd';
 import {getUserList} from '../../actions/stats';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
-const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column'}
+const UserItemTitle = ({username, roles, isBanned}) => {
+  return (
+    <div>
+      <a href={`https://www.steemit.com/${username}`}>{username}</a>
+      <div className="mod-tags">
+        {roles.filter(role => role !== 'contributor').map((role) => {
+          return (
+            <Tag key={`${username}-${role}`} color={(role === 'supervisor') ? 'magenta' : 'blue'}>{role}</Tag>
+          );
+        })}
+        {/*isBanned && */<Tag color="red">banned</Tag>}
+      </div>
+    </div>
+  );
+};
+
+const UserItem = (item) => {
+  return (
+    <List.Item>
+      <List.Item.Meta
+        avatar={<Avatar src={`https://steemitimages.com/u/${item.username}/avatar`} />}
+        title={<UserItemTitle username={item.username} roles={item.roles} isBanned={item.isBanned} />}
+        description={`Contributions: ${item.contributions || 0}`}
+      />
+      <div className="mod-buttons">
+        <Button size="small">Ban</Button>
+      </div>
+    </List.Item>
+  );
 };
 
 //Review Overview
@@ -55,8 +82,6 @@ class Users extends Component {
     const {stats} = this.props;
     const {users} = stats;
 
-    console.log(users);
-
     return (
       <div>
         <Header>
@@ -67,14 +92,11 @@ class Users extends Component {
           />
         </Header>
         <Content>
-          <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-            {users.map((data, index) => {
-              return (
-                <div key={data.username}>{data.username}</div>
-              );
-            })}
-            {(!users.length && !stats.isBusy) && <div>No users...</div>}
-          </div>
+          <List
+            dataSource={users}
+            renderItem={UserItem}
+          />
+          {(!users.length && !stats.isBusy) && <div>No users...</div>}
           {stats.isBusy && <Spin/>}
         </Content>
       </div>
