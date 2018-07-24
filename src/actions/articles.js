@@ -7,6 +7,23 @@ import Config from '../config';
 import Cookies from 'js-cookie';
 
 /**
+ * get categories from server
+ */
+export const getCategories = () => {
+  return async (dispatch) => {
+    try {
+      let response = await apiGet('/categories');
+      dispatch({
+        type: types.CATEGORIES_GET,
+        payload: response.data.results
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+/**
  * get articles by category from backend
  */
 export const getArticlesByCategory = (category, skip) => {

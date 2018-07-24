@@ -1,6 +1,6 @@
 import * as types from './types';
 import {apiGet, apiPost} from '../services/api';
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie';
 
 /**
  * get list of users (for moderative actions)
