@@ -36,6 +36,13 @@ export const getUserList = (skip, banned, search) => {
   };
 };
 
+/**
+ * create moderative action on specific user
+ * @param username name of the user to deal with
+ * @param action moderative action
+ * @param banReason reason for ban
+ * @param bannedUntil end date for user ban
+ */
 export const moderateUser = (username, action, banReason, bannedUntil) => {
   return async (dispatch) => {
     const modEndpoints = {
