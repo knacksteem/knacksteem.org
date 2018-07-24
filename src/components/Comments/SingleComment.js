@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import ReactMarkdown from 'react-markdown';
-import {Avatar} from 'antd';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import Editor from '../../components/Editor';
 import './index.css';
@@ -48,7 +47,7 @@ class SingleComment extends React.Component {
     return (
       <div className="ant-list-item comment">
         <div>
-          <Avatar src={data.authorImage} className="comment-avatar" />
+          <div className="avatar" style={{backgroundImage: `url(${data.authorImage})`}} />
           <span>{data.author} ({data.authorReputation})</span>
           {isEditMode && <Editor isEdit={true} isComment={true} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={parentPermlink} parentAuthor={parentAuthor} />}
           {!isEditMode && <ReactMarkdown source={data.description} />}

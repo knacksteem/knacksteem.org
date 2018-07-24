@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {Layout, Input, Spin, Tag, List, Avatar, Popover} from 'antd';
+import {Layout, Input, Spin, Tag, List, Popover} from 'antd';
 import {getUserList} from '../../actions/stats';
 import ModButtons from '../../components/Common/ModButtons';
 import {timestampToDate} from '../../services/functions';
@@ -115,7 +115,7 @@ class Users extends Component {
               return (
                 <List.Item>
                   <List.Item.Meta
-                    avatar={<Avatar src={`https://steemitimages.com/u/${item.username}/avatar`} />}
+                    avatar={<div className="avatar" style={{backgroundImage: `url(https://steemitimages.com/u/${item.username}/avatar)`}} />}
                     title={<Title username={item.username} roles={item.roles} isBanned={item.isBanned} bannedBy={item.bannedBy} bannedReason={item.bannedReasons} bannedUntil={item.bannedUntil} />}
                     description={`Contributions: ${item.contributions || 0}`}
                   />
