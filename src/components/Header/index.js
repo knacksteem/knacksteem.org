@@ -1,7 +1,7 @@
 import React from 'react';
 import {withRouter, Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {Layout, Button} from 'antd';
+import {Layout, Button, Tooltip} from 'antd';
 import PropTypes from 'prop-types';
 import {userLogout} from '../../actions/user';
 import './index.css';
@@ -32,7 +32,7 @@ const CustomHeader = ({user, dispatch}) => {
         {user.username && <Link to="/new"><Button type="primary">New Contribution</Button></Link>}
         {!user.username && <a href={getOathURL()}><Button>Login</Button></a>}
         {user.username && <Link to="/"><Button onClick={onLogoutClick}>Logout</Button></Link>}
-        {user.username && <div className="avatar" style={{backgroundImage: `url(https://steemitimages.com/u/${user.username}/avatar)`}} />}
+        {user.username && <Tooltip title={user.username}><a href={`https://steemit.com/@${user.username}`}><div className="avatar" style={{backgroundImage: `url(https://steemitimages.com/u/${user.username}/avatar)`}} /></a></Tooltip>}
       </div>
     </Header>
   );
