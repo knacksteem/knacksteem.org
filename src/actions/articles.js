@@ -26,7 +26,7 @@ export const getCategories = () => {
 /**
  * get articles by category from backend
  */
-export const getArticlesByCategory = (category, skip) => {
+export const getArticlesByCategory = (category, skip, search) => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -39,7 +39,8 @@ export const getArticlesByCategory = (category, skip) => {
       let response = await apiGet('/posts', {
         username: Cookies.get('username') || undefined,
         category: category || undefined,
-        skip: skip || undefined //skip elements for paging
+        skip: skip || undefined, //skip elements for paging
+        search: search || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,
@@ -59,7 +60,7 @@ export const getArticlesByCategory = (category, skip) => {
 /**
  * get articles by user from backend
  */
-export const getArticlesByUser = (skip) => {
+export const getArticlesByUser = (skip, search) => {
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -74,7 +75,8 @@ export const getArticlesByUser = (skip) => {
       let response = await apiGet('/posts', {
         username: Cookies.get('username') || undefined,
         author: store.user.username,
-        skip: skip || undefined //skip elements for paging
+        skip: skip || undefined, //skip elements for paging
+        search: search || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,

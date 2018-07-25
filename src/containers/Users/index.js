@@ -56,6 +56,7 @@ class Users extends Component {
   }
   //scroll handler for lazy loading
   onScroll = () => {
+    const {searchString} = this.state;
     const {stats} = this.props;
 
     //if in loading process, don´t do anything
@@ -65,7 +66,7 @@ class Users extends Component {
     //if user hits bottom, load next batch of items
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      this.loadUsers(stats.users.length);
+      this.loadUsers(stats.users.length, searchString);
     }
   };
   componentDidMount() {
@@ -90,11 +91,6 @@ class Users extends Component {
 
     dispatch(getUserList(skip, banned, search));
   };
-  onChangeSearchString = (value) => {
-    this.setState({
-      searchString: value
-    });
-  };
   render() {
     const {stats} = this.props;
     const {users} = stats;
@@ -104,7 +100,7 @@ class Users extends Component {
         <Header>
           <Search
             placeholder="Search for users"
-            onSearch={this.onChangeSearchString}
+            onSearch={value => this.setState({searchString: value})}
             style={{width: 300}}
           />
         </Header>
@@ -124,7 +120,6 @@ class Users extends Component {
               );
             }}
           />
-          {(!users.length && !stats.isBusy) && <div>No users...</div>}
           {stats.isBusy && <Spin/>}
         </Content>
       </div>
