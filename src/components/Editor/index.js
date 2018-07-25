@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import RichTextEditor from 'react-rte';
-import {Input, AutoComplete, Tag, Icon, Button, Divider} from 'antd';
+import {Input, AutoComplete, Tag, Icon, Button, Divider, message} from 'antd';
 import {postArticle, editArticle} from '../../actions/articles';
 import './index.css';
 
@@ -20,6 +20,7 @@ class Editor extends Component {
       value: articleData ? RichTextEditor.createValueFromString(articleData.description, 'markdown') : RichTextEditor.createEmptyValue(),
       tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
       inputTagsVisible: false,
+      inputTagsValue: '',
       previewMarkdown: ''
     };
   }
@@ -38,7 +39,7 @@ class Editor extends Component {
   //will get called when you click the "add tag" button, to show the input field for a new tag
   showInputTags = () => {
     //show input field for new tag and set focus to input or autocomplete (autocomplete for category tag)
-    this.setState({inputTagsVisible: true}, () => {
+    this.setState({inputTagsVisible: true, inputTagsValue: ''}, () => {
       if (this.inputTags) {
         this.inputTags.focus();
       } else {
@@ -81,6 +82,7 @@ class Editor extends Component {
     if (newTagValue && tags.indexOf(newTagValue) === -1) {
       newTags = [...newTags, newTagValue];
     }
+
     this.setState({
       tags: newTags,
       inputTagsVisible: false,
@@ -91,6 +93,10 @@ class Editor extends Component {
   onPostClick = async () => {
     const {dispatch, isComment, isEdit, articleData, onDone, parentPermlink, parentAuthor} = this.props;
     const {title, value, tags} = this.state;
+
+    if (this.checkFieldErrors()) {
+      return;
+    }
 
     try {
       if (isEdit) {
@@ -104,6 +110,31 @@ class Editor extends Component {
     } catch(err) {
       console.log(err);
     }
+  };
+  //check for correct input before posting/editing
+  checkFieldErrors = () => {
+    const {title, value, tags} = this.state;
+    const {isComment} = this.props;
+    const {categories} = this.props.articles;
+    let error = false;
+
+    //check if title is existing
+    if (!isComment && !title.length) {
+      message.error('title is missing');
+      error = true;
+    }
+    //check if there is something in the rich text editor
+    if (!value.getEditorState().getCurrentContent().hasText()) {
+      message.error('content is missing');
+      error = true;
+    }
+    //check if the second tag is one of the predefined categories
+    if (!isComment && categories.map(elem => elem.key).indexOf(tags[1]) === -1) {
+      message.error('second tag must be one of the predefined categories');
+      error = true;
+    }
+
+    return error;
   };
   //reference to default input for new tags
   refInputTags = input => this.inputTags = input;
