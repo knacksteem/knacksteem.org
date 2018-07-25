@@ -23,7 +23,8 @@ class ArticleMetaBottom extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isBusy: false
+      isDeleting: false,
+      isUpvoted: false
     };
   }
   //upvote article or comment
@@ -36,9 +37,8 @@ class ArticleMetaBottom extends Component {
     }
     //upvote with 10000 - which equals 100%
     try {
-      this.setState({isBusy: true});
+      this.setState({isUpvoted: true});
       await dispatch(upvoteElement(data.author, data.permlink, 10000));
-      this.setState({isBusy: false});
       //on successful update, reload article or article list
       onUpdate();
     } catch (err) {
@@ -50,9 +50,9 @@ class ArticleMetaBottom extends Component {
     const {data, dispatch, onUpdate} = this.props;
 
     try {
-      this.setState({isBusy: true});
+      this.setState({isDeleting: true});
       await dispatch(deleteElement(data.permlink));
-      this.setState({isBusy: false});
+      this.setState({isDeleting: false});
       //on successful update, reload article or article list
       onUpdate();
     } catch (err) {
@@ -60,7 +60,7 @@ class ArticleMetaBottom extends Component {
     }
   };
   render() {
-    const {isBusy} = this.state;
+    const {isDeleting, isUpvoted} = this.state;
     const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
 
     const isAuthor = (Cookies.get('username') === data.author);
@@ -88,18 +88,18 @@ class ArticleMetaBottom extends Component {
         <Divider type="vertical" />
         <IconText type="message" text={commentCount} />
         <Divider type="vertical" />
-        <span className={`upvote ${data.isVoted ? 'active' : ''}`} onClick={this.onUpvoteClick}><IconText type={data.isVoted ? 'up-circle' : 'up-circle-o'} text={data.votesCount} /></span>
+        <span className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`} onClick={this.onUpvoteClick}><IconText type={(data.isVoted || isUpvoted) ? 'up-circle' : 'up-circle-o'} text={isUpvoted ? (data.votesCount + 1) : data.votesCount} /></span>
         <Divider type="vertical" />
         <IconText type="wallet" text={`$${data.totalPayout}`} />
         <Divider type="vertical" />
         <span className="action-links">
-          {(!isEditMode && !isBusy) && actionsArray}
-          {isBusy && <Spin size="small" />}
+          {(!isEditMode && !isDeleting) && actionsArray}
+          {isDeleting && <Spin size="small" />}
         </span>
       </div>
     );
   }
-};
+}
 
 ArticleMetaBottom.propTypes = {
   dispatch: PropTypes.func.isRequired,

@@ -78,9 +78,9 @@ class Review extends Component {
         </Header>
         <Content>
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-            {articlesData.map((data, index) => {
+            {articlesData.map((data) => {
               return (
-                <ArticleListItem key={index} data={data} status="pending" onUpvoteSuccess={this.loadArticles} />
+                <ArticleListItem key={data.permlink} data={data} status="pending" onUpvoteSuccess={this.loadArticles} />
               );
             })}
             {(!articlesData.length && !articles.isBusy) && <div>No pending articles...</div>}

@@ -114,8 +114,4 @@ ArticleDetail.propTypes = {
   match: PropTypes.object
 };
 
-const mapStateToProps = state => ({
-  /*user: state.user*/
-});
-
-export default withRouter(connect(mapStateToProps)(ArticleDetail));
+export default withRouter(connect()(ArticleDetail));

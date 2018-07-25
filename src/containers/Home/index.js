@@ -58,7 +58,7 @@ class Home extends Component {
   }
   componentDidUpdate(prevProps, prevState) {
     const {searchString} = this.state;
-    const {location, match} = this.props;
+    const {location} = this.props;
 
     if (prevProps.location.pathname !== location.pathname || searchString !== prevState.searchString) {
       //location change detected, load new data
@@ -84,6 +84,8 @@ class Home extends Component {
   render() {
     const {articles} = this.props;
 
+    console.log(articles);
+
     return (
       <div>
         <Header>
@@ -95,9 +97,9 @@ class Home extends Component {
         </Header>
         <Content>
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-            {articles.data.map((data, index) => {
+            {articles.data.map((data) => {
               return (
-                <ArticleListItem key={index} data={data} onUpvoteSuccess={this.loadArticles} />
+                <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
               );
             })}
           </div>
