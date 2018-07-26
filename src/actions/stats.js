@@ -17,6 +17,7 @@ export const getUserList = (skip, banned, search) => {
     try {
       //get user details from database, including the user role (supervisor, moderator, contributor)
       let response = await apiGet('/stats/users', {
+        access_token: Cookies.get('accessToken'),
         skip: skip || 0,
         banned: !!banned,
         search: search || undefined
