@@ -23,6 +23,7 @@ class Home extends Component {
   }
   //scroll handler for lazy loading
   onScroll = () => {
+    const {searchString} = this.state;
     const {match, articles, location} = this.props;
 
     //if in loading process, don´t do anything
@@ -33,9 +34,9 @@ class Home extends Component {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
       if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(articles.data.length);
+        this.loadArticlesUser(articles.data.length, 0, searchString);
       } else {
-        this.loadArticles(match.params.category, articles.data.length);
+        this.loadArticles(match.params.category, articles.data.length, searchString);
       }
     }
   };
@@ -56,45 +57,32 @@ class Home extends Component {
     window.removeEventListener('scroll', this.onScroll);
   }
   componentDidUpdate(prevProps, prevState) {
-    const {location, match} = this.props;
+    const {searchString} = this.state;
+    const {location} = this.props;
 
-    if (prevProps.location.pathname !== location.pathname) {
+    if (prevProps.location.pathname !== location.pathname || searchString !== prevState.searchString) {
       //location change detected, load new data
       if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser();
+        this.loadArticlesUser(0, searchString);
       } else {
-        this.loadArticles(match.params.category);
+        this.loadArticles(0, searchString);
       }
     }
   }
   //load general articles
-  loadArticles = (category = 'all', skip = 0) => {
+  loadArticles = (skip = 0, search) => {
     const {dispatch, match} = this.props;
 
-    dispatch(getArticlesByCategory(match.params.category, skip));
+    dispatch(getArticlesByCategory(match.params.category, skip, search));
   };
   //load own contributions
-  loadArticlesUser = (skip = 0) => {
+  loadArticlesUser = (skip = 0, search) => {
     const {dispatch} = this.props;
 
-    dispatch(getArticlesByUser(skip));
+    dispatch(getArticlesByUser(skip, search));
   };
   render() {
-    const {searchString} = this.state;
     const {articles} = this.props;
-
-    let articlesData = articles.data;
-    if (searchString !== '') {
-      articlesData = articlesData.filter((elem) => {
-        if (elem.title.toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
-          return true;
-        }
-        if (elem.description.toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
-          return true;
-        }
-        return false;
-      });
-    }
 
     return (
       <div>
@@ -107,9 +95,9 @@ class Home extends Component {
         </Header>
         <Content>
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-            {articlesData.map((data, index) => {
+            {articles.data.map((data) => {
               return (
-                <ArticleListItem key={index} data={data} onUpvoteSuccess={this.loadArticles} />
+                <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
               );
             })}
           </div>

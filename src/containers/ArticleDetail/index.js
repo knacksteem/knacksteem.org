@@ -44,7 +44,7 @@ class ArticleDetail extends Component {
         dispatch(push('/'));
       }
     } catch (error) {
-      console.log(error);
+      //error handled in api get service
       dispatch(push('/'));
     }
   };
@@ -114,8 +114,4 @@ ArticleDetail.propTypes = {
   match: PropTypes.object
 };
 
-const mapStateToProps = state => ({
-  /*user: state.user*/
-});
-
-export default withRouter(connect(mapStateToProps)(ArticleDetail));
+export default withRouter(connect()(ArticleDetail));

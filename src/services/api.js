@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {message} from 'antd';
 
 //set some default settings for axios to handle backend api correctly
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -13,7 +14,7 @@ export const apiPost = async (url, data) => {
       responseType: 'json'
     });
   } catch (error) {
-    console.log(error);
+    message.error(error.response.data.message);
     return false;
   }
 };
@@ -28,7 +29,7 @@ export const apiGet = async (url, data) => {
       responseType: 'json'
     });
   } catch (error) {
-    console.log(error);
+    message.error(error.response.data.message);
     return false;
   }
 };
@@ -43,7 +44,7 @@ export const apiPut = async (url, data) => {
       responseType: 'json'
     });
   } catch (error) {
-    console.log(error);
+    message.error(error.response.data.message);
     return false;
   }
 };

@@ -9,3 +9,15 @@ div, p, span, img {
 #root {
   height: 100%;
 }
+
+.avatar {
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  margin-right: 5px;
+}

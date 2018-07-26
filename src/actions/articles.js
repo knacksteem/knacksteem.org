@@ -1,15 +1,32 @@
 import {push} from 'react-router-redux';
 import * as types from './types';
 import {getUniquePermalink, getUniquePermalinkComment} from '../services/functions';
-import sc2 from 'sc2-sdk';
 import {apiPost, apiGet, apiPut} from '../services/api';
-import Config from '../config';
 import Cookies from 'js-cookie';
+import SteemConnect from '../services/SteemConnect';
+import {message} from 'antd';
+
+/**
+ * get categories from server
+ */
+export const getCategories = () => {
+  return async (dispatch) => {
+    try {
+      let response = await apiGet('/categories');
+      dispatch({
+        type: types.CATEGORIES_GET,
+        payload: response.data.results
+      });
+    } catch (error) {
+      message.error('error getting categories');
+    }
+  };
+};
 
 /**
  * get articles by category from backend
  */
-export const getArticlesByCategory = (category, skip) => {
+export const getArticlesByCategory = (category, skip, search) => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -22,7 +39,8 @@ export const getArticlesByCategory = (category, skip) => {
       let response = await apiGet('/posts', {
         username: Cookies.get('username') || undefined,
         category: category || undefined,
-        skip: skip || undefined //skip elements for paging
+        skip: skip || undefined, //skip elements for paging
+        search: search || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,
@@ -30,7 +48,6 @@ export const getArticlesByCategory = (category, skip) => {
         payload: response.data.results
       });
     } catch (error) {
-      console.log(error);
       dispatch({
         type: types.ARTICLES_GET,
         payload: []
@@ -42,7 +59,7 @@ export const getArticlesByCategory = (category, skip) => {
 /**
  * get articles by user from backend
  */
-export const getArticlesByUser = (skip) => {
+export const getArticlesByUser = (skip, search) => {
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -57,7 +74,8 @@ export const getArticlesByUser = (skip) => {
       let response = await apiGet('/posts', {
         username: Cookies.get('username') || undefined,
         author: store.user.username,
-        skip: skip || undefined //skip elements for paging
+        skip: skip || undefined, //skip elements for paging
+        search: search || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,
@@ -65,7 +83,6 @@ export const getArticlesByUser = (skip) => {
         payload: response.data.results
       });
     } catch (error) {
-      console.log(error);
       dispatch({
         type: types.ARTICLES_GET,
         payload: []
@@ -97,7 +114,6 @@ export const getArticlesPending = (skip) => {
         payload: response.data.results
       });
     } catch (error) {
-      console.log(error);
       dispatch({
         type: types.ARTICLES_GET,
         payload: []
@@ -117,23 +133,16 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
 
     const store = getState();
 
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: store.user.accessToken,
-      scope: Config.SteemConnect.scope
-    });
-
     try {
       //post to blockchain
       if (isComment) {
         //generate unique permalink for new comment
         const newPermLink = getUniquePermalinkComment(parentPermlink);
-        await api.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body, {});
+        await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body, {});
       } else {
         //generate unique permalink for new article
         const newPermLink = getUniquePermalink(title);
-        await api.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags});
+        await SteemConnect.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags});
 
         //successfully posted to blockchain, now posting to backend with permalink and category
         await apiPost('/posts/create', {
@@ -151,13 +160,13 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
       }
       return true;
     } catch (error) {
-      console.log(error);
-      return false;
+      message.error('error creating article');
     } finally {
       dispatch({
         type: types.ARTICLES_POSTED
       });
     }
+    return false;
   };
 };
 
@@ -172,20 +181,13 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
 
     const store = getState();
 
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: store.user.accessToken,
-      scope: Config.SteemConnect.scope
-    });
-
     try {
       if (isComment) {
         //edit comment on blockchain
-        await api.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
+        await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
       } else {
         //edit post on blockchain
-        await api.comment('', tags[0], store.user.username, articleData.permlink, title, body, {tags: tags});
+        await SteemConnect.comment('', tags[0], store.user.username, articleData.permlink, title, body, {tags: tags});
 
         //successfully edited post on blockchain, now editing tags on backend
         await apiPut('/posts/update', {
@@ -197,13 +199,13 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
 
       return true;
     } catch (error) {
-      console.log(error);
-      return false;
+      message.error('error editing element');
     } finally {
       dispatch({
         type: types.ARTICLES_POSTED
       });
     }
+    return false;
   };
 };
 
@@ -222,7 +224,7 @@ export const approveArticle = (permlink) => {
         access_token: store.user.accessToken
       });
     } catch (error) {
-      console.log(error);
+      //handled in api service
     } finally {
       //reload pending articles after approval
       dispatch(getArticlesPending());
@@ -245,7 +247,7 @@ export const rejectArticle = (permlink) => {
         access_token: store.user.accessToken
       });
     } catch (error) {
-      console.log(error);
+      //handled in api service
     } finally {
       //reload pending articles after approval
       dispatch(getArticlesPending());
@@ -263,14 +265,11 @@ export const upvoteElement = (author, permlink, weight) => {
   return async (dispatch, getState) => {
     const store = getState();
 
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: store.user.accessToken,
-      scope: Config.SteemConnect.scope
-    });
-
-    return await api.vote(store.user.username, author, permlink, weight);
+    try {
+      return await SteemConnect.vote(store.user.username, author, permlink, weight);
+    } catch (error) {
+      message.error('error upvoting element');
+    }
   };
 };
 
@@ -282,19 +281,16 @@ export const deleteElement = (permlink) => {
   return async (dispatch, getState) => {
     const store = getState();
 
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: store.user.accessToken,
-      scope: Config.SteemConnect.scope
-    });
-
-    //use broadcast operation to delete comment
-    return await api.broadcast([
-      ['delete_comment', {
-        'author': store.user.username,
-        'permlink': permlink
-      }]
-    ]);
+    try {
+      //use broadcast operation to delete comment
+      return await SteemConnect.broadcast([
+        ['delete_comment', {
+          'author': store.user.username,
+          'permlink': permlink
+        }]
+      ]);
+    } catch (error) {
+      message.error('error deleting element');
+    }
   };
 };

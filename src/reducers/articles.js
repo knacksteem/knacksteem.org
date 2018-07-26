@@ -1,29 +1,20 @@
-import {ARTICLES_REQUEST, ARTICLES_GET, ARTICLES_POSTING, ARTICLES_POSTED} from '../actions/types';
+import {ARTICLES_REQUEST, ARTICLES_GET, ARTICLES_POSTING, ARTICLES_POSTED, CATEGORIES_GET} from '../actions/types';
 
 const initialState = {
   isBusy: false,
   currentCategory: '',
   searchString: '',
   data: [],
-  categories: [
-    {key: 'vlog', name: 'VLog'},
-    {key: 'graphics', name: 'Graphics'},
-    {key: 'art', name: 'Art'},
-    {key: 'knack', name: 'Knack'},
-    {key: 'onealtruism', name: 'One Altruism'},
-    {key: 'music', name: 'Music'},
-    {key: 'humor', name: 'Joke/Humor'},
-    {key: 'inspiring', name: 'Inspiring'},
-    {key: 'visibility', name: 'Visibility'},
-    {key: 'news', name: 'News'},
-    {key: 'quotes', name: 'Quotes'},
-    {key: 'techtrends', name: 'Tech Trends'},
-    {key: 'blogposts', name: 'Blog Posts'}
-  ]
+  categories: []
 };
 
 const articles = (state = initialState, action) => {
   switch (action.type) {
+    case CATEGORIES_GET:
+      return {
+        ...state,
+        categories: action.payload
+      };
     case ARTICLES_REQUEST:
       return {
         ...state,

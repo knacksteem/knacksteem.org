@@ -1,6 +1,6 @@
 import * as types from './types';
 import {apiGet, apiPost} from '../services/api';
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie';
 
 /**
  * get list of users (for moderative actions)
@@ -17,6 +17,7 @@ export const getUserList = (skip, banned, search) => {
     try {
       //get user details from database, including the user role (supervisor, moderator, contributor)
       let response = await apiGet('/stats/users', {
+        access_token: Cookies.get('accessToken'),
         skip: skip || 0,
         banned: !!banned,
         search: search || undefined
@@ -27,7 +28,6 @@ export const getUserList = (skip, banned, search) => {
         payload: response.data.results
       });
     } catch (error) {
-      console.log(error);
       dispatch({
         type: types.USERLIST_GET,
         payload: []
@@ -36,6 +36,13 @@ export const getUserList = (skip, banned, search) => {
   };
 };
 
+/**
+ * create moderative action on specific user
+ * @param username name of the user to deal with
+ * @param action moderative action
+ * @param banReason reason for ban
+ * @param bannedUntil end date for user ban
+ */
 export const moderateUser = (username, action, banReason, bannedUntil) => {
   return async (dispatch) => {
     const modEndpoints = {
@@ -56,7 +63,7 @@ export const moderateUser = (username, action, banReason, bannedUntil) => {
 
       dispatch(getUserList());
     } catch (error) {
-      console.log(error);
+      //error handled in api post service
     }
   };
 };

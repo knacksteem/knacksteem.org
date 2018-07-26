@@ -1,9 +1,8 @@
 import * as types from './types';
-import sc2 from 'sc2-sdk';
 import Cookies from 'js-cookie';
 import {push} from 'react-router-redux';
-import Config from '../config';
 import {apiGet} from '../services/api';
+import SteemConnect from '../services/SteemConnect';
 
 /**
  * check if the user is logged in already (with a cookie)
@@ -27,13 +26,8 @@ export const userLogin = (accessToken) => {
       type: types.USER_AUTH
     });
 
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: accessToken,
-      scope: Config.SteemConnect.scope
-    });
-    let response = await api.me();
+    SteemConnect.setAccessToken(accessToken);
+    let response = await SteemConnect.me();
 
     //TODO error handling if the token does not work (anymore) - try/catch
 
@@ -59,16 +53,8 @@ export const userLogin = (accessToken) => {
  * logout from SteemConnect and clear cookie
  */
 export const userLogout = () => {
-  return (dispatch, getState) => {
-    const store = getState();
-
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: store.user.accessToken,
-      scope: Config.SteemConnect.scope
-    });
-    api.revokeToken();
+  return (dispatch) => {
+    SteemConnect.revokeToken();
 
     Cookies.remove('accessToken');
     Cookies.remove('username');
