@@ -5,8 +5,7 @@ import {Layout, Button, Tooltip} from 'antd';
 import PropTypes from 'prop-types';
 import {userLogout} from '../../actions/user';
 import './index.css';
-import sc2 from 'sc2-sdk';
-import Config from '../../config';
+import SteemConnect from '../../services/SteemConnect';
 const {Header} = Layout;
 
 /**
@@ -15,12 +14,7 @@ const {Header} = Layout;
 const CustomHeader = ({user, dispatch}) => {
   //get OAuth URL for Steem Connect
   const getOathURL = () => {
-    const api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      scope: Config.SteemConnect.scope
-    });
-    return api.getLoginURL();
+    return SteemConnect.getLoginURL();
   };
   //dispatch logout action
   const onLogoutClick = () => {

@@ -1,10 +1,9 @@
 import {push} from 'react-router-redux';
 import * as types from './types';
 import {getUniquePermalink, getUniquePermalinkComment} from '../services/functions';
-import sc2 from 'sc2-sdk';
 import {apiPost, apiGet, apiPut} from '../services/api';
-import Config from '../config';
 import Cookies from 'js-cookie';
+import SteemConnect from '../services/SteemConnect';
 
 /**
  * get categories from server
@@ -136,23 +135,16 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
 
     const store = getState();
 
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: store.user.accessToken,
-      scope: Config.SteemConnect.scope
-    });
-
     try {
       //post to blockchain
       if (isComment) {
         //generate unique permalink for new comment
         const newPermLink = getUniquePermalinkComment(parentPermlink);
-        await api.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body, {});
+        await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body, {});
       } else {
         //generate unique permalink for new article
         const newPermLink = getUniquePermalink(title);
-        await api.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags});
+        await SteemConnect.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags});
 
         //successfully posted to blockchain, now posting to backend with permalink and category
         await apiPost('/posts/create', {
@@ -191,20 +183,13 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
 
     const store = getState();
 
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: store.user.accessToken,
-      scope: Config.SteemConnect.scope
-    });
-
     try {
       if (isComment) {
         //edit comment on blockchain
-        await api.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
+        await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
       } else {
         //edit post on blockchain
-        await api.comment('', tags[0], store.user.username, articleData.permlink, title, body, {tags: tags});
+        await SteemConnect.comment('', tags[0], store.user.username, articleData.permlink, title, body, {tags: tags});
 
         //successfully edited post on blockchain, now editing tags on backend
         await apiPut('/posts/update', {
@@ -282,14 +267,7 @@ export const upvoteElement = (author, permlink, weight) => {
   return async (dispatch, getState) => {
     const store = getState();
 
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: store.user.accessToken,
-      scope: Config.SteemConnect.scope
-    });
-
-    return await api.vote(store.user.username, author, permlink, weight);
+    return await SteemConnect.vote(store.user.username, author, permlink, weight);
   };
 };
 
@@ -301,15 +279,8 @@ export const deleteElement = (permlink) => {
   return async (dispatch, getState) => {
     const store = getState();
 
-    let api = sc2.Initialize({
-      app: 'knacksteem.app',
-      callbackURL: Config.SteemConnect.callbackURL,
-      accessToken: store.user.accessToken,
-      scope: Config.SteemConnect.scope
-    });
-
     //use broadcast operation to delete comment
-    return await api.broadcast([
+    return await SteemConnect.broadcast([
       ['delete_comment', {
         'author': store.user.username,
         'permlink': permlink

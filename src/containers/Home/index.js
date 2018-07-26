@@ -84,8 +84,6 @@ class Home extends Component {
   render() {
     const {articles} = this.props;
 
-    console.log(articles);
-
     return (
       <div>
         <Header>
