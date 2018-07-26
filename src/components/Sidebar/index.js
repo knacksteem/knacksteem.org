@@ -16,7 +16,7 @@ const CustomSidebar = ({location, user, articles}) => {
       collapsedWidth="0"
     >
       <div className="logo"><img src={logo} alt="Knacksteem Logo" /></div>
-      <Menu theme="dark" mode="inline" defaultSelectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
+      <Menu theme="dark" mode="inline" selectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
         {user.username && user.isContributor && <Menu.Item key="/mycontributions"><Link to="/mycontributions">My Contributions</Link></Menu.Item>}
         {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item key="/review"><Link to="/review">Review</Link></Menu.Item>}
         {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item key="/users"><Link to="/users">Users</Link></Menu.Item>}
