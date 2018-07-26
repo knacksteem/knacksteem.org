@@ -42,7 +42,7 @@ class ArticleMetaBottom extends Component {
       //on successful update, reload article or article list
       onUpdate();
     } catch (err) {
-      console.log(err);
+      //error handled in upvoteElement action
     }
   };
   //delete article or comment - will get called after confirmation
@@ -56,7 +56,7 @@ class ArticleMetaBottom extends Component {
       //on successful update, reload article or article list
       onUpdate();
     } catch (err) {
-      console.log(err);
+      //error handled in deleteElement action
     }
   };
   render() {

@@ -44,7 +44,7 @@ class ArticleDetail extends Component {
         dispatch(push('/'));
       }
     } catch (error) {
-      console.log(error);
+      //error handled in api get service
       dispatch(push('/'));
     }
   };

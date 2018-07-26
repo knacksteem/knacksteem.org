@@ -28,7 +28,6 @@ export const getUserList = (skip, banned, search) => {
         payload: response.data.results
       });
     } catch (error) {
-      console.log(error);
       dispatch({
         type: types.USERLIST_GET,
         payload: []
@@ -64,7 +63,7 @@ export const moderateUser = (username, action, banReason, bannedUntil) => {
 
       dispatch(getUserList());
     } catch (error) {
-      console.log(error);
+      //error handled in api post service
     }
   };
 };

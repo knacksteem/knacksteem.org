@@ -108,7 +108,7 @@ class Editor extends Component {
         onDone();
       }
     } catch(err) {
-      console.log(err);
+      //already handled in redux actions
     }
   };
   //check for correct input before posting/editing
