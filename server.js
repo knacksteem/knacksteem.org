@@ -7,11 +7,11 @@ const fs = require('fs');
 const app = express();
 
 const options = {
-  key: fs.readFileSync('/path/to/key.pem'),
-  cert: fs.readFileSync('/path/to/cert.pem')
+  key: fs.readFileSync('./privkey.pem'),
+  cert: fs.readFileSync('./fullchain.pem')
 };
 
-const staticPath = path.join(__dirname, '/build');
+const staticPath = path.join(__dirname, 'build');
 app.use(express.static(staticPath));
 
 http.createServer(app).listen(80);
