@@ -13,6 +13,12 @@ export const getCategories = () => {
   return async (dispatch) => {
     try {
       let response = await apiGet('/categories');
+      response.data.results = response.data.results.filter((category) => {
+        if(category.key === 'vlog' || category.key === 'graphics' || category.key === 'art' || category.key === 'knack' || category.key === 'techtrends') {
+          return true;
+        }
+        return false;
+      });
       dispatch({
         type: types.CATEGORIES_GET,
         payload: response.data.results
