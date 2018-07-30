@@ -9,7 +9,7 @@ export const apiPost = async (url, data) => {
   try {
     return await axios({
       method: 'post',
-      url: `${window.location.protocol}//${window.location.hostname}:3030/v1${url}`,
+      url: `${window.location.protocol}//api.${window.location.hostname}/v1${url}`,
       data: data,
       responseType: 'json'
     });
@@ -24,7 +24,7 @@ export const apiGet = async (url, data) => {
   try {
     return await axios({
       method: 'get',
-      url: `${window.location.protocol}//${window.location.hostname}:3030/v1${url}`,
+      url: `${window.location.protocol}//api.${window.location.hostname}/v1${url}`,
       params: data,
       responseType: 'json'
     });
@@ -39,7 +39,7 @@ export const apiPut = async (url, data) => {
   try {
     return await axios({
       method: 'put',
-      url: `${window.location.protocol}//${window.location.hostname}:3030/v1${url}`,
+      url: `${window.location.protocol}//api.${window.location.hostname}/v1${url}`,
       data: data,
       responseType: 'json'
     });
