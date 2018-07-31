@@ -148,7 +148,38 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
       } else {
         //generate unique permalink for new article
         const newPermLink = getUniquePermalink(title);
-        await SteemConnect.comment('', tags[0], store.user.username, newPermLink, title, body, {tags: tags});
+
+        //post with beneficiaries
+        const operations = [
+          ['comment',
+            {
+              parent_author: '',
+              parent_permlink: tags[0],
+              author: store.user.username,
+              permlink: newPermLink,
+              title: title,
+              body: body,
+              json_metadata: JSON.stringify({
+                tags: tags
+              })
+            }
+          ],
+          ['comment_options', {
+            author: store.user.username,
+            permlink: newPermLink,
+            max_accepted_payout: '100000.000 SBD',
+            percent_steem_dollars: 50,
+            allow_votes: true,
+            allow_curation_rewards: true,
+            extensions: [
+              [0, {
+                beneficiaries: [{account: 'knacksteem.org', weight: 1500}]
+              }]
+            ]
+          }]
+        ];
+
+        await SteemConnect.broadcast(operations);
 
         //successfully posted to blockchain, now posting to backend with permalink and category
         await apiPost('/posts/create', {
@@ -193,7 +224,17 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
         await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
       } else {
         //edit post on blockchain
-        await SteemConnect.comment('', tags[0], store.user.username, articleData.permlink, title, body, {tags: tags});
+        await SteemConnect.comment('', tags[0], store.user.username, articleData.permlink, title, body, {
+          tags: tags,
+          extensions: [
+            [
+              0,
+              {
+                beneficiaries: [{account: 'knacksteem', 'weight': 1500}]
+              }
+            ]
+          ]
+        });
 
         //successfully edited post on blockchain, now editing tags on backend
         await apiPut('/posts/update', {
