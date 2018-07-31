@@ -100,7 +100,7 @@ export const getArticlesByUser = (skip, search) => {
 /**
  * get pending articles, waiting for moderation
  */
-export const getArticlesPending = (skip) => {
+export const getArticlesPending = (skip, search) => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -111,8 +111,39 @@ export const getArticlesPending = (skip) => {
     //get articles by category from server
     try {
       let response = await apiGet('/stats/moderation/pending', {
-        username: Cookies.get('username') || undefined,
-        skip: skip || undefined //skip elements for paging
+        skip: skip || undefined, //skip elements for paging
+        search: search || undefined
+      });
+      dispatch({
+        type: types.ARTICLES_GET,
+        skip: skip || undefined,
+        payload: response.data.results
+      });
+    } catch (error) {
+      dispatch({
+        type: types.ARTICLES_GET,
+        payload: []
+      });
+    }
+  };
+};
+
+/**
+ * get pending articles, waiting for moderation
+ */
+export const getArticlesReserved = (skip, search) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
+      category: ''
+    });
+
+    //get articles by category from server
+    try {
+      let response = await apiGet('/stats/moderation/reserved', {
+        skip: skip || undefined, //skip elements for paging
+        search: search || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,

@@ -7,7 +7,8 @@ import Home from './containers/Home';
 import NewContribution from './containers/NewContribution';
 import ArticleDetail from './containers/ArticleDetail';
 import Callback from './containers/Callback';
-import Review from './containers/Review';
+import Pending from './containers/Pending';
+import Reserved from './containers/Reserved';
 import Users from './containers/Users';
 import 'antd/dist/antd.min.css';
 import './assets/styles/index.css';
@@ -20,7 +21,8 @@ const App = () => {
       <Layout>
         <Header/>
         <Route exact path="/" component={Home} />
-        <Route exact path="/review" component={Review} />
+        <Route exact path="/pending" component={Pending} />
+        <Route exact path="/reserved" component={Reserved} />
         <Route exact path="/users" component={Users} />
         <Route exact path="/callback" component={Callback} />
         <Route exact path="/mycontributions" component={Home} />

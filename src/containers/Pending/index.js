@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import './index.css';
 import {Layout, Input, Spin} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
+import {getArticlesPending} from '../../actions/articles';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
@@ -13,8 +13,8 @@ const styles = {
   articlesList: {display: 'flex', flexDirection: 'column'}
 };
 
-//Article Overview
-class Home extends Component {
+//Pending Overview
+class Pending extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,7 +24,7 @@ class Home extends Component {
   //scroll handler for lazy loading
   onScroll = () => {
     const {searchString} = this.state;
-    const {match, articles, location} = this.props;
+    const {articles} = this.props;
 
     //if in loading process, don´t do anything
     if (articles.isBusy) {
@@ -33,21 +33,11 @@ class Home extends Component {
     //if user hits bottom, load next batch of items
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(articles.data.length, searchString);
-      } else {
-        this.loadArticles(articles.data.length, searchString);
-      }
+      this.loadArticles(articles.data.length, searchString);
     }
   };
   componentDidMount() {
-    const {location} = this.props;
-
-    if (location.pathname === '/mycontributions') {
-      this.loadArticlesUser();
-    } else {
-      this.loadArticles();
-    }
+    this.loadArticles();
 
     //on scroll, load the next batch of articles
     window.addEventListener('scroll', this.onScroll);
@@ -56,33 +46,27 @@ class Home extends Component {
     //remove scroll event again when hitting another route
     window.removeEventListener('scroll', this.onScroll);
   }
-  componentDidUpdate(prevProps, prevState) {
-    const {searchString} = this.state;
-    const {location} = this.props;
-
-    if (prevProps.location.pathname !== location.pathname || searchString !== prevState.searchString) {
-      //location change detected, load new data
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(0, searchString);
-      } else {
-        this.loadArticles(0, searchString);
-      }
-    }
-  }
-  //load general articles
   loadArticles = (skip = 0, search) => {
-    const {dispatch, match} = this.props;
-
-    dispatch(getArticlesByCategory(match.params.category, skip, search));
-  };
-  //load own contributions
-  loadArticlesUser = (skip = 0, search) => {
     const {dispatch} = this.props;
 
-    dispatch(getArticlesByUser(skip, search));
+    dispatch(getArticlesPending(skip, search));
   };
   render() {
+    const {searchString} = this.state;
     const {articles} = this.props;
+
+    let articlesData = articles.data;
+    if (searchString !== '') {
+      articlesData = articlesData.filter((elem) => {
+        if (elem.title.toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
+          return true;
+        }
+        if (elem.description.toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
+          return true;
+        }
+        return false;
+      });
+    }
 
     return (
       <div>
@@ -95,11 +79,12 @@ class Home extends Component {
         </Header>
         <Content>
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-            {articles.data.map((data) => {
+            {articlesData.map((data) => {
               return (
-                <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
+                <ArticleListItem key={data.permlink} data={data} status="pending" onUpvoteSuccess={this.loadArticles} />
               );
             })}
+            {(!articlesData.length && !articles.isBusy) && <div>No pending articles...</div>}
           </div>
           {articles.isBusy && <Spin/>}
         </Content>
@@ -108,7 +93,7 @@ class Home extends Component {
   }
 }
 
-Home.propTypes = {
+Pending.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
@@ -119,4 +104,4 @@ const mapStateToProps = state => ({
   articles: state.articles
 });
 
-export default withRouter(connect(mapStateToProps)(Home));
+export default withRouter(connect(mapStateToProps)(Pending));

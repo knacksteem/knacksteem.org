@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import './index.css';
 import {Layout, Input, Spin} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import {getArticlesPending} from '../../actions/articles';
+import {getArticlesReserved} from '../../actions/articles';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
@@ -13,8 +13,8 @@ const styles = {
   articlesList: {display: 'flex', flexDirection: 'column'}
 };
 
-//Review Overview
-class Review extends Component {
+//Pending Overview
+class Reserved extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,6 +23,7 @@ class Review extends Component {
   }
   //scroll handler for lazy loading
   onScroll = () => {
+    const {searchString} = this.state;
     const {articles} = this.props;
 
     //if in loading process, don´t do anything
@@ -32,7 +33,7 @@ class Review extends Component {
     //if user hits bottom, load next batch of items
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      this.loadArticles(articles.data.length);
+      this.loadArticles(articles.data.length, searchString);
     }
   };
   componentDidMount() {
@@ -45,10 +46,10 @@ class Review extends Component {
     //remove scroll event again when hitting another route
     window.removeEventListener('scroll', this.onScroll);
   }
-  loadArticles = (skip = 0) => {
+  loadArticles = (skip = 0, search) => {
     const {dispatch} = this.props;
 
-    dispatch(getArticlesPending(skip));
+    dispatch(getArticlesReserved(skip, search));
   };
   render() {
     const {searchString} = this.state;
@@ -92,7 +93,7 @@ class Review extends Component {
   }
 }
 
-Review.propTypes = {
+Reserved.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
@@ -103,4 +104,4 @@ const mapStateToProps = state => ({
   articles: state.articles
 });
 
-export default withRouter(connect(mapStateToProps)(Review));
+export default withRouter(connect(mapStateToProps)(Reserved));
