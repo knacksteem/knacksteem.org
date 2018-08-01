@@ -20,7 +20,7 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
   return (
     <div className="ant-list-item">
       <Link to={`/articles/${data.author}/${data.permlink}`}>
-        {data.coverImage && <div style={{width: 280, float: 'left', marginRight: 20}}><img src={data.coverImage} alt="Article"/></div>}
+        {data.coverImage && <div className="coverImage"><img src={data.coverImage} alt="Article"/></div>}
         <h2 className="ant-list-item-meta-title">{data.title}</h2>
         <div className="ant-list-item-content">{data.description}</div>
       </Link>
