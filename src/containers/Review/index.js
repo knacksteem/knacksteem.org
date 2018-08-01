@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import './index.css';
 import {Layout, Input, Spin} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import {getArticlesReserved} from '../../actions/articles';
+import {getArticlesModeration} from '../../actions/articles';
 const {Header, Content} = Layout;
 const Search = Input.Search;
 
@@ -14,7 +14,7 @@ const styles = {
 };
 
 //Pending Overview
-class Reserved extends Component {
+class Review extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,26 +47,11 @@ class Reserved extends Component {
     window.removeEventListener('scroll', this.onScroll);
   }
   loadArticles = (skip = 0, search) => {
-    const {dispatch} = this.props;
-
-    dispatch(getArticlesReserved(skip, search));
+    const {dispatch, location} = this.props;
+    dispatch(getArticlesModeration(location.pathname, skip, search));
   };
   render() {
-    const {searchString} = this.state;
-    const {articles} = this.props;
-
-    let articlesData = articles.data;
-    if (searchString !== '') {
-      articlesData = articlesData.filter((elem) => {
-        if (elem.title.toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
-          return true;
-        }
-        if (elem.description.toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
-          return true;
-        }
-        return false;
-      });
-    }
+    const {articles, location} = this.props;
 
     return (
       <div>
@@ -79,12 +64,12 @@ class Reserved extends Component {
         </Header>
         <Content>
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-            {articlesData.map((data) => {
+            {articles.data.map((data) => {
               return (
-                <ArticleListItem key={data.permlink} data={data} status="pending" onUpvoteSuccess={this.loadArticles} />
+                <ArticleListItem key={data.permlink} data={data} status={location.pathname.replace('/moderation/', '')} onUpvoteSuccess={this.loadArticles} />
               );
             })}
-            {(!articlesData.length && !articles.isBusy) && <div>No pending articles...</div>}
+            {(!articles.data.length && !articles.isBusy) && <div>No pending articles...</div>}
           </div>
           {articles.isBusy && <Spin/>}
         </Content>
@@ -93,15 +78,16 @@ class Reserved extends Component {
   }
 }
 
-Reserved.propTypes = {
+Review.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
-  articles: PropTypes.object
+  articles: PropTypes.object,
+  type: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => ({
   articles: state.articles
 });
 
-export default withRouter(connect(mapStateToProps)(Reserved));
+export default withRouter(connect(mapStateToProps)(Review));

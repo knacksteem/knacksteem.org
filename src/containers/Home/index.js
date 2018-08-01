@@ -24,7 +24,7 @@ class Home extends Component {
   //scroll handler for lazy loading
   onScroll = () => {
     const {searchString} = this.state;
-    const {match, articles, location} = this.props;
+    const {articles, location} = this.props;
 
     //if in loading process, don´t do anything
     if (articles.isBusy) {

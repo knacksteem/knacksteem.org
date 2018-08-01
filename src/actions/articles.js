@@ -98,9 +98,12 @@ export const getArticlesByUser = (skip, search) => {
 };
 
 /**
- * get pending articles, waiting for moderation
+ * get articles for moderation
+ * @param route can be /moderation/pending or /moderation/reserved, for example
+ * @param skip number of elemnts to skip, used for lazy loading
+ * @param search search string
  */
-export const getArticlesPending = (skip, search) => {
+export const getArticlesModeration = (route, skip, search) => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -110,38 +113,7 @@ export const getArticlesPending = (skip, search) => {
 
     //get articles by category from server
     try {
-      let response = await apiGet('/stats/moderation/pending', {
-        skip: skip || undefined, //skip elements for paging
-        search: search || undefined
-      });
-      dispatch({
-        type: types.ARTICLES_GET,
-        skip: skip || undefined,
-        payload: response.data.results
-      });
-    } catch (error) {
-      dispatch({
-        type: types.ARTICLES_GET,
-        payload: []
-      });
-    }
-  };
-};
-
-/**
- * get pending articles, waiting for moderation
- */
-export const getArticlesReserved = (skip, search) => {
-  return async (dispatch) => {
-    dispatch({
-      type: types.ARTICLES_REQUEST,
-      skip: skip || undefined,
-      category: ''
-    });
-
-    //get articles by category from server
-    try {
-      let response = await apiGet('/stats/moderation/reserved', {
+      let response = await apiGet(`/stats${route}`, {
         skip: skip || undefined, //skip elements for paging
         search: search || undefined
       });
@@ -249,7 +221,7 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
 /**
  * approve article by mod
  */
-export const approveArticle = (permlink) => {
+export const approveArticle = (permlink, status) => {
   return async (dispatch, getState) => {
     const store = getState();
 
@@ -264,7 +236,7 @@ export const approveArticle = (permlink) => {
       //handled in api service
     } finally {
       //reload pending articles after approval
-      dispatch(getArticlesPending());
+      dispatch(getArticlesModeration(`/moderation/${status}`));
     }
   };
 };
@@ -272,7 +244,7 @@ export const approveArticle = (permlink) => {
 /**
  * reject article by mod
  */
-export const rejectArticle = (permlink) => {
+export const rejectArticle = (permlink, status) => {
   return async (dispatch, getState) => {
     const store = getState();
 
@@ -287,7 +259,7 @@ export const rejectArticle = (permlink) => {
       //handled in api service
     } finally {
       //reload pending articles after approval
-      dispatch(getArticlesPending());
+      dispatch(getArticlesModeration(`/moderation/${status}`));
     }
   };
 };
