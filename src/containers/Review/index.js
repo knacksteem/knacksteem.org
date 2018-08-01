@@ -82,8 +82,7 @@ Review.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
-  articles: PropTypes.object,
-  type: PropTypes.string.isRequired
+  articles: PropTypes.object
 };
 
 const mapStateToProps = state => ({
