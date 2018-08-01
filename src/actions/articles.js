@@ -224,17 +224,36 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
         await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
       } else {
         //edit post on blockchain
-        await SteemConnect.comment('', tags[0], store.user.username, articleData.permlink, title, body, {
-          tags: tags,
-          extensions: [
-            [
-              0,
-              {
-                beneficiaries: [{account: 'knacksteem', 'weight': 1500}]
-              }
+        const operations = [
+          ['comment',
+            {
+              parent_author: '',
+              parent_permlink: tags[0],
+              author: store.user.username,
+              permlink: articleData.permlink,
+              title: title,
+              body: body,
+              json_metadata: JSON.stringify({
+                tags: tags
+              })
+            }
+          ],
+          ['comment_options', {
+            author: store.user.username,
+            permlink: articleData.permlink,
+            max_accepted_payout: '100000.000 SBD',
+            percent_steem_dollars: 50,
+            allow_votes: true,
+            allow_curation_rewards: true,
+            extensions: [
+              [0, {
+                beneficiaries: [{account: 'knacksteem.org', weight: 1500}]
+              }]
             ]
-          ]
-        });
+          }]
+        ];
+
+        await SteemConnect.broadcast(operations);
 
         //successfully edited post on blockchain, now editing tags on backend
         await apiPut('/posts/update', {
