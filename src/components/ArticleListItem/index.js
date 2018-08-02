@@ -11,21 +11,21 @@ import './index.css';
 const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
   //approve the current article with an api call and reload the pending articles for redux
   const onApproveClick = () => {
-    dispatch(approveArticle(data.permlink));
+    dispatch(approveArticle(data.permlink, status));
   };
   //reject the current article
   const onRejectClick = () => {
-    dispatch(rejectArticle(data.permlink));
+    dispatch(rejectArticle(data.permlink, status));
   };
   return (
     <div className="ant-list-item">
       <Link to={`/articles/${data.author}/${data.permlink}`}>
-        {data.coverImage && <div style={{width: 280, float: 'left', marginRight: 20}}><img src={data.coverImage} alt="Article"/></div>}
+        {data.coverImage && <div className="coverImage"><img src={data.coverImage} alt="Article"/></div>}
         <h2 className="ant-list-item-meta-title">{data.title}</h2>
         <div className="ant-list-item-content">{data.description}</div>
       </Link>
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
-      {(status === 'pending') &&
+      {(status === 'pending' || status === 'reserved') &&
         <div className="mod-functions">
           <Button size="small" type="primary" onClick={onApproveClick}>Approve</Button>
           <Button size="small" type="danger" onClick={onRejectClick}>Reject</Button>

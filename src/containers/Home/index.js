@@ -24,7 +24,7 @@ class Home extends Component {
   //scroll handler for lazy loading
   onScroll = () => {
     const {searchString} = this.state;
-    const {match, articles, location} = this.props;
+    const {articles, location} = this.props;
 
     //if in loading process, don´t do anything
     if (articles.isBusy) {
@@ -34,9 +34,9 @@ class Home extends Component {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
       if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(articles.data.length, 0, searchString);
+        this.loadArticlesUser(articles.data.length, searchString);
       } else {
-        this.loadArticles(match.params.category, articles.data.length, searchString);
+        this.loadArticles(articles.data.length, searchString);
       }
     }
   };

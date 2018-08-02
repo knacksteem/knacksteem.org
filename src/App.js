@@ -20,7 +20,8 @@ const App = () => {
       <Layout>
         <Header/>
         <Route exact path="/" component={Home} />
-        <Route exact path="/review" component={Review} />
+        <Route exact path="/moderation/pending" component={Review} />
+        <Route exact path="/moderation/reserved" component={Review} />
         <Route exact path="/users" component={Users} />
         <Route exact path="/callback" component={Callback} />
         <Route exact path="/mycontributions" component={Home} />
