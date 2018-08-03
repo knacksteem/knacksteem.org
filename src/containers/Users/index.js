@@ -66,7 +66,7 @@ class Users extends Component {
     //if user hits bottom, load next batch of items
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      this.loadUsers(stats.users.length, searchString);
+      this.loadUsers(stats.users.length, false, searchString);
     }
   };
   componentDidMount() {
