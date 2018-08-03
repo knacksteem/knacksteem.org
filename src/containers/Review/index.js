@@ -27,7 +27,7 @@ class Review extends Component {
     const {articles} = this.props;
 
     //if in loading process, don´t do anything
-    if (articles.isBusy) {
+    if (articles.isBusy  || articles.data.length % 25 !== 0) {
       return;
     }
     //if user hits bottom, load next batch of items

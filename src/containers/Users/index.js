@@ -60,7 +60,7 @@ class Users extends Component {
     const {stats} = this.props;
 
     //if in loading process, don´t do anything
-    if (stats.isBusy) {
+    if (stats.isBusy || stats.users.length % 25 !== 0) {
       return;
     }
     //if user hits bottom, load next batch of items
