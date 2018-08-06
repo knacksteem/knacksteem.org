@@ -28,6 +28,7 @@ export const getUserList = (skip, banned, search) => {
         payload: response.data.results
       });
     } catch (error) {
+      console.log(error);
       dispatch({
         type: types.USERLIST_GET,
         payload: []

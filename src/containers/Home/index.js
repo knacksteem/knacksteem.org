@@ -27,7 +27,7 @@ class Home extends Component {
     const {articles, location} = this.props;
 
     //if in loading process, don´t do anything
-    if (articles.isBusy || articles.data.length % 25 !== 0) {
+    if (articles.isBusy) {
       return;
     }
     //if user hits bottom, load next batch of items
