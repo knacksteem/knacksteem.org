@@ -79,13 +79,13 @@ class ArticleDetail extends Component {
     //show spinner/loader while loading article from the backend
     if (isLoading) {
       return (
-        <div><Content><Spin/></Content></div>
+        <div><Content style={{minHeight: 1080}}><Spin/></Content></div>
       );
     }
 
     return (
       <div>
-        <Content>
+        <Content style={{minHeight: 1080}}>
           {!isEditMode && <h1>{data.title}</h1>}
           <div className="article-author">Author: {data.author}</div>
           <div className="article-category">Category: {data.category}</div>

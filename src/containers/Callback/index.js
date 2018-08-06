@@ -37,7 +37,7 @@ class Callback extends Component {
   render() {
     return (
       <div>
-        <Content>
+        <Content style={{minHeight: 1080}}>
           Logging in...
         </Content>
       </div>

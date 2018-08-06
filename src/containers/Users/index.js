@@ -104,7 +104,7 @@ class Users extends Component {
             style={{width: 300}}
           />
         </Header>
-        <Content>
+        <Content style={{minHeight: 1080}}>
           <List
             dataSource={users}
             renderItem={item => {

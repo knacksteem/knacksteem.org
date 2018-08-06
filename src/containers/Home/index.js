@@ -93,7 +93,7 @@ class Home extends Component {
             style={{width: 300}}
           />
         </Header>
-        <Content>
+        <Content style={{minHeight: 1080}}>
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articles.data.map((data) => {
               return (

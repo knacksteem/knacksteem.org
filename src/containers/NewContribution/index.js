@@ -10,7 +10,7 @@ const {Content} = Layout;
 const NewContribution = () => {
   return (
     <div className="editor">
-      <Content>
+      <Content style={{minHeight: 1080}}>
         <Editor isComment={false} isEdit={false} />
       </Content>
     </div>
