@@ -10,7 +10,7 @@ export const apiPost = async (url, data) => {
   try {
     return await axios({
       method: 'post',
-      url: `${Config.apiURL}{url}`,
+      url: `${Config.apiURL}${url}`,
       data: data,
       responseType: 'json'
     });
