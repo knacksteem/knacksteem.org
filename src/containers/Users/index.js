@@ -60,7 +60,7 @@ class Users extends Component {
     const {stats} = this.props;
 
     //if in loading process, don´t do anything
-    if (stats.isBusy || stats.users.length % 25 !== 0) {
+    if (stats.isBusy) {
       return;
     }
     //if user hits bottom, load next batch of items
@@ -104,7 +104,7 @@ class Users extends Component {
             style={{width: 300}}
           />
         </Header>
-        <Content>
+        <Content style={{minHeight: 1080}}>
           <List
             dataSource={users}
             renderItem={item => {

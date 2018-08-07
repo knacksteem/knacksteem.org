@@ -6,10 +6,6 @@ div, p, span, img {
   box-sizing: border-box;
 }
 
-#root {
-  height: 100%;
-}
-
 .avatar {
   display: inline-block;
   background-size: cover;

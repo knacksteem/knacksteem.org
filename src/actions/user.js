@@ -36,7 +36,8 @@ export const userLogin = (accessToken) => {
 
     //get user details from database, including the user role (supervisor, moderator, contributor)
     let userData = await apiGet('/stats/users', {
-      username: response.user
+      username: response.user,
+      access_token: accessToken
     });
 
     dispatch({
