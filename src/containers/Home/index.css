@@ -1,0 +1,11 @@
+#home-body {
+    flex-grow: 1;
+    display: flex;
+}
+
+#home-announcements {
+    margin-left: 2rem;
+    background-color: #fff;
+    padding: 1rem;
+    box-shadow: 0px 2px 6px 0px rgba(0,0,0, 0.2);
+}

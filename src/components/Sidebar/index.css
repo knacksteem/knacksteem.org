@@ -6,13 +6,3 @@
 .ant-menu-inline .ant-menu-item[role="menuitem"]:not(:last-child) {
   margin-bottom: 0;
 }
-
-.ant-layout-sider .logo {
-  width: 150px;
-  margin: 20px;
-}
-
-.ant-layout-sider .logo img {
-  width: 100%;
-  height: auto;
-}

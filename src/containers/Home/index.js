@@ -85,24 +85,29 @@ class Home extends Component {
     const {articles} = this.props;
 
     return (
-      <div>
-        <Header>
-          <Search
-            placeholder="Search through Knacksteem"
-            onSearch={value => this.setState({searchString: value})}
-            style={{width: 300}}
-          />
-        </Header>
-        <Content style={{minHeight: 1080}}>
-          <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-            {articles.data.map((data) => {
-              return (
-                <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
-              );
-            })}
-          </div>
-          {articles.isBusy && <Spin/>}
-        </Content>
+      <div id="home-body">
+        <Layout id="home-articles">
+          <Header>
+            <Search
+              placeholder="Search through Knacksteem"
+              onSearch={value => this.setState({searchString: value})}
+              style={{width: 300}}
+            />
+          </Header>
+          <Content>
+            <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+              {articles.data.map((data) => {
+                return (
+                  <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
+                );
+              })}
+            </div>
+            {articles.isBusy && <Spin/>}
+          </Content>
+        </Layout>
+        <Layout id="home-announcements">
+          Announcements
+        </Layout>
       </div>
     );
   }

@@ -1,19 +1,5 @@
 .ant-layout {
-  background-color: white;
-}
-
-.ant-layout-header {
-  background-color: white;
-  display: flex;
-  justify-content: flex-start;
-  /*border-bottom: 1px solid #e6eaed;*/
-  padding: 10px 16px;
-  height: auto;
-  line-height: normal;
-}
-
-.ant-layout-sider {
-  background-color: #283638;
+  background-color: transparent;
 }
 
 .ant-menu-dark {

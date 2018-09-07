@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import {Layout, Menu, Divider} from 'antd';
 import PropTypes from 'prop-types';
 import './index.css';
-import logo from '../../assets/images/logo.png';
 const {Sider} = Layout;
 
 //Sidebar with category menu
@@ -15,8 +14,7 @@ const CustomSidebar = ({location, user, articles}) => {
       breakpoint="lg"
       collapsedWidth="0"
     >
-      <div className="logo"><img src={logo} alt="Knacksteem Logo" /></div>
-      <Menu theme="dark" mode="inline" selectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
+      <Menu mode="inline" selectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
         {user.username && user.isContributor && <Menu.Item key="/mycontributions"><Link to="/mycontributions">My Contributions</Link></Menu.Item>}
         {user.username && user.isContributor && <Menu.Item><Divider/></Menu.Item>}
         {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item key="/moderation/pending"><Link to="/moderation/pending">Pending</Link></Menu.Item>}

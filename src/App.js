@@ -15,10 +15,10 @@ import './assets/styles/ant-overrides.css';
 
 const App = () => {
   return (
-    <Layout>
-      <Sidebar/>
-      <Layout>
-        <Header/>
+    <Layout id="page-layout">
+      <Header/>
+      <Layout id="content-layout">
+        <Sidebar/>
         <Route exact path="/" component={Home} />
         <Route exact path="/moderation/pending" component={Review} />
         <Route exact path="/moderation/reserved" component={Review} />

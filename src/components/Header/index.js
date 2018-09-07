@@ -5,6 +5,7 @@ import {Layout, Button, Tooltip} from 'antd';
 import PropTypes from 'prop-types';
 import {userLogout} from '../../actions/user';
 import './index.css';
+import logo from '../../assets/images/logo_black.png';
 import SteemConnect from '../../services/SteemConnect';
 const {Header} = Layout;
 
@@ -22,6 +23,7 @@ const CustomHeader = ({user, dispatch}) => {
   };
   return (
     <Header>
+      <div className="logo"><img src={logo} alt="Knacksteem Logo" /></div>
       <div className="username-login">
         {user.username && <Link to="/new"><Button type="primary">New Contribution</Button></Link>}
         {!user.username && <a href={getOathURL()}><Button>Login</Button></a>}
