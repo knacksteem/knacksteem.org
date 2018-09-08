@@ -23,12 +23,14 @@ const CustomHeader = ({user, dispatch}) => {
   };
   return (
     <Header>
-      <div className="logo"><img src={logo} alt="Knacksteem Logo" /></div>
-      <div className="username-login">
-        {user.username && <Link to="/new"><Button type="primary">New Contribution</Button></Link>}
-        {!user.username && <a href={getOathURL()}><Button>Login</Button></a>}
-        {user.username && <Link to="/"><Button onClick={onLogoutClick}>Logout</Button></Link>}
-        {user.username && <Tooltip title={user.username}><a href={`https://steemit.com/@${user.username}`}><div className="avatar" style={{backgroundImage: `url(https://steemitimages.com/u/${user.username}/avatar)`}} /></a></Tooltip>}
+      <div id="header-wrapper">
+        <div className="logo"><img src={logo} alt="Knacksteem Logo" /></div>
+        <div className="username-login">
+          {user.username && <Link to="/new"><Button type="primary">New Contribution</Button></Link>}
+          {!user.username && <a href={getOathURL()}><Button>Login</Button></a>}
+          {user.username && <Link to="/"><Button onClick={onLogoutClick}>Logout</Button></Link>}
+          {user.username && <Tooltip title={user.username}><a href={`https://steemit.com/@${user.username}`}><div className="avatar" style={{backgroundImage: `url(https://steemitimages.com/u/${user.username}/avatar)`}} /></a></Tooltip>}
+        </div>
       </div>
     </Header>
   );

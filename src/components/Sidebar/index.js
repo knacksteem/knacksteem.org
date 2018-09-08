@@ -8,19 +8,33 @@ const {Sider} = Layout;
 
 //Sidebar with category menu
 const CustomSidebar = ({location, user, articles}) => {
+  let links = [];
+  if (user.username && user.isContributor) {
+    links.push(
+      <Menu.Item key="/mycontributions"><Link to="/mycontributions">My Contributions</Link></Menu.Item>
+    );
+    links.push(
+      <Menu.Item key="user-divider"><Divider/></Menu.Item>
+    );
+  }
+  if (user.isModerator || process.env.NODE_ENV === 'development') {
+    links.push(
+      <Menu.Item key="/moderation/pending"><Link to="/moderation/pending">Pending</Link></Menu.Item>
+    );
+    links.push(
+      <Menu.Item key="/moderation/reserved"><Link to="/moderation/reserved">Reserved</Link></Menu.Item>
+    );
+    links.push(
+      <Menu.Item key="/users"><Link to="/users">Users</Link></Menu.Item>
+    );
+    links.push(
+      <Menu.Item key="mod_divider"><Divider/></Menu.Item>
+    );
+  }
   return (
-    <Sider
-      width={200}
-      breakpoint="lg"
-      collapsedWidth="0"
-    >
+    <Sider width={200}>
       <Menu mode="inline" selectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
-        {user.username && user.isContributor && <Menu.Item key="/mycontributions"><Link to="/mycontributions">My Contributions</Link></Menu.Item>}
-        {user.username && user.isContributor && <Menu.Item><Divider/></Menu.Item>}
-        {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item key="/moderation/pending"><Link to="/moderation/pending">Pending</Link></Menu.Item>}
-        {(user.isSupervisor || process.env.NODE_ENV === 'development') && <Menu.Item key="/moderation/reserved"><Link to="/moderation/reserved">Reserved</Link></Menu.Item>}
-        {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item key="/users"><Link to="/users">Users</Link></Menu.Item>}
-        {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item><Divider/></Menu.Item>}
+        {links}
         <Menu.Item key="/">
           <Link to="/">All</Link>
         </Menu.Item>
