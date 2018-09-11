@@ -12,3 +12,13 @@
   text-align: center;
   margin-right: 0.25rem;
 }
+
+.ant-layout-sider .user-box {
+  padding: 1rem;
+  color: #FFF;
+  font-weight: bold;
+}
+.ant-layout-sider .user-box .account {
+  font-weight: normal;
+  color: rgba(255,255,255, 0.6);
+}

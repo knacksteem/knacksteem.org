@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {Layout, Menu, Divider} from 'antd';
 import PropTypes from 'prop-types';
 import './index.css';
+import cover from '../../assets/images/cover.jpg';
 const {Sider} = Layout;
 
 //Sidebar with category menu
@@ -33,6 +34,10 @@ const CustomSidebar = ({location, user, articles}) => {
   }
   return (
     <Sider width={200}>
+      <div className="user-box" style={{backgroundImage: 'url(' + cover + ')' }}>
+        <span className="name">RoundedHexagon</span><br />
+        <span className="account">@outwork</span>
+      </div>
       <Menu mode="inline" selectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
         {links}
         <Menu.Item key="/guidelines">
