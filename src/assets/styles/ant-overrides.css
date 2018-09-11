@@ -19,3 +19,14 @@
   top: 10px;
   z-index: 1000;
 }
+
+.ant-menu-item>a {
+  color: #2a2a2a;
+}
+.ant-menu-item>a>i {
+  color: #999999;
+}
+.ant-menu-item-selected, .ant-menu-item-selected>a, .ant-menu-item-selected>a:hover {
+  color: #22429d;
+  font-weight: bold;
+}
