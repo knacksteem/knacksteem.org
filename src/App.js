@@ -4,6 +4,13 @@ import {Layout} from 'antd';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Home from './containers/Home';
+import Guidelines from './containers/Guidelines';
+import FAQs from './containers/FAQs';
+import TermsOfService from './containers/TermsOfService';
+import HowItWorks from './containers/HowItWorks';
+import AboutUs from './containers/AboutUs';
+import Contribute from './containers/Contribute';
+import ContactUs from './containers/ContactUs';
 import NewContribution from './containers/NewContribution';
 import ArticleDetail from './containers/ArticleDetail';
 import Callback from './containers/Callback';
@@ -21,6 +28,13 @@ const App = () => {
       <Layout id="content-layout">
         <Sidebar/>
         <Route exact path="/" component={Home} />
+        <Route exact path="/guidelines" component={Guidelines} />
+        <Route exact path="/faq" component={FAQs} />
+        <Route exact path="/tos" component={TermsOfService} />
+        <Route exact path="/how" component={HowItWorks} />
+        <Route exact path="/about" component={AboutUs} />
+        <Route exact path="/contribute" component={Contribute} />
+        <Route exact path="/contact" component={ContactUs} />
         <Route exact path="/moderation/pending" component={Review} />
         <Route exact path="/moderation/reserved" component={Review} />
         <Route exact path="/users" component={Users} />
