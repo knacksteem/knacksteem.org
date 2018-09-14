@@ -4,13 +4,38 @@ import {connect} from 'react-redux';
 import {Layout, Menu, Divider} from 'antd';
 import PropTypes from 'prop-types';
 import './index.css';
-import cover from '../../assets/images/cover.jpg';
+import cover_generic from '../../assets/images/cover.jpg';
 const {Sider} = Layout;
+
+const UserBox = (user) => {
+  if (typeof user.userObjectSteemit.account === 'undefined') {
+    return null;
+  }
+  const userMeta = JSON.parse(user.userObjectSteemit.account.json_metadata);
+  let coverImg = userMeta.profile.cover_image;
+  if (typeof coverImg === 'undefined' || coverImg === '') {
+    coverImg = cover_generic;
+  }
+  let displayName = userMeta.profile.name;
+  if (typeof displayName === 'undefined' || displayName === '') {
+    displayName = user.username;
+  }
+
+  return (
+    <div className="user-box" style={{backgroundImage: 'url(' + coverImg + ')' }}>
+      <span className="name">{displayName}</span><br />
+      <span className="account">@{user.username}</span>
+    </div>
+  );
+};
 
 //Sidebar with category menu
 const CustomSidebar = ({location, user, articles}) => {
+  const isUserLoggedIn = (user.username === '');
+
+  let userBox = UserBox(user);
   let links = [];
-  if (user.username && user.isContributor) {
+  if (isUserLoggedIn && user.isContributor) {
     links.push(
       <Menu.Item key="/mycontributions"><Link to="/mycontributions"><i className="fas fa-pen"></i>My Contributions</Link></Menu.Item>
     );
@@ -34,10 +59,7 @@ const CustomSidebar = ({location, user, articles}) => {
   }
   return (
     <Sider width={200}>
-      <div className="user-box" style={{backgroundImage: 'url(' + cover + ')' }}>
-        <span className="name">RoundedHexagon</span><br />
-        <span className="account">@outwork</span>
-      </div>
+      {userBox}
       <Menu mode="inline" selectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
         {links}
         <Menu.Item key="/guidelines">

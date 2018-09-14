@@ -14,11 +14,15 @@
 }
 
 .ant-layout-sider .user-box {
+  background-size: cover;
+  background-position: center center;
   padding: 1rem;
   color: #FFF;
+  background-color: #000;
   font-weight: bold;
+  text-shadow: 0 0 12px rgba(0,0,0, 0.8);
 }
 .ant-layout-sider .user-box .account {
   font-weight: normal;
-  color: rgba(255,255,255, 0.6);
+  color: #c5c5c5;
 }
