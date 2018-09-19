@@ -105,9 +105,11 @@ class Home extends Component {
             {articles.isBusy && <Spin/>}
           </Content>
         </Layout>
+        {/*
         <Layout id="home-announcements">
           Announcements
         </Layout>
+        */}
       </div>
     );
   }

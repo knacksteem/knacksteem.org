@@ -108,9 +108,11 @@ class ArticleDetail extends Component {
             <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Content>
         </Layout>
+        {/*
         <Layout id="article-announcements">
           Announcements
         </Layout>
+        */}
       </div>
     );
   }
