@@ -1,3 +1,12 @@
+#header-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px 2rem;
+  width: 100%;
+  max-width: 70rem;
+  margin: 0 auto;
+}
+
 .username-login {
   display: flex;
   justify-content: flex-end;
@@ -6,4 +15,15 @@
 
 .username-login > * {
   margin: 5px;
+}
+
+
+.logo {
+  width: 210px;
+  flex-shrink: 0;
+}
+
+.logo img {
+  width: 100%;
+  height: auto;
 }
