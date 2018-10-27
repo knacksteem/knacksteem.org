@@ -7,12 +7,22 @@
   margin-bottom: 0;
 }
 
-.ant-layout-sider .logo {
-  width: 150px;
-  margin: 20px;
+.ant-menu-item i {
+  width: 20px;
+  text-align: center;
+  margin-right: 0.25rem;
 }
 
-.ant-layout-sider .logo img {
-  width: 100%;
-  height: auto;
+.ant-layout-sider .user-box {
+  background-size: cover;
+  background-position: center center;
+  padding: 1rem;
+  color: #FFF;
+  background-color: #000;
+  font-weight: bold;
+  text-shadow: 0 0 12px rgba(0,0,0, 0.8);
+}
+.ant-layout-sider .user-box .account {
+  font-weight: normal;
+  color: #c5c5c5;
 }

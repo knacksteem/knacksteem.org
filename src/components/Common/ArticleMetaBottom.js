@@ -83,7 +83,7 @@ class ArticleMetaBottom extends Component {
     }
 
     return (
-      <div>
+      <div className="article-meta">
         <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
         <Divider type="vertical" />
         <IconText type="message" text={commentCount} />

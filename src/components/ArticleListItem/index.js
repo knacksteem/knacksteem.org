@@ -18,12 +18,14 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
     dispatch(rejectArticle(data.permlink, status));
   };
   return (
-    <div className="ant-list-item">
-      <Link to={`/articles/${data.author}/${data.permlink}`}>
-        {data.coverImage && <div className="coverImage"><img src={data.coverImage} alt="Article"/></div>}
-        <h2 className="ant-list-item-meta-title">{data.title}</h2>
-        <div className="ant-list-item-content">{data.description}</div>
-      </Link>
+    <div className="ant-list-item list-item-article">
+      <div className="article-content-wrapper">
+        <Link to={`/articles/${data.author}/${data.permlink}`}>
+          {data.coverImage && <div className="coverImage"><img src={data.coverImage} alt="Article"/></div>}
+          <h2 className="ant-list-item-meta-title">{data.title}</h2>
+          <div className="ant-list-item-content">{data.description}</div>
+        </Link>
+      </div>
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
       {(status === 'pending' || status === 'reserved') &&
         <div className="mod-functions">

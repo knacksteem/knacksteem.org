@@ -4,25 +4,74 @@ import {connect} from 'react-redux';
 import {Layout, Menu, Divider} from 'antd';
 import PropTypes from 'prop-types';
 import './index.css';
-import logo from '../../assets/images/logo.png';
+import cover_generic from '../../assets/images/cover.jpg';
 const {Sider} = Layout;
+
+const UserBox = (user) => {
+  if (typeof user.userObjectSteemit.account === 'undefined') {
+    return null;
+  }
+  const userMeta = JSON.parse(user.userObjectSteemit.account.json_metadata);
+  let coverImg = userMeta.profile.cover_image;
+  if (typeof coverImg === 'undefined' || coverImg === '') {
+    coverImg = cover_generic;
+  }
+  let displayName = userMeta.profile.name;
+  if (typeof displayName === 'undefined' || displayName === '') {
+    displayName = user.username;
+  }
+
+  return (
+    <div className="user-box" style={{backgroundImage: 'url(' + coverImg + ')' }}>
+      <span className="name">{displayName}</span><br />
+      <span className="account">@{user.username}</span>
+    </div>
+  );
+};
 
 //Sidebar with category menu
 const CustomSidebar = ({location, user, articles}) => {
+  const isUserLoggedIn = (user.username === '');
+
+  let userBox = UserBox(user);
+  let links = [];
+  if (isUserLoggedIn && user.isContributor) {
+    links.push(
+      <Menu.Item key="/mycontributions"><Link to="/mycontributions"><i className="fas fa-pen"></i>My Contributions</Link></Menu.Item>
+    );
+    links.push(
+      <Menu.Item key="user-divider"><Divider/></Menu.Item>
+    );
+  }
+  if (user.isModerator || process.env.NODE_ENV === 'development') {
+    links.push(
+      <Menu.Item key="/moderation/pending"><Link to="/moderation/pending"><i className="fas fa-bars"></i>Pending</Link></Menu.Item>
+    );
+    links.push(
+      <Menu.Item key="/moderation/reserved"><Link to="/moderation/reserved"><i className="fas fa-bookmark"></i>Reserved</Link></Menu.Item>
+    );
+    links.push(
+      <Menu.Item key="/users"><Link to="/users"><i className="fas fa-users"></i>Users</Link></Menu.Item>
+    );
+    links.push(
+      <Menu.Item key="mod_divider"><Divider/></Menu.Item>
+    );
+  }
   return (
-    <Sider
-      width={200}
-      breakpoint="lg"
-      collapsedWidth="0"
-    >
-      <div className="logo"><img src={logo} alt="Knacksteem Logo" /></div>
-      <Menu theme="dark" mode="inline" selectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
-        {user.username && user.isContributor && <Menu.Item key="/mycontributions"><Link to="/mycontributions">My Contributions</Link></Menu.Item>}
-        {user.username && user.isContributor && <Menu.Item><Divider/></Menu.Item>}
-        {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item key="/moderation/pending"><Link to="/moderation/pending">Pending</Link></Menu.Item>}
-        {(user.isSupervisor || process.env.NODE_ENV === 'development') && <Menu.Item key="/moderation/reserved"><Link to="/moderation/reserved">Reserved</Link></Menu.Item>}
-        {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item key="/users"><Link to="/users">Users</Link></Menu.Item>}
-        {(user.isModerator || process.env.NODE_ENV === 'development') && <Menu.Item><Divider/></Menu.Item>}
+    <Sider width={200}>
+      {userBox}
+      <Menu mode="inline" selectedKeys={[location.pathname]} style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
+        {links}
+        <Menu.Item key="/guidelines">
+          <Link to="/guidelines"><i className="fas fa-th"></i>Guidelines</Link>
+        </Menu.Item>
+        <Menu.Item key="/faq">
+          <Link to="/faq"><i className="fas fa-question-circle"></i>FAQ</Link>
+        </Menu.Item>
+        <Menu.Item key="/tos">
+          <Link to="/tos"><i className="fas fa-file-contract"></i>ToS</Link>
+        </Menu.Item>
+        <Menu.Item key="mod_divider"><Divider/></Menu.Item>
         <Menu.Item key="/">
           <Link to="/">All</Link>
         </Menu.Item>
