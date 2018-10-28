@@ -17,6 +17,9 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
   const onRejectClick = () => {
     dispatch(rejectArticle(data.permlink, status));
   };
+
+  // window.console.log(data);
+
   return (
     <div className="ant-list-item list-item-article">
       <div className="article-content-wrapper">

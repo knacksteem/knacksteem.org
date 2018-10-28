@@ -6,6 +6,8 @@ import Cookies from 'js-cookie';
 import SteemConnect from '../services/SteemConnect';
 import {message} from 'antd';
 
+const IMAGE_REGEX = /!\[.*?]\((.*?)\)/g;
+
 /**
  * get categories from server
  */
@@ -135,13 +137,23 @@ export const getArticlesModeration = (route, skip, search) => {
  * post article to blockchain and knacksteem backend
  */
 export const postArticle = (title, body, tags, isComment, parentPermlink, parentAuthor) => {
+  let images = [];
+  let matches;
+
+  // eslint-disable-next-line
+  while ((matches = IMAGE_REGEX.exec(body))) {
+    if (images.indexOf(matches[1]) === -1 && matches[1].search(/https?:\/\//) === 0) {
+      images.push(matches[1]);
+    }
+  }
+
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_POSTING
     });
 
     const store = getState();
-
+  
     try {
       //post to blockchain
       if (isComment) {
@@ -151,7 +163,7 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
       } else {
         //generate unique permalink for new article
         const newPermLink = getUniquePermalink(title);
-
+    
         //post with beneficiaries
         const operations = [
           ['comment',
@@ -163,7 +175,8 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
               title: title,
               body: body,
               json_metadata: JSON.stringify({
-                tags: tags
+                tags: tags,
+                image: images
               })
             }
           ],
