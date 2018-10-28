@@ -2,10 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {Button} from 'antd';
+import {Button, Col, Row} from 'antd';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {approveArticle, rejectArticle} from '../../actions/articles';
 import './index.css';
+
+const styles = {
+  articleItemThumb: {
+    display: 'inline-block',
+    width: '100%',
+    position: 'relative'
+  },
+  articleItemImageContainer: {
+    width: '100%',
+  },
+  articleItemImage: {
+    maxWidth: '100%',
+    height: 'auto',
+    verticalAlign: 'center',
+    display: 'inline-block'
+  }
+};
 
 //Single Item for Article Overview
 const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
@@ -17,17 +34,34 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
   const onRejectClick = () => {
     dispatch(rejectArticle(data.permlink, status));
   };
-
-  // window.console.log(data);
-
   return (
     <div className="ant-list-item list-item-article">
-      <div className="article-content-wrapper">
-        <Link to={`/articles/${data.author}/${data.permlink}`}>
-          {data.coverImage && <div className="coverImage"><img src={data.coverImage} alt="Article"/></div>}
+      <div className="">
+        <Row gutter={0}>
+          {data.coverImage && <Col span={6}>
+            <span style={styles.articleItemThumb}>
+              <picture style={styles.articleItemImageContainer}>
+                <img srcSet={data.coverImage} style={styles.articleItemImage} alt={data.title}/>
+              </picture>
+            </span>
+          </Col>}
+          <Col span={18}>
+            <div className="article-content-wrapper">
+              <Link to={`/articles/${data.author}/${data.permlink}`}>
+                <h2 className="ant-list-item-title">{data.title}</h2>
+              </Link>
+              <Link to={`/articles/${data.author}/${data.permlink}`}>
+                <div className="ant-list-item-content">{data.description}</div>
+              </Link>
+            </div>
+          </Col>
+        </Row>
+        {/* <Link to={`/articles/${data.author}/${data.permlink}`}>
+          <div style={{ width: '25%' }}>
+          </div>
           <h2 className="ant-list-item-meta-title">{data.title}</h2>
           <div className="ant-list-item-content">{data.description}</div>
-        </Link>
+        </Link> */}
       </div>
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
       {(status === 'pending' || status === 'reserved') &&
