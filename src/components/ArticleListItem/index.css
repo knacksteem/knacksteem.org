@@ -17,3 +17,29 @@
   width: 100%;
   height: auto;
 }
+
+.ant-list-item.list-item-article {
+  border: solid 1px #DDDDDD;
+  margin: 1rem 0;
+}
+
+.ant-list-lg .ant-list-item.list-item-article {
+  padding: 0;
+}
+
+.ant-list-split .ant-list-item.list-item-article:last-child {
+  border-bottom: solid 1px #DDDDDD;
+}
+
+.ant-list-item.list-item-article .article-content-wrapper {
+  padding: 1rem;
+}
+
+.ant-list-item.list-item-article .article-content-wrapper .ant-list-item-content {
+  margin-bottom: 0;
+}
+
+.ant-list-item.list-item-article .article-meta {
+  padding: 1rem;
+  background: #FFF;
+}

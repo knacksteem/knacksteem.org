@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  background-color: #efefef;
 }
 
 div, p, span, img {
@@ -16,4 +17,37 @@ div, p, span, img {
   height: 32px;
   vertical-align: middle;
   margin-right: 5px;
+}
+
+#page-layout {
+  min-height: 100vh;
+}
+
+#page-layout > .ant-layout-header {
+  background-color: #fff;
+  height: auto;
+  line-height: normal;
+  box-shadow: 0px 2px 6px 0px rgba(0,0,0, 0.2);
+  margin-bottom: 2rem;
+  padding: 0;
+}
+
+#page-layout > .ant-layout-footer {
+  background-color: #e7e7e7;
+  box-shadow: inset 0px 2px 12px 0px rgba(0,0,0, 0.2);
+  padding: 0;
+}
+
+#content-layout {
+  width: 100%;
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 0 2rem;
+  align-items: flex-start;
+}
+
+.ant-layout-sider {
+  background-color:#fff;
+  box-shadow: 0px 2px 6px 0px rgba(0,0,0, 0.2);
+  margin-right: 2rem;
 }

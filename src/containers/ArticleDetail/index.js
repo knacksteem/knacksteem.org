@@ -79,31 +79,40 @@ class ArticleDetail extends Component {
     //show spinner/loader while loading article from the backend
     if (isLoading) {
       return (
-        <div><Content style={{minHeight: 1080}}><Spin/></Content></div>
+        <div><Content><Spin/></Content></div>
       );
     }
 
     return (
-      <div>
-        <Content style={{minHeight: 1080}}>
-          {!isEditMode && <h1>{data.title}</h1>}
-          <div className="article-author">Author: {data.author}</div>
-          <div className="article-category">Category: {data.category}</div>
-          <Divider/>
-          {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
-          {!isEditMode && <ReactMarkdown source={data.description} />}
-          <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
-          <div className="article-tags">
-            {data.tags.map((tag, index) => {
-              return (
-                <Tag key={tag} closable={false} color={(index > 0 ? 'blue' : 'magenta')}>{tag}</Tag>
-              );
-            })}
-          </div>
-          <Divider/>
-          {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
-          <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
-        </Content>
+      <div id="article-body">
+        <Layout id="article-detail">
+          <Content className="article-detail">
+            {!isEditMode && <h1>{data.title}</h1>}
+            <div className="article-author">Author: {data.author}</div>
+            <div className="article-category">Category: {data.category}</div>
+            <Divider/>
+            {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
+            {!isEditMode && <ReactMarkdown source={data.description} />}
+            <div className="article-footer">
+              <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
+              <div className="article-tags">
+                {data.tags.map((tag, index) => {
+                  return (
+                    <Tag key={tag} closable={false} color={(index > 0 ? 'blue' : 'magenta')}>{tag}</Tag>
+                  );
+                })}
+              </div>
+            </div>
+            <Divider/>
+            {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
+            <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
+          </Content>
+        </Layout>
+        {/*
+        <Layout id="article-announcements">
+          Announcements
+        </Layout>
+        */}
       </div>
     );
   }
