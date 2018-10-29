@@ -87,7 +87,13 @@ class Home extends Component {
     return (
       <div id="home-body">
         <Layout id="home-articles">
-          
+          <Header>
+            <Search
+              placeholder="Search through Knacksteem"
+              onSearch={value => this.setState({searchString: value})}
+              style={{width: 300}}
+            />
+          </Header>
           <Content>
             <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
               {articles.data.map((data) => {
