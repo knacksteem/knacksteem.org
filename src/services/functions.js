@@ -45,3 +45,13 @@ export const timestampToDate = (timestamp) => {
   const date = new Date(timestamp);
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };
+
+export const getUserCoverImage = (user) => {
+  if (typeof user.userObjectSteemit.account === 'undefined') {
+    return null;
+  }
+  const userMeta = JSON.parse(user.userObjectSteemit.account.json_metadata);
+  let coverImg = userMeta.profile.cover_image;
+
+  return coverImg;
+};

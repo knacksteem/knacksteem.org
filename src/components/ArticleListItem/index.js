@@ -38,12 +38,15 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
     <div className="ant-list-item list-item-article">
       <div className="">
         <Row gutter={0}>
-          {data.coverImage && <Col span={6}>
-            <span style={styles.articleItemThumb}>
-              <picture style={styles.articleItemImageContainer}>
-                <img srcSet={data.coverImage} style={styles.articleItemImage} alt={data.title}/>
-              </picture>
-            </span>
+          {data.coverImage && 
+          <Col span={6}>
+            <Link to={`/articles/${data.author}/${data.permlink}`}>
+              <span style={styles.articleItemThumb}>
+                <picture style={styles.articleItemImageContainer}>
+                  <img srcSet={data.coverImage} style={styles.articleItemImage} alt={data.title}/>
+                </picture>
+              </span>
+            </Link>
           </Col>}
           <Col span={18}>
             <div className="article-content-wrapper">
