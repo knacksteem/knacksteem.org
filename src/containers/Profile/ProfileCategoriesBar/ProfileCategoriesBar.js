@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { Button, Layout, Menu } from 'antd';
 import './ProfileCategoriesBar.css';
 
 const ProfileCategoriesBar = (props) => {
-  const {style} = props;
+  const {style, categories} = props;
 
   return (
     <div style={{...style}} className="profile-categories-bar">
@@ -13,25 +14,15 @@ const ProfileCategoriesBar = (props) => {
           <h2 className="profile-categories-bar-title">Categories</h2>
 
           <Menu style={{height: '100%', borderRight: 0, marginTop: '10px'}}>
-            <Menu.Item key="location">
-              <span className="profile-info-bar-label">DIY</span>
-            </Menu.Item>
-
-            <Menu.Item key="url" disabled={false}>
-              <span className="profile-info-bar-label">Art</span>
-            </Menu.Item>
-
-            <Menu.Item key="time" disabled={false}>
-              <span className="profile-info-bar-label">One Altruism</span>
-            </Menu.Item>
-
-            <Menu.Item key="power" disabled={false}>
-              <span className="profile-info-bar-label">Fashion</span>
-            </Menu.Item>
-
-            <Menu.Item key="value" disabled={false}>
-              <span className="profile-info-bar-label">Tech trend</span>
-            </Menu.Item>
+            {categories.length > 0 && categories.map((elem) => {
+              return (
+                <Menu.Item key={`/categories/${elem.key}`}>
+                  <Link to={`/categories/${elem.key}`}>
+                    <span className="profile-info-bar-label">{elem.name}</span>
+                  </Link>
+                </Menu.Item>
+              );
+            })}
 
           </Menu>
 
@@ -50,7 +41,8 @@ const ProfileCategoriesBar = (props) => {
 
 ProfileCategoriesBar.propTypes = {
   style: PropTypes.object,
-  user: PropTypes.object
+  user: PropTypes.object,
+  categories: PropTypes.object
 };
 
 export default ProfileCategoriesBar;

@@ -55,7 +55,7 @@ class Profile extends Component {
                 );
               })}
             </div>
-            <ProfileCategoriesBar/>
+            <ProfileCategoriesBar categories={articles.categories}/>
 
             {articles.isBusy && <Spin/>}
           </Layout>

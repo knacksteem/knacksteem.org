@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {Button, Col, Row} from 'antd';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {approveArticle, rejectArticle} from '../../actions/articles';
+import { truncateString } from '../../services/functions';
 import './index.css';
 
 const styles = {
@@ -14,7 +15,8 @@ const styles = {
     position: 'relative'
   },
   articleItemImageContainer: {
-    width: '100%',
+    display: 'inline-block',
+    width: '175px',
   },
   articleItemImage: {
     maxWidth: '100%',
@@ -31,30 +33,34 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
     dispatch(approveArticle(data.permlink, status));
   };
   //reject the current article
-  const onRejectClick = () => {
+  const onRejectClick = () => { 
     dispatch(rejectArticle(data.permlink, status));
   };
   return (
     <div className="ant-list-item list-item-article">
-      <div className="">
-        <Row gutter={0}>
-          {data.coverImage && 
-          <Col span={6}>
+      <div style={{
+        overflow: 'hidden',
+        height: 'inherit'
+      }}>
+        {data.coverImage && 
+          <div style={{ display: 'inline-block' }}>
             <Link to={`/articles/${data.author}/${data.permlink}`}>
               <span style={styles.articleItemThumb}>
                 <picture style={styles.articleItemImageContainer}>
-                  <img srcSet={data.coverImage} style={styles.articleItemImage} alt={data.title}/>
+                  <img srcSet={`https://steemitimages.com/640x480/${data.coverImage}`} style={styles.articleItemImage} alt={data.title}/>
                 </picture>
               </span>
             </Link>
-          </Col>}
+          </div>
+        }
+        <Row gutter={0} style={{ width: '70%', display: 'inline-block' }}>
           <Col span={18}>
             <div className="article-content-wrapper">
               <Link to={`/articles/${data.author}/${data.permlink}`}>
                 <h2 className="ant-list-item-title">{data.title}</h2>
               </Link>
               <Link to={`/articles/${data.author}/${data.permlink}`}>
-                <div className="ant-list-item-content">{data.description}</div>
+                <div className="ant-list-item-content">{truncateString(data.description)}</div>
               </Link>
             </div>
           </Col>

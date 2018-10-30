@@ -55,3 +55,8 @@ export const getUserCoverImage = (user) => {
 
   return coverImg;
 };
+
+// truncates long strings to shorter ones.
+export const truncateString = (str, maxCharacters=90) => {
+  return str.substring(0, maxCharacters).concat('...');
+};
