@@ -13,3 +13,6 @@ export const ARTICLES_POSTED = 'ARTICLES_POSTED';
 //stats
 export const USERLIST_REQUEST = 'USERLIST_REQUEST';
 export const USERLIST_GET = 'USERLIST_GET';
+
+//header
+export const HEADER_VISIBILITY_SET = 'HEADER_VISIBILITY_SET'
