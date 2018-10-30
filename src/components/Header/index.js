@@ -97,7 +97,7 @@ class KnackHeader extends React.Component {
                 <Col className="select">
                   <KnackSelect/>
                 </Col>
-                <Col className="ml">
+                <Col className="ml ">
                   <KnackSearch onSearch={(value) => {this.setState({searchString: value}); this.search()}}/>
                 </Col>
               </Row>
@@ -137,16 +137,17 @@ class KnackHeader extends React.Component {
               </Row> 
           </Row>
           <Row type="flex" justify="center" align="middle" style={Object.assign({}, styles.header)} className="collasped-header">
-            <Row type="flex" align="middle">
-              <Col className="ml mb">
-                <KnackSearch onSearch={(value) => {this.setState({searchString: value}); this.search()}}/>
-              </Col>
-            </Row>
-            <Row type="flex" align="middle">
+             <Row type="flex" align="middle">
               <Col  className="ml mb">
                 <KnackSelect/>
               </Col>
             </Row>
+            <Row type="flex" align="middle">
+              <Col className="ml collasped-search mb">
+                <KnackSearch onSearch={(value) => {this.setState({searchString: value}); this.search()}}/>
+              </Col>
+            </Row>
+            
             <Row type="flex" style={{padding: "20px"}}>
                   {user.username && 
                   <Row>

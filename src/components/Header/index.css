@@ -107,9 +107,15 @@
     display: none !important;
   }
 
+
   .select {
     display: none !important;
     
+  }
+  
+
+  .collasped-header {
+   flex-basis: column;
   }
 
   
@@ -120,10 +126,3 @@
   
 }
 
-.collasped-header {
-  width: 80%;
-  margin: auto;
-  padding-top: 20px;
-
- 
-}
