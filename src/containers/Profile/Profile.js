@@ -7,9 +7,10 @@ import { Layout, Spin } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesByUser} from '../../actions/articles';
 
-import ProfileInfoBar from '../Profile/ProfileInfoBar';
 import ProfileCategoriesBar from '../Profile/ProfileCategoriesBar';
+import ProfileInfoBar from '../Profile/ProfileInfoBar';
 import ProfileHero from '../Profile/ProfileHero';
+import ProfileMetaBar from '../Profile/ProfileMetaBar';
 
 const styles = {
   articlesList: {
@@ -40,6 +41,10 @@ class Profile extends Component {
           <ProfileHero style={{
             marginTop: '-31px'
           }} user={user} />
+          <Layout>
+            <ProfileMetaBar/>
+          </Layout>
+          
           <Layout id="content-layout">
             <ProfileInfoBar/>
 

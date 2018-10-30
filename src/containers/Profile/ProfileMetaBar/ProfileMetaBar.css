@@ -1,0 +1,20 @@
+.profile-meta-bar {
+    background: #fff;
+    width: 100%;
+}
+
+.profile-meta-bar-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.profile-meta-bar-content {
+    flex-direction: row;
+    margin-left: 280px;
+}
+
+.profile-meta-bar-label {
+    font-size: 18px;
+}

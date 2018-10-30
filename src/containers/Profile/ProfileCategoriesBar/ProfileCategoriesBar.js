@@ -36,7 +36,7 @@ const ProfileCategoriesBar = (props) => {
           </Menu>
 
           <div style={{ padding: '0 20px', width: '100%', marginTop: '15px' }}>
-            <Button size="large" type="primary" ghost style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
+            <Button size="large" style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
                 Show all
             </Button>
           </div>
