@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Layout } from 'antd';
-import coverFallbackImage from '../../assets/images/cover.jpg';
-import {getUserCoverImage} from '../../services/functions';
+import coverFallbackImage from '../../../assets/images/cover.jpg';
+import {getUserCoverImage} from '../../../services/functions';
 import './ProfileHero.css';
 
 let styles = {

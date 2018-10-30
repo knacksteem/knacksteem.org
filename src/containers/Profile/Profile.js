@@ -4,11 +4,12 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import { Layout, Spin } from 'antd';
 
-import ProfileInfoBar from './ProfileInfoBar';
-import ProfileCategoriesBar from './ProfileCategoriesBar';
 import ArticleListItem from '../../components/ArticleListItem';
-import ProfileHero from './ProfileHero';
 import {getArticlesByUser} from '../../actions/articles';
+
+import ProfileInfoBar from '../Profile/ProfileInfoBar';
+import ProfileCategoriesBar from '../Profile/ProfileCategoriesBar';
+import ProfileHero from '../Profile/ProfileHero';
 
 const styles = {
   articlesList: {
