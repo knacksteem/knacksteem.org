@@ -1,3 +1,7 @@
+.markdown-editor-is-inactive .EditorToolbar__root___3_Aqz {
+  display: none;
+}
+
 .editor-tags {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -11,7 +15,7 @@
   border-radius: 3px;
   font-family: 'Georgia', serif;
   font-size: 14px;
-  min-height: 390px;
+  min-height: 300px;
   font-size: 10px;
   margin: 0 0px;
   padding: 0px 0 0px
@@ -34,7 +38,7 @@
   word-wrap: break-word; 
   font-size: 120%;
   line-height: 150%;
-  padding: 3px;
+  padding: 6px;
 }
 
 

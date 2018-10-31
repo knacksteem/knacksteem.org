@@ -39,25 +39,6 @@ class KnackHeader extends React.Component {
     dispatch(getArticlesByCategory(match.params.category, skip, search));
   };
 
-  //load own contributions
-
-  navigateToLocation(){
-    this.props.history.push('/search-result')
-  }
-  
-  search () {
-
-    const {searchString} = this.state
-    const {articles} = this.props;
- 
-
-    if(searchString == ''){
-        return
-    }else{
-      this.navigateToLocation();
-      this.loadArticles(articles.data.length, searchString);
-    }
-  }
 
   handleHeaderToggle(){ 
       const {dispatch, header} =this.props
@@ -97,7 +78,7 @@ class KnackHeader extends React.Component {
                 <Col className="select">
                   <KnackSelect/>
                 </Col>
-                <Col className="ml ">
+                <Col className="ml search">
                   <KnackSearch onSearch={(value) => {this.setState({searchString: value}); this.search()}}/>
                 </Col>
               </Row>
@@ -144,7 +125,7 @@ class KnackHeader extends React.Component {
             </Row>
             <Row type="flex" align="middle">
               <Col className="ml collasped-search mb">
-                <KnackSearch onSearch={(value) => {this.setState({searchString: value}); this.search()}}/>
+                <KnackSearch onSearch={(value) => {this.setState({searchString: value})}}/>
               </Col>
             </Row>
             
@@ -203,6 +184,7 @@ const mapStateToProps = state => {
     header: state.header
   }
 }
+
 
 
 export default withRouter(connect(mapStateToProps)(KnackHeader));

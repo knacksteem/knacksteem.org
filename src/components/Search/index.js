@@ -1,5 +1,6 @@
 import React from "react";
 import {Input} from "antd";
+import PropTypes from 'prop-types';
 const Search = Input.Search;
 
 export const KnackSearch = props => {
@@ -7,9 +8,11 @@ export const KnackSearch = props => {
             <Search
                 placeholder="Search through Knacksteem"
                 style={{width: 300}}
-                onSearch={props.onSearch}
-                
+                onSearch={props.onSearch} 
             >    
             </Search>
         )
 }
+KnackSearch.propTypes = {
+    onSearch: PropTypes.func
+};

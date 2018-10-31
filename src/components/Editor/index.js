@@ -22,7 +22,7 @@ class Editor extends Component {
       inputTagsVisible: false,
       inputTagsValue: '',
       previewMarkdown: '',
-      editor: false
+      isMarkdownEditorActive: false
     };
   }
   //will be called whenever the content of the editor changes
@@ -112,6 +112,14 @@ class Editor extends Component {
       //already handled in redux actions
     }
   };
+
+  //toggle Editor display
+  handleEditorToggle() {
+    console.log(this.state.isMarkdownEditorActive);
+    this.setState({
+      isMarkdownEditorActive: !this.state.isMarkdownEditorActive
+    })
+  }
   //check for correct input before posting/editing
   checkFieldErrors = () => {
     const {title, value, tags} = this.state;
@@ -145,24 +153,32 @@ class Editor extends Component {
     const {title, value, tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
     const {isComment, isEdit, onCancel} = this.props;
     const {isBusy, categories} = this.props.articles;
-
+    const {isMarkdownEditorActive} = this.state
     return (
-      <div className="editor">
+
+      
+      <div className={`editor ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
         <h3>Title</h3>
         {!isComment && <Input style={{
-                                      backgroundColor: '#eee', 
-                                      fontWeight: 'bolder', 
-                                      border: '2px solid #e8e8e8'
-                                    }} placeholder="Title" onChange={this.handleInputTitleChange} value={title} />}
+              backgroundColor: '#eee', 
+              fontWeight: 'bolder', 
+              border: '2px solid #e8e8e8'
+            }}
+            placeholder="Title"
+            onChange={this.handleInputTitleChange}
+            value={title}
+        />}
         
         <Row type='flex' justify="space-between">
               <Col>
                 <h3>Story</h3>
               </Col>
               <Col>
-              <a href="#"><p>markdown</p></a>
-              </Col>
-            </Row>
+              <a onClick={e=>this.handleEditorToggle(e)} href="#">
+                <p>{ isMarkdownEditorActive ? 'visual' : 'markdown' }</p>
+              </a>
+            </Col>
+        </Row>
         <RichTextEditor
           value={value}
           onChange={this.onChange}
@@ -190,6 +206,11 @@ class Editor extends Component {
                 onPressEnter={this.handleInputConfirm}
               />
             )}
+            <Row type="flex" justify="end">
+              <Col>
+                <p style={{fontSize: '10px'}}>Insert images by draging & dropping, pasting from the clipboard, or by <a href="#">selecting them</a> </p>
+              </Col>
+            </Row>
             
             {inputTagsVisible && (tags.length === 1) && (
               <AutoComplete
@@ -212,8 +233,8 @@ class Editor extends Component {
           </div>
         }
         <Row style={{width: '100%'}} >
-          <Button  block style={{width: 'inherit', backgroundColor: "#22429d"}} type="primary" onClick={this.onPostClick} loading={isBusy}>{isEdit ? 'Update' : 'Post'}</Button>
-          {onCancel && <Button block type="secondary" onClick={onCancel} className="button-cancel">Cancel</Button>}
+          <Button style={{width: 'inherit', backgroundColor: "#22429d"}} type="primary" onClick={this.onPostClick} loading={isBusy}>{isEdit ? 'Update' : 'Post'}</Button>
+          {onCancel && <Button type="secondary" onClick={onCancel} className="button-cancel">Cancel</Button>}
         </Row>
         
         
