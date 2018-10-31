@@ -11,6 +11,8 @@ export default class Sponsors extends Component {
   }
   async componentDidMount() {
     let temp;
+    let globalData = [];
+    let arr = [];
     //getting history of an account TODO: Get whole history to get every delegator.
     await steem.api.getAccountHistoryAsync('knacksteem.org', Date.now(), 1000).then(res => {
       //filtering to get only delegations
@@ -22,7 +24,6 @@ export default class Sponsors extends Component {
     }).catch(err => {
       return err;
     });
-    let arr = [];
     temp.map(sponsor => {
       let obj = {
         delegator: sponsor[1].op[1].delegator,
@@ -59,8 +60,16 @@ export default class Sponsors extends Component {
       if (x > y) {return -1;}
       return 0;
     });
+
+    await steem.api.getDynamicGlobalPropertiesAsync().then(result => {
+      globalData.push(result);
+      return null;
+    }).catch(err =>{
+      return err;
+    });
     this.setState({
-      sponsors: sorted
+      sponsors: sorted,
+      globalData: globalData
     });
 
   }
@@ -74,7 +83,9 @@ export default class Sponsors extends Component {
         <div className="sponsors-data-container">
           {this.state.sponsors.map(sponsor => {
 
-            return <Sponsor key={sponsor.delegator} data={sponsor} />;
+            return <Sponsor key={sponsor.delegator} data={sponsor}
+              total_vesting_shares={this.state.globalData[0].total_vesting_shares}
+              total_vesting_fund_steem={this.state.globalData[0].total_vesting_fund_steem}/>;
           })}
         </div>
       </div>

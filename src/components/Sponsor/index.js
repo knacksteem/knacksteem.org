@@ -13,18 +13,10 @@ export default class Sponsor extends Component {
     };
   }
   async componentDidMount() {
-    let globalData = [];
-    await steem.api.getDynamicGlobalPropertiesAsync().then(result => {
-      globalData.push(result);
-      return null;
-    }).catch(err =>{
-      return err;
-    });
-
     const steemPower = steem.formatter.vestToSteem(
       this.props.data.vesting_shares,
-      parseFloat(globalData[0].total_vesting_shares),
-      parseFloat(globalData[0].total_vesting_fund_steem)
+      parseFloat(this.props.total_vesting_shares),
+      parseFloat(this.props.total_vesting_fund_steem)
     );
     this.setState({
       steemPower
@@ -45,5 +37,7 @@ export default class Sponsor extends Component {
 }
 
 Sponsor.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.object,
+  total_vesting_shares: PropTypes.string,
+  total_vesting_fund_steem: PropTypes.string
 };
