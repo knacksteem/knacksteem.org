@@ -1,0 +1,24 @@
+.sponsors-container {
+  min-height: 1080px;
+  padding: 30px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.sponsors-h1 {
+  color: #22429d;
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 44.44pt;
+}
+
+.sponsors-about {
+  color: #2a2a2a;
+  line-height: 20pt;
+  margin-bottom: 41.7px;
+}
+.sponsors-data-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 130px;
+  grid-row-gap: 6.4px;
+}

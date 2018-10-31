@@ -1,0 +1,19 @@
+.follow-button {
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 87px;
+  height: 38px;
+  color: #2a2a2a;
+  border: 1px solid #9c9d9f;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  background: transparent;
+  border-radius: 4px;
+  outline: none;
+  transition: 0.2s;
+}
+.follow-button:hover {
+  color: #fff;
+  background-color: #22429d;
+}
