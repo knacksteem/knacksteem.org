@@ -51,9 +51,18 @@ export default class Sponsors extends Component {
     const filterZeroVesting = arr.filter(item => {
       return item.vesting_shares !== 0;
     });
-    this.setState({
-      sponsors: filterZeroVesting
+
+    const sorted = filterZeroVesting.sort(function(a, b){
+      const x = a.vesting_shares;
+      const y = b.vesting_shares;
+      if (x < y) {return 1;}
+      if (x > y) {return -1;}
+      return 0;
     });
+    this.setState({
+      sponsors: sorted
+    });
+
   }
 
   render() {

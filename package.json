@@ -5,7 +5,6 @@
   "dependencies": {
     "antd": "^3.7.0",
     "axios": "^0.18.0",
-    "dsteem": "^0.10.1",
     "express": "^4.16.3",
     "express-http-to-https": "^1.1.4",
     "history": "^4.7.2",
