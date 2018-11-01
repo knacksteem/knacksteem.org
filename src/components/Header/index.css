@@ -46,7 +46,9 @@
 
   .header-container{
     justify-content: space-between !important;
+    width: 100%
   }
+
 
   .navbar__link-toggle {
     align-self: flex-end;
@@ -55,6 +57,13 @@
   }
   .brand {
     align-self: flex-start
+  }
+  .profile {
+    display: none;
+    
+  }
+  .edit {
+    display: none;
   }
   
   
@@ -88,6 +97,12 @@
   .brand {
     align-self: flex-start
   }
+  
+
+  .header-container{
+    width: 90%
+  }
+
   
   
 }
@@ -124,5 +139,9 @@
   }
   
   
+  .header-container{
+    width: 90%
+  }
 }
+
 
