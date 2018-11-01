@@ -9,7 +9,8 @@ export default class Sponsor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      steemPower: 0
+      steemPower: 0,
+      avatar: ''
     };
   }
   async componentDidMount() {
@@ -25,9 +26,10 @@ export default class Sponsor extends Component {
   render() {
     return (
       <div className="sponsor-container" key={this.props.data.trx_id}>
-        <img className="sponsor-avatar" src={`https://steemitimages.com/u/${
+        <div className="sponsor-avatar-container" style={{backgroundImage: `url(https://steemitimages.com/u/${
           this.props.data.delegator
-        }/avatar`} alt={this.props.data.delegator + ' avatar'}/>
+        }/avatar)`}}>
+        </div>
         <div><p className="sponsor-username-container"><Link className="sponsor-username" to={'/@'+this.props.data.delegator}>{this.props.data.delegator}</Link></p>
           <p className="sponsor-delegation">Delegated: {this.state.steemPower.toFixed(0) + ' STEEM'}</p></div>
         <FollowButton />

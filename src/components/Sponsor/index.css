@@ -6,11 +6,17 @@
   font-family: "Montserrat", sans-serif;
   margin-bottom: 17.6px;
 }
-
-.sponsor-avatar {
+.sponsor-avatar-container {
   width: 46px;
   height: 46px;
   border-radius: 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.sponsor-avatar {
+  width: 100%;
+  height: auto;
 }
 .sponsor-username-container {
   margin: 0;
