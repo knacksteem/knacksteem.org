@@ -6,6 +6,9 @@ import { Layout, Spin } from 'antd';
 
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesByUser} from '../../actions/articles';
+import {getRemoteUserData} from '../../actions/user';
+import {getRewardFund, getCurrentMedianHistoryPrice, getDynamicGlobalProperties} from '../../actions/stats';
+import { calculateVotePower, calculateVoteValue, repLog10 } from '../../services/functions';
 
 import ProfileCategoriesBar from '../Profile/ProfileCategoriesBar';
 import ProfileInfoBar from '../Profile/ProfileInfoBar';
@@ -28,38 +31,130 @@ class Profile extends Component {
     dispatch(getArticlesByUser());
   }
 
+  loadSteemRewardFunds() {
+    const {dispatch} = this.props;
+
+    dispatch(getRewardFund());
+  }
+
+  loadCurrentMedianHistoryPrice() {
+    const {dispatch} = this.props;
+
+    dispatch(getCurrentMedianHistoryPrice());
+  }
+
+  loadDynamicGlobalProperties() {
+    const {dispatch} = this.props;
+
+    dispatch(getDynamicGlobalProperties());
+  }
+
+  loadRemoteUserData() {
+    const {dispatch, match} = this.props;
+
+    dispatch(getRemoteUserData(match.params.username));
+  }
+
   componentDidMount() {
     this.loadArticlesUser();
+    this.loadSteemRewardFunds();
+    this.loadCurrentMedianHistoryPrice();
+    this.loadDynamicGlobalProperties();
+    this.loadRemoteUserData();
   }
 
   render () {
-    const {articles, user} = this.props;
+    let 
+      about,
+      coverImage,
+      name,
+      reputation,
+      location,
+      website,
+      votingPower,
+      voteValue,
+      remoteUserObjectMeta;
+
+    const {articles, user, stats, match} = this.props;
+    const { remoteUserObject } = user;
+    const { rewardFundObject, dynamicGlobalPropertiesObject, currentMedianHistoryPriceObject } = stats;
+
+    const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
+    const hasLoadedRewardFundObject = Object.keys(rewardFundObject).length > 0;
+    const hasLoadedDynamicGlobalPropertiesObject = Object.keys(dynamicGlobalPropertiesObject).length > 0;
+    const hasLoadedCurrentMedianHistoryPriceObject = Object.keys(currentMedianHistoryPriceObject).length > 0;
+
+    if (hasLoadedRemoteUserObject
+        && hasLoadedRewardFundObject
+        && hasLoadedDynamicGlobalPropertiesObject
+        && hasLoadedCurrentMedianHistoryPriceObject
+    ) {
+      remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
+      name = remoteUserObjectMeta.name;
+      location = remoteUserObjectMeta.location;
+      website = remoteUserObjectMeta.website;
+      coverImage = remoteUserObjectMeta.cover_image;
+      about = remoteUserObjectMeta.about;
+      reputation = repLog10(parseFloat(remoteUserObject.reputation));
+      votingPower = calculateVotePower(remoteUserObject.voting_power, remoteUserObject.last_vote_time).votePower;
+
+      voteValue=calculateVoteValue({
+        votingPower: remoteUserObject.voting_power,
+        lastVoteTime: remoteUserObject.last_vote_time,
+        rewardBalance: rewardFundObject.reward_balance,
+        recentClaims: rewardFundObject.recent_claims,
+        currentMedianHistoryPrice: currentMedianHistoryPriceObject,
+        vestingShares: remoteUserObject.vesting_shares,
+        receivedVestingShares: remoteUserObject.received_vesting_shares,
+        delegatedVestingShares: remoteUserObject.delegated_vesting_shares,
+        totalVestingFundSteem: dynamicGlobalPropertiesObject.total_vesting_fund_steem,
+        totalVestingShares: dynamicGlobalPropertiesObject.total_vesting_shares
+      });
+    }
 
     return (
-      <div>
+      <div>        
         <section style={{minHeight: 1080}}>
-          <ProfileHero style={{
-            marginTop: '-31px'
-          }} user={user} />
-          <Layout>
-            <ProfileMetaBar/>
-          </Layout>
-          
-          <Layout id="content-layout">
-            <ProfileInfoBar/>
+          {hasLoadedRemoteUserObject && <div>
+            <ProfileHero
+              style={{
+                marginTop: '-31px'
+              }}
+              coverImage={coverImage}
+              user={user}
+              username={match.params.username}
+              name={name}
+              reputation={reputation}
+            />
+            <Layout>
+              <ProfileMetaBar
+                followersCount={1206}
+                followingCount={50}
+              />
+            </Layout>
+            
+            <Layout id="content-layout">
+              <ProfileInfoBar
+                about={about}
+                location={location}
+                website={website}
+                votingPower={votingPower}
+                voteValue={voteValue}
+              />
 
-            <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-              {articles.data.map((data) => {
-                return (
-                  <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticlesUser} />
-                );
-              })}
-            </div>
-            <ProfileCategoriesBar categories={articles.categories}/>
+              <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+                {articles.data.map((data) => {
+                  return (
+                    <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticlesUser} />
+                  );
+                })}
+              </div>
+              <ProfileCategoriesBar categories={articles.categories}/>
 
-            {articles.isBusy && <Spin/>}
-          </Layout>
-
+              {articles.isBusy && <Layout><Spin/></Layout>}
+            </Layout>
+          </div>}
+          {!hasLoadedRemoteUserObject && <Spin/>}
         </section>
       </div>
     );
@@ -71,12 +166,14 @@ Profile.propTypes = {
   match: PropTypes.object,
   user: PropTypes.object,
   dispatch: PropTypes.func,
-  articles: PropTypes.object
+  articles: PropTypes.object,
+  stats: PropTypes.object
 };
 
 const mapStateToProps = state => ({
   articles: state.articles,
-  user: state.user
+  user: state.user,
+  stats: state.stats
 });
 
 export default withRouter(connect(mapStateToProps)(Profile));

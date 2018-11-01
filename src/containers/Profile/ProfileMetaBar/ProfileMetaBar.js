@@ -4,7 +4,7 @@ import { Button, Icon, Menu } from 'antd';
 import './ProfileMetaBar.css';
 
 const ProfileMetaBar = (props) => {
-  const {style} = props;
+  const {style, followingCount, followersCount} = props;
 
   return (
     <div style={{...style}} className="profile-meta-bar">
@@ -21,11 +21,11 @@ const ProfileMetaBar = (props) => {
             <div style={{ display: 'inline-block' }}>
               <Menu mode="horizontal" style={{height: '100%', borderRight: 0, borderBottom: 0}}>
                 <Menu.Item key="location">
-                  <span className="profile-meta-bar-label">Followers <strong>1206</strong> </span>
+                  <span className="profile-meta-bar-label">Followers <strong>{ followersCount }</strong> </span>
                 </Menu.Item>
 
                 <Menu.Item key="url" disabled={false}>
-                  <span className="profile-meta-bar-label">Following <strong>50</strong> </span>
+                  <span className="profile-meta-bar-label">Following <strong>{ followingCount }</strong> </span>
                 </Menu.Item>
 
                 <Menu.Item key="time" disabled={false}>
@@ -54,7 +54,9 @@ const ProfileMetaBar = (props) => {
 
 ProfileMetaBar.propTypes = {
   style: PropTypes.object,
-  user: PropTypes.object
+  user: PropTypes.object,
+  followingCount: PropTypes.number,
+  followersCount: PropTypes.number
 };
 
 export default ProfileMetaBar;

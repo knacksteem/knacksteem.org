@@ -1,8 +1,9 @@
-import {USER_AUTH, USER_GET, USER_LOGOUT} from '../actions/types';
+import {USER_AUTH, USER_GET, REMOTE_USER_GET, USER_LOGOUT} from '../actions/types';
 
 const initialState = {
   username: '',
   userObject: {},
+  remoteUserObject: {},
   userObjectSteemit: {},
   accessToken: '',
   isContributor: false,
@@ -24,6 +25,11 @@ const user = (state = initialState, action) => {
         isContributor: action.userObject.roles && action.userObject.roles.indexOf('contributor') !== -1,
         isModerator: action.userObject.roles && action.userObject.roles.indexOf('moderator') !== -1,
         isSupervisor: action.userObject.roles && action.userObject.roles.indexOf('supervisor') !== -1
+      };
+    case REMOTE_USER_GET:
+      return {
+        ...state,
+        remoteUserObject: action.remoteUserObject
       };
     case USER_LOGOUT:
       return initialState;

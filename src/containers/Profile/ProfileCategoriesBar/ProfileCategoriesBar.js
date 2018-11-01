@@ -42,7 +42,7 @@ const ProfileCategoriesBar = (props) => {
 ProfileCategoriesBar.propTypes = {
   style: PropTypes.object,
   user: PropTypes.object,
-  categories: PropTypes.object
+  categories: PropTypes.array
 };
 
 export default ProfileCategoriesBar;
