@@ -7,14 +7,14 @@ const initialState = {
 
 const header = (state = initialState, action) => {
   switch (action.type) {
-        case HEADER_VISIBILITY_SET:
-        return {
-            ...state,
-            isHeaderVisible: action.payload.isHeaderVisible
-        }
-        break;   
-    }
-  return state;
+    case HEADER_VISIBILITY_SET:
+      return {
+        ...state,
+        isHeaderVisible: action.payload.isHeaderVisible
+      };  
+    default:
+      return state;
+  }  
 };
 
 export default header;

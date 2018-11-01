@@ -3,11 +3,10 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Input, Spin} from 'antd';
+import {Layout, Spin} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
-const {Header, Content} = Layout;
-const Search = Input.Search;
+const { Content} = Layout;
 
 const styles = {
   articlesList: {display: 'flex', flexDirection: 'column'}

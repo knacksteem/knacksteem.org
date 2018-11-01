@@ -2,7 +2,6 @@ import React from 'react';
 import {Route} from 'react-router-dom';
 import {Layout} from 'antd';
 import KnackHeader from './components/Header';
-import Sidebar from './components/Sidebar';
 import Home from './containers/Home';
 import Guidelines from './containers/Guidelines';
 import FAQs from './containers/FAQs';
@@ -12,7 +11,6 @@ import AboutUs from './containers/AboutUs';
 import Contribute from './containers/Contribute';
 import ContactUs from './containers/ContactUs';
 import NewContribution from './containers/NewContribution';
-import SearchResult from './containers/SearchResult';
 import ArticleDetail from './containers/ArticleDetail';
 import Callback from './containers/Callback';
 import Review from './containers/Review';
@@ -29,7 +27,6 @@ const App = () => {
       <Layout id="content-layout">
         <Route exact path="/" component={Home} />
         <Route exact path="/guidelines" component={Guidelines} />
-        <Route exact path="/search-result" component={SearchResult} />
         <Route exact path="/faq" component={FAQs} />
         <Route exact path="/tos" component={TermsOfService} />
         <Route exact path="/how" component={HowItWorks} />
