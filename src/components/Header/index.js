@@ -42,7 +42,6 @@ class KnackHeader extends React.Component {
 
   handleHeaderToggle(){ 
       const {dispatch, header} =this.props
-      console.log(header.isHeaderVisible);
       
       dispatch(toggleHeader(
         {
@@ -184,7 +183,14 @@ const mapStateToProps = state => {
     header: state.header
   }
 }
-
+KnackHeader.PropTypes = {
+  articles: PropTypes.object,
+  location: PropTypes.object,
+  user: PropTypes.object,
+  header: PropTypes.object,
+  dispatch: PropTypes.func,
+  match: PropTypes.object
+}
 
 
 export default withRouter(connect(mapStateToProps)(KnackHeader));

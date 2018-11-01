@@ -1,7 +1,8 @@
 import {HEADER_VISIBILITY_SET} from '../actions/types';
 
 const initialState = {
-  isHeaderVisible: false
+  isHeaderVisible: false,
+  searchString: ''
 };
 
 const header = (state = initialState, action) => {
