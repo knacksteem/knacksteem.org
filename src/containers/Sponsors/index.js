@@ -15,7 +15,6 @@ export default class Sponsors extends Component {
     let arr = [];
     //getting history of an account TODO: Get whole history to get every delegator.
     await this.getData();
-    console.log('temp', this.state.temp);
     //filtering to get only delegations
     const filtered = this.state.temp.filter(op => {
       return op[1].op[0] === 'delegate_vesting_shares';
