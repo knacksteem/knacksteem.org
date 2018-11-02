@@ -144,8 +144,6 @@ const mapStateToProps = state => {
     articles: state.articles,
     header: state.header
   };
-
-=======
 };
 
 KnackHeader.propTypes = {
