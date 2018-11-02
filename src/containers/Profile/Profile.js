@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import { Layout, Spin } from 'antd';
 
 import ArticleListItem from '../../components/ArticleListItem';
-import {getArticlesByUser} from '../../actions/articles';
+import {getArticlesByUsername} from '../../actions/articles';
 import {getRemoteUserData, getRemoteUserFollowData} from '../../actions/user';
 import {getRewardFund, getCurrentMedianHistoryPrice, getDynamicGlobalProperties} from '../../actions/stats';
 import { calculateVotePower, calculateVoteValue, repLog10 } from '../../services/functions';
@@ -26,9 +26,9 @@ const styles = {
 class Profile extends Component {
   
   loadArticlesUser() {
-    const {dispatch} = this.props;
+    const {dispatch, match} = this.props;
 
-    dispatch(getArticlesByUser());
+    dispatch(getArticlesByUsername(match.params.username));
   }
 
   loadSteemRewardFunds() {
@@ -149,6 +149,13 @@ class Profile extends Component {
                   );
                 })}
               </div>
+
+              {!articles.data.length && (
+                <div style={{ flex: 4, marginTop: '20px', marginRight: '20px', padding: '30px', background: '#fff' }}>
+                  No articles found for this user.
+                </div>
+              )}
+
               <ProfileCategoriesBar categories={articles.categories}/>
 
               {articles.isBusy && <Layout><Spin/></Layout>}

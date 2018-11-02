@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {Button, Col, Row} from 'antd';
+import {Button, Row} from 'antd';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {approveArticle, rejectArticle} from '../../actions/articles';
 import { truncateString } from '../../services/functions';
@@ -16,7 +16,6 @@ const styles = {
   },
   articleItemImageContainer: {
     display: 'inline-block',
-    width: '175px',
   },
   articleItemImage: {
     maxWidth: '100%',
@@ -40,10 +39,11 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
     <div className="ant-list-item list-item-article">
       <div style={{
         overflow: 'hidden',
-        height: 'inherit'
+        maxHeight: '130px',
+        display: 'flex'
       }}>
         {data.coverImage && 
-          <div style={{ display: 'inline-block' }}>
+          <div style={{ display: 'block', width: '200px' }}>
             <Link to={`/articles/${data.author}/${data.permlink}`}>
               <span style={styles.articleItemThumb}>
                 <picture style={styles.articleItemImageContainer}>
@@ -53,24 +53,16 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
             </Link>
           </div>
         }
-        <Row gutter={0} style={{ width: '70%', display: 'inline-block' }}>
-          <Col span={18}>
-            <div className="article-content-wrapper">
-              <Link to={`/articles/${data.author}/${data.permlink}`}>
-                <h2 className="ant-list-item-title">{data.title}</h2>
-              </Link>
-              <Link to={`/articles/${data.author}/${data.permlink}`}>
-                <div className="ant-list-item-content">{truncateString(data.description)}</div>
-              </Link>
-            </div>
-          </Col>
-        </Row>
-        {/* <Link to={`/articles/${data.author}/${data.permlink}`}>
-          <div style={{ width: '25%' }}>
+        <Row gutter={0} style={{ width: 'calc(100% - 200px)' }}>
+          <div className="article-content-wrapper">
+            <Link to={`/articles/${data.author}/${data.permlink}`}>
+              <h2 className="ant-list-item-title">{data.title}</h2>
+            </Link>
+            <Link to={`/articles/${data.author}/${data.permlink}`}>
+              <div className="ant-list-item-content">{truncateString(data.description, 60)}</div>
+            </Link>
           </div>
-          <h2 className="ant-list-item-meta-title">{data.title}</h2>
-          <div className="ant-list-item-content">{data.description}</div>
-        </Link> */}
+        </Row>
       </div>
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
       {(status === 'pending' || status === 'reserved') &&

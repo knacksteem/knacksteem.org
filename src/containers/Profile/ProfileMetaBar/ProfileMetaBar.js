@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Icon, Menu } from 'antd';
+import { Layout, Button, Icon, Menu } from 'antd';
 import './ProfileMetaBar.css';
 
 const ProfileMetaBar = (props) => {
@@ -8,7 +8,7 @@ const ProfileMetaBar = (props) => {
 
   return (
     <div style={{...style}} className="profile-meta-bar">
-      <section className="content-layout">
+      <Layout className="content-layout">
         <div className="profile-meta-bar-container">
           <section className="profile-meta-bar-content">
             <div style={{ display: 'inline-block' }}>
@@ -47,7 +47,7 @@ const ProfileMetaBar = (props) => {
 
           </section>
         </div>
-      </section>
+      </Layout>
     </div>
   );
 };

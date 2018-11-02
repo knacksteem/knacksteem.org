@@ -99,6 +99,36 @@ export const getArticlesByUser = (skip, search) => {
   };
 };
 
+export const getArticlesByUsername = (username, skip, search) => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
+      category: ''
+    });
+
+    //get user articles from server
+    try {
+      let response = await apiGet('/posts', {
+        username: username || undefined,
+        author: username,
+        skip: skip || undefined, //skip elements for paging
+        search: search || undefined
+      });
+      dispatch({
+        type: types.ARTICLES_GET,
+        skip: skip || undefined,
+        payload: response.data.results
+      });
+    } catch (error) {
+      dispatch({
+        type: types.ARTICLES_GET,
+        payload: []
+      });
+    }
+  };
+};
+
 /**
  * get articles for moderation
  * @param route can be /moderation/pending or /moderation/reserved, for example
