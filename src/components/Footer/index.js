@@ -1,8 +1,6 @@
 import React from 'react';
 import {withRouter, Link} from 'react-router-dom';
-
 import {Layout, Col, Row} from 'antd';
-=======
 import './index.css';
 import logo from '../../assets/images/logo_black.png';
 const {Footer} = Layout;
@@ -25,12 +23,9 @@ const KnackFooter = () => {
           </Col>
         </Row>
       </Row>
-=======
     </Footer>
   );
 };
 
-
 export default withRouter(KnackFooter);
-=======
 
