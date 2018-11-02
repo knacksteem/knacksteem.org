@@ -100,7 +100,7 @@ export const getArticlesByUser = (skip, search) => {
 };
 
 export const getArticlesByUsername = (username, skip, search) => {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
       skip: skip || undefined,

@@ -92,7 +92,7 @@ export const getRewardFund = (method='get') => {
         rewardFundObject: (steemRewardFundData) ? steemRewardFundData.data : {}
       });  
     } catch (error) {
-      message.error('We were unable to fetch information.');
+      window.console.error('We were unable to fetch steem reward fund data.');
     }
   };
 };
@@ -115,7 +115,7 @@ export const getCurrentMedianHistoryPrice = (method='get') => {
         currentMedianHistoryPriceObject: (currentMedianHistoryPriceData) ? currentMedianHistoryPriceData.data : {}
       });  
     } catch (error) {
-      message.error('We were unable to fetch information.');
+      window.console.error('We were unable to fetch current median history price.');
     }
   };
 };
@@ -138,7 +138,7 @@ export const getDynamicGlobalProperties = (method='get') => {
         dynamicGlobalPropertiesObject: (dynamicGlobalPropertiesData) ? dynamicGlobalPropertiesData.data : {}
       });
     } catch (error) {
-      message.error('We were unable to fetch information.');
+      window.console.error('We were unable to fetch dynamic global properties data.');
     }
   };
 };
