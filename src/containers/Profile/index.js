@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import { Layout, Spin } from 'antd';
+import fecha from 'fecha';
 
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesByUsername} from '../../actions/articles';
@@ -71,6 +72,7 @@ class Profile extends Component {
       name,
       reputation,
       location,
+      signupDate,
       website,
       votingPower,
       voteValue,
@@ -90,6 +92,14 @@ class Profile extends Component {
         && hasLoadedDynamicGlobalPropertiesObject
         && hasLoadedCurrentMedianHistoryPriceObject
     ) {
+      signupDate = fecha.format(
+        fecha.parse(
+          remoteUserObject.created.split('T')[0],
+          'YYYY-MM-DD'
+        ),
+        'D MMMM YYYY'
+      );
+  
       remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
       name = remoteUserObjectMeta.name;
       location = remoteUserObjectMeta.location;
@@ -140,6 +150,7 @@ class Profile extends Component {
                 website={website}
                 votingPower={votingPower}
                 voteValue={voteValue}
+                signupDate={signupDate}
               />
 
               <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>

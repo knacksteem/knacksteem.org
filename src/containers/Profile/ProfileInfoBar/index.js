@@ -7,12 +7,22 @@ const styles = {
   barIcon: {
     fontSize: '16px',
     marginRight: '10px',
-    color: '#999'
+    color: '#999',
+    display: 'inline-block',
+    width: '20px'
   }
 };
 
 const ProfileInfoBar = (props) => {
-  const {style, about, location, votingPower, voteValue, website} = props;
+  const {
+    style,
+    signupDate,
+    about,
+    location,
+    votingPower,
+    voteValue,
+    website
+  } = props;
 
   return (
     <div style={{...style}} className="profile-info-bar">
@@ -40,7 +50,7 @@ const ProfileInfoBar = (props) => {
             {('website' !== undefined && 'website'.length > 0) &&
             <Menu.Item key="time" disabled={false}>
               <i style={styles.barIcon} className="far fa-clock"/>
-              <span className="profile-info-bar-label">Joined 16 March 2018</span>
+              <span className="profile-info-bar-label">Joined {signupDate}</span>
             </Menu.Item>
             }
 
@@ -79,6 +89,7 @@ const ProfileInfoBar = (props) => {
 
 ProfileInfoBar.propTypes = {
   style: PropTypes.object,
+  signupDate: PropTypes.string,
   about: PropTypes.string,
   location: PropTypes.string,
   website: PropTypes.string,
