@@ -158,3 +158,15 @@ export const calculateVoteValue = ({
 
   return (vote / 100).toFixed(2);
 };
+
+/**
+ * Returns a string with first character in uppercase.
+ * 
+ * @param {String} str 
+ */
+export function uppercaseFirst(str) {
+  return str
+    .charAt(0)
+    .toUpperCase()
+    .concat(str.slice(1, str.length));
+}
