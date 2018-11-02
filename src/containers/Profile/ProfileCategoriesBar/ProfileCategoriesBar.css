@@ -1,0 +1,17 @@
+.profile-categories-bar {
+    margin-top: 20px;
+}
+
+.profile-categories-bar-container {
+    padding: 20px 0;
+}
+
+.profile-categories-bar-title {
+    text-align: center;
+    padding: 10px 20px;
+}
+
+.profile-categories-bar-label {
+    padding-left: 5px;
+    line-height: 2;
+}

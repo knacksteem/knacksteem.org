@@ -7,6 +7,7 @@
     "axios": "^0.18.0",
     "express": "^4.16.3",
     "express-http-to-https": "^1.1.4",
+    "fecha": "^2.3.3",
     "history": "^4.7.2",
     "js-cookie": "^2.2.0",
     "prop-types": "^15.6.2",

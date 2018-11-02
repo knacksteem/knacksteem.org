@@ -1,8 +1,9 @@
 import React from 'react';
 import {Route} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import {Layout} from 'antd';
 import Header from './components/Header';
-import Sidebar from './components/Sidebar';
 import Home from './containers/Home';
 import Guidelines from './containers/Guidelines';
 import FAQs from './containers/FAQs';
@@ -16,6 +17,7 @@ import ArticleDetail from './containers/ArticleDetail';
 import Callback from './containers/Callback';
 import Review from './containers/Review';
 import Users from './containers/Users';
+import Profile from './containers/Profile';
 import Footer from './components/Footer';
 import 'antd/dist/antd.min.css';
 import './assets/styles/index.css';
@@ -25,8 +27,9 @@ const App = () => {
   return (
     <Layout id="page-layout">
       <Header/>
+      <Route exact path="/@:username" component={Profile} />
+
       <Layout id="content-layout">
-        <Sidebar/>
         <Route exact path="/" component={Home} />
         <Route exact path="/guidelines" component={Guidelines} />
         <Route exact path="/faq" component={FAQs} />
@@ -49,4 +52,8 @@ const App = () => {
   );
 };
 
-export default App;
+const mapStateToProps = state => ({
+  articles: state.articles,
+});
+
+export default withRouter(connect(mapStateToProps)(App));
