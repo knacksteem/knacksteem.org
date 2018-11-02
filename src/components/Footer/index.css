@@ -1,16 +1,28 @@
-.footer-container {
-  width: 100%;
-
-}
-Footer {
-  margin-top: 50px !important;
-}
-
 a {
-  padding: 3px;
-  color:#767676 !important;
+  padding: 5px !important;
+}
+
+.copyright {
   font-size: 12px;
 }
-a:active {
-  color:#4961aa !important;
+
+@media (max-width: 768px) {
+  .link-container {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    margin: auto;
+    font-size: 10px;
+    align-items: center;
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .link-container {
+    align-items: center;
+    justify-content: center !important;
+    margin: auto !important;
+    width: 100%;
+  }
 }

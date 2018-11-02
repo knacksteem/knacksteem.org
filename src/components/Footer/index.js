@@ -8,18 +8,18 @@ const {Footer} = Layout;
 const KnackFooter = () => {
   return (
     <Footer className="footer-container">
-      <Row className="inner-container " style={{paddingTop: '10px'}} justify="center" type="flex">
-        <Row type="flex" style={{ width: '50%'}} align="middle" justify="center" >
+      <Row className="inner-container " type="flex">
+        <Row type="flex" className="logo-container" style={{padding: '5px'}}  align="middle" justify="space-between" >
           <Col className="logo"><img  style={{maxWidth: '100%'}} src={logo}  alt="Knacksteem Logo" /></Col>
-          <Col style={{marginLeft: '10px', fontSize: '12px'}}><div  className="copyright">All rights reserved</div></Col>
+          <Col style={{ fontSize: '12px'}}><div  className="copyright">All rights reserved</div></Col>
         </Row>
-        <Row type="flex" align="middle" justify="space-around">
-          <Col>
-            <Link to="/">Home</Link>
-            <Link to="/how">How it works</Link>
-            <Link to="/about">About us</Link>
-            <Link to="/contribute">Contribute</Link>
-            <Link to="/contact">Contact</Link>
+        <Row  className="link-container"  style={{padding: '5px'}} type="flex" align="middle" justify="center">
+          <Col className="footer-links">
+            <Link className="footer-links-item" to="/">Home</Link>
+            <Link className="footer-links-item" to="/how">How it works</Link>
+            <Link className="footer-links-item" to="/about">About us</Link>
+            <Link  className="footer-links-item" to="/contribute">Contribute</Link>
+            <Link className="footer-links-item" to="/contact">Contact</Link>
           </Col>
         </Row>
       </Row>

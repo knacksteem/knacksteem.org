@@ -11,7 +11,7 @@ const NewContribution = () => {
       <Col
         type="flex"
         style={{
-          minHeight: '1080px',
+          minHeight: '780px',
           width: '90vw'
         }}>
         <Editor isComment={false} isEdit={false}/>

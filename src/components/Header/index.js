@@ -72,7 +72,7 @@ class KnackHeader extends React.Component {
         <Row type="flex" justify="center" align="middle" className="header-container"  >    
           <Row  className="logo"  align="middle"  justify="center" type="flex">
             <Col className="brand">
-              <img style={{maxWidth: '100%'}}  alt="Knack Logo" src={Logo}></img>
+              <Link to="/"><img style={{maxWidth: '100%'}}  alt="Knack Logo" src={Logo}></img></Link>
             </Col>  
           </Row>
           <Row type="flex" justify="center" className=" navbar__items input-container">

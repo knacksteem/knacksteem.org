@@ -1,5 +1,5 @@
 .logo {
-  width:25%;
+  width:20%;
 }
 .input-container {
   width: 50%;
@@ -36,9 +36,6 @@
   .navbar {
     flex-direction: column !important;
   }
-  .navbar__items--right {
-    margin-left: 0;
-  }
 
   .navbar__items {
     display: none !important;
@@ -71,11 +68,6 @@
 
 @media (max-width: 992px) {
   
-  .navbar__items--right {
-    margin-left: 0;
-  }
-
-
   .header-container{
     justify-content: space-between !important;
   }
