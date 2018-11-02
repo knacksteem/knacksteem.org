@@ -86,6 +86,7 @@ class Home extends Component {
     return (
       <div id="home-body">
         <Layout id="home-articles">
+=======
           <Content>
             <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
               {articles.data.map((data) => {

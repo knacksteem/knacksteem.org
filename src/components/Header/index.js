@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {userLogout} from '../../actions/user';
 import {toggleHeader} from '../../actions/header';
 import './index.css';
+import logo from '../../assets/images/logo_black.png';
 import SteemConnect from '../../services/SteemConnect';
 import Logo from '../../assets/images/logo_black.png';
 import {KnackSelect} from '../../components/Select';
@@ -143,6 +144,8 @@ const mapStateToProps = state => {
     articles: state.articles,
     header: state.header
   };
+
+=======
 };
 
 KnackHeader.propTypes = {

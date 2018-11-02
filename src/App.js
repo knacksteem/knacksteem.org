@@ -16,6 +16,7 @@ import Callback from './containers/Callback';
 import Review from './containers/Review';
 import Users from './containers/Users';
 import KnackFooter from './components/Footer';
+=======
 import 'antd/dist/antd.min.css';
 import './assets/styles/index.css';
 import './assets/styles/ant-overrides.css';
@@ -25,6 +26,7 @@ const App = () => {
     <Layout id="page-layout">
       <KnackHeader/>
       <Layout id="content-layout">
+=======
         <Route exact path="/" component={Home} />
         <Route exact path="/guidelines" component={Guidelines} />
         <Route exact path="/faq" component={FAQs} />
@@ -43,6 +45,7 @@ const App = () => {
         <Route exact path="/articles/:author/:permlink" component={ArticleDetail} />
       </Layout>
       <KnackFooter/>
+=======
     </Layout>
   );
 };
