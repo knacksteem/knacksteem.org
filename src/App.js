@@ -9,11 +9,10 @@ import ArticleDetail from './containers/ArticleDetail';
 import Callback from './containers/Callback';
 import Review from './containers/Review';
 import Users from './containers/Users';
-import Sponsors from './containers/Sponsors';
 import 'antd/dist/antd.min.css';
 import './assets/styles/index.css';
 import './assets/styles/ant-overrides.css';
-
+import Sponsors from './containers/Sponsors';
 const App = () => {
   return (
     <Layout>
