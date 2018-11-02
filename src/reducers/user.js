@@ -1,9 +1,19 @@
-import {USER_AUTH, USER_GET, REMOTE_USER_GET, USER_LOGOUT} from '../actions/types';
+import {
+  USER_AUTH,
+  USER_GET,
+  REMOTE_USER_GET,
+  REMOTE_USER_FOLLOW_GET,
+  USER_LOGOUT
+} from '../actions/types';
 
 const initialState = {
   username: '',
   userObject: {},
   remoteUserObject: {},
+  remoteUserFollowObject: {
+    follower_count: 0,
+    following_count: 0
+  },
   userObjectSteemit: {},
   accessToken: '',
   isContributor: false,
@@ -30,6 +40,11 @@ const user = (state = initialState, action) => {
       return {
         ...state,
         remoteUserObject: action.remoteUserObject
+      };
+    case REMOTE_USER_FOLLOW_GET:
+      return {
+        ...state,
+        remoteUserFollowObject: action.remoteUserFollowObject
       };
     case USER_LOGOUT:
       return initialState;

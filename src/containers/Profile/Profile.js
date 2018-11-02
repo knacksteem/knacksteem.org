@@ -6,7 +6,7 @@ import { Layout, Spin } from 'antd';
 
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesByUser} from '../../actions/articles';
-import {getRemoteUserData} from '../../actions/user';
+import {getRemoteUserData, getRemoteUserFollowData} from '../../actions/user';
 import {getRewardFund, getCurrentMedianHistoryPrice, getDynamicGlobalProperties} from '../../actions/stats';
 import { calculateVotePower, calculateVoteValue, repLog10 } from '../../services/functions';
 
@@ -53,6 +53,7 @@ class Profile extends Component {
     const {dispatch, match} = this.props;
 
     dispatch(getRemoteUserData(match.params.username));
+    dispatch(getRemoteUserFollowData(match.params.username));
   }
 
   componentDidMount() {
@@ -76,7 +77,7 @@ class Profile extends Component {
       remoteUserObjectMeta;
 
     const {articles, user, stats, match} = this.props;
-    const { remoteUserObject } = user;
+    const { remoteUserObject, remoteUserFollowObject } = user;
     const { rewardFundObject, dynamicGlobalPropertiesObject, currentMedianHistoryPriceObject } = stats;
 
     const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
@@ -121,15 +122,14 @@ class Profile extends Component {
                 marginTop: '-31px'
               }}
               coverImage={coverImage}
-              user={user}
               username={match.params.username}
               name={name}
               reputation={reputation}
             />
             <Layout>
               <ProfileMetaBar
-                followersCount={1206}
-                followingCount={50}
+                followersCount={remoteUserFollowObject.follower_count}
+                followingCount={remoteUserFollowObject.following_count}
               />
             </Layout>
             

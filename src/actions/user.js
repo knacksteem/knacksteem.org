@@ -94,3 +94,26 @@ export const getRemoteUserData = (username, method='get') => {
     }
   };
 };
+
+export const getRemoteUserFollowData = (username, method='get') => {
+  return async (dispatch) => {
+    const url = `${REMOTE_USER_API}/getFollowCount?account=${username}`;
+    const params = {};
+
+    try {
+      let remoteUserFollowData = await axios({
+        method,
+        url,
+        params,
+        responseType: 'json'
+      });
+
+      dispatch({
+        type: types.REMOTE_USER_FOLLOW_GET,
+        remoteUserFollowObject: (remoteUserFollowData) ? remoteUserFollowData.data : {}
+      }); 
+    } catch (error) {
+      message.error(`We were unable to fetch followers/following count for "${username}".`);
+    }
+  };
+};

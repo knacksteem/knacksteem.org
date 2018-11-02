@@ -14,7 +14,6 @@ let styles = {
 const ProfileHero = (props) => {
   let {
     style,
-    user,
     name,
     username,
     reputation,
@@ -57,7 +56,6 @@ const ProfileHero = (props) => {
 
 ProfileHero.propTypes = {
   style: PropTypes.object,
-  user: PropTypes.object,
   username: PropTypes.string,
   name: PropTypes.string,
   coverImage: PropTypes.string,
