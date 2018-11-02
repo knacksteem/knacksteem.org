@@ -1,12 +1,20 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Divider, Popconfirm, Spin} from 'antd';
-import IconText from '../Common/IconText';
-import {prettyDate} from '../../services/functions';
+import {Popconfirm, Spin} from 'antd';
+// import {prettyDate} from '../../services/functions';
 import {upvoteElement, deleteElement} from '../../actions/articles';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
+import { comment } from 'postcss';
+
+const styles = {
+  barIcon: {
+    fontSize: '16px',
+    marginRight: '5px',
+    color: '#999'
+  }
+};
 
 /**
  * article meta info for the bottom of every article in every view
@@ -82,18 +90,24 @@ class ArticleMetaBottom extends Component {
       }
     }
 
+    const upvoteIconColor = (data.isVoted || isUpvoted) ? '#999' : '#333';
+
     return (
       <div className="article-meta">
-        <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
-        <Divider type="vertical" />
-        <IconText type="message" text={commentCount} />
-        <Divider type="vertical" />
-        <span className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`} onClick={this.onUpvoteClick}><IconText type={(data.isVoted || isUpvoted) ? 'up-circle' : 'up-circle-o'} text={isUpvoted ? (data.votesCount + 1) : data.votesCount} /></span>
-        <Divider type="vertical" />
-        <IconText type="wallet" text={`$${data.totalPayout}`} />
-        <Divider type="vertical" />
+        <span
+          className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
+          onClick={this.onUpvoteClick}>
+            <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-arrow-up"/>
+            <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
+            <i style={{...styles.barIcon, marginLeft: '5px', color: '#eee'}} className="fas fa-arrow-down"/>
+        </span>
+        {/* <IconText type="wallet" text={`$${data.totalPayout}`} /> */}
+        <span style={{ float: 'right' }}>
+          <i style={styles.barIcon} className="fas fa-comment-dots"/>
+          <strong className="">{commentCount}</strong>
+        </span>
         <span className="action-links">
-          {(!isEditMode && !isDeleting) && actionsArray}
+          {/* {(!isEditMode && !isDeleting) && actionsArray} */}
           {isDeleting && <Spin size="small" />}
         </span>
       </div>
