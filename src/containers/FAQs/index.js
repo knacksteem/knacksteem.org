@@ -3,15 +3,15 @@ import {Layout} from 'antd';
 import './index.css';
 const {Content} = Layout;
 
-//About route
-const About = () => {
+const FAQs = () => {
   return (
     <div>
-      <Content style={{minHeight: 1080}}>
-        About
+      <Content>
+        <h1>FAQs</h1>
+        <p>Coming soon!</p>
       </Content>
     </div>
   );
 };
 
-export default About;
+export default FAQs;
