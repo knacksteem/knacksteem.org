@@ -1,5 +1,7 @@
 import React from 'react';
 import {Route} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import {Layout} from 'antd';
 import KnackHeader from './components/Header';
 import Home from './containers/Home';
@@ -16,6 +18,7 @@ import Callback from './containers/Callback';
 import Review from './containers/Review';
 import Users from './containers/Users';
 import KnackFooter from './components/Footer';
+import Profile from './containers/Profile';
 import 'antd/dist/antd.min.css';
 import './assets/styles/index.css';
 import './assets/styles/ant-overrides.css';
@@ -24,6 +27,7 @@ const App = () => {
   return (
     <Layout id="page-layout">
       <KnackHeader/>
+      <Route exact path="/@:username" component={Profile} />
       <Layout id="content-layout">
         <Route exact path="/" component={Home} />
         <Route exact path="/guidelines" component={Guidelines} />
@@ -47,4 +51,8 @@ const App = () => {
   );
 };
 
-export default App;
+const mapStateToProps = state => ({
+  articles: state.articles,
+});
+
+export default withRouter(connect(mapStateToProps)(App));

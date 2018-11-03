@@ -5,6 +5,12 @@ a {
 .copyright {
   font-size: 12px;
 }
+.footer-container {
+  width: 100%;
+}
+.inner-container {
+  justify-content: center !important;
+}
 
 @media (max-width: 768px) {
   .link-container {
@@ -16,13 +22,17 @@ a {
     align-items: center;
     justify-content: center !important;
   }
+
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1280px) {
   .link-container {
     align-items: center;
     justify-content: center !important;
     margin: auto !important;
+    width: 100%;
+  }
+  .logo-container {
     width: 100%;
   }
 }
