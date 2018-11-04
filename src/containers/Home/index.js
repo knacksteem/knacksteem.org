@@ -3,11 +3,10 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Input, Spin} from 'antd';
+import {Layout, Spin} from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
-const {Header, Content} = Layout;
-const Search = Input.Search;
+const { Content} = Layout;
 
 const styles = {
   articlesList: {display: 'flex', flexDirection: 'column'}
@@ -87,13 +86,6 @@ class Home extends Component {
     return (
       <div id="home-body">
         <Layout id="home-articles">
-          <Header>
-            <Search
-              placeholder="Search through Knacksteem"
-              onSearch={value => this.setState({searchString: value})}
-              style={{width: 300}}
-            />
-          </Header>
           <Content>
             <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
               {articles.data.map((data) => {

@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import RichTextEditor from 'react-rte';
-import {Input, AutoComplete, Tag, Icon, Button, Divider, message} from 'antd';
+import {Input, AutoComplete, Tag, Icon, Button,Row, message, Col } from 'antd';
 import {postArticle, editArticle} from '../../actions/articles';
 import './index.css';
 
@@ -21,7 +21,8 @@ class Editor extends Component {
       tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
       inputTagsVisible: false,
       inputTagsValue: '',
-      previewMarkdown: ''
+      previewMarkdown: '',
+      isMarkdownEditorActive: false
     };
   }
   //will be called whenever the content of the editor changes
@@ -111,6 +112,13 @@ class Editor extends Component {
       //already handled in redux actions
     }
   };
+
+  //toggle Editor display
+  handleEditorToggle() {
+    this.setState({
+      isMarkdownEditorActive: !this.state.isMarkdownEditorActive
+    });
+  }
   //check for correct input before posting/editing
   checkFieldErrors = () => {
     const {title, value, tags} = this.state;
@@ -144,16 +152,39 @@ class Editor extends Component {
     const {title, value, tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
     const {isComment, isEdit, onCancel} = this.props;
     const {isBusy, categories} = this.props.articles;
-
+    const {isMarkdownEditorActive} = this.state;
     return (
-      <div className="editor">
-        {!isComment && <Input placeholder="Title" onChange={this.handleInputTitleChange} value={title} />}
+
+      <div className={`editor ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
+        <h3>Title</h3>
+        {!isComment && <Input style={{
+          backgroundColor: '#eee', 
+          fontWeight: 'bolder', 
+          border: '2px solid #e8e8e8'
+        }}
+        placeholder="Title"
+        onChange={this.handleInputTitleChange}
+        value={title}
+        />}
+        
+        <Row type="flex" justify="space-between">
+          <Col>
+            <h3>Story</h3>
+          </Col>
+          <Col>
+            <a onClick={e=>this.handleEditorToggle(e)}>
+              <p>{ isMarkdownEditorActive ? 'visual' : 'markdown' }</p>
+            </a>
+          </Col>
+        </Row>
         <RichTextEditor
           value={value}
           onChange={this.onChange}
           autoFocus={true}
-          className="editor-rte"
+          onClick={e => alert('clicked')}
+          className="editor-rte"  
         />
+        <h3>Tags</h3>
         {!isComment &&
           <div className="editor-tags">
             {tags.map((tag, index) => {
@@ -173,6 +204,12 @@ class Editor extends Component {
                 onPressEnter={this.handleInputConfirm}
               />
             )}
+            <Row type="flex" justify="end">
+              <Col>
+                <p style={{fontSize: '10px'}}>Insert images by draging & dropping, pasting from the clipboard, or by <a >selecting them</a> </p>
+              </Col>
+            </Row>
+            
             {inputTagsVisible && (tags.length === 1) && (
               <AutoComplete
                 ref={this.refInputTagsAutoComplete}
@@ -193,10 +230,13 @@ class Editor extends Component {
             )}
           </div>
         }
-        <Button type="primary" onClick={this.onPostClick} loading={isBusy}>{isEdit ? 'Update' : 'Post'}</Button>
-        {onCancel && <Button type="secondary" onClick={onCancel} className="button-cancel">Cancel</Button>}
-        <Divider />
-        <ReactMarkdown source={previewMarkdown} />
+        <Row style={{width: '100%'}} >
+          <Button style={{width: 'inherit', backgroundColor: '#22429d'}} type="primary" onClick={this.onPostClick} loading={isBusy}>{isEdit ? 'Update' : 'Post'}</Button>
+          {onCancel && <Button type="secondary" onClick={onCancel} className="button-cancel">Cancel</Button>}
+        </Row>
+        <ReactMarkdown className={'preview'}  source={previewMarkdown} />
+        <Row type="flex" className="preview">
+        </Row> 
       </div>
     );
   }
