@@ -1,6 +1,7 @@
 body {
   margin: 0;
   background-color: #efefef;
+  font-family: Montserrat, "Open Sans", Helvetica, Arial, sans-serif;
 }
 
 div, p, span, img {
@@ -33,9 +34,9 @@ div, p, span, img {
 }
 
 #page-layout > .ant-layout-footer {
-  background-color: #e7e7e7;
-  box-shadow: inset 0px 2px 12px 0px rgba(0,0,0, 0.2);
-  padding: 0;
+  box-shadow: inset 0px 1px 1px 0px rgba(0,0,0, 0.2);
+  padding: 5px;
+  width: 100%;
 }
 
 #content-layout,
@@ -47,8 +48,11 @@ div, p, span, img {
   align-items: flex-start;
 }
 
-.ant-layout-sider {
-  background-color:#fff;
-  box-shadow: 0px 2px 6px 0px rgba(0,0,0, 0.2);
-  margin-right: 2rem;
+a:hover {
+  color: #22429d !important;
+}
+
+a:active {
+  color: #22429d !important;
+  font-weight: bolder;
 }

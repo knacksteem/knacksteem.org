@@ -1,6 +1,5 @@
 import * as types from './types';
 import axios from 'axios';
-import {message} from 'antd';
 
 import {apiGet, apiPost} from '../services/api';
 import Cookies from 'js-cookie';
