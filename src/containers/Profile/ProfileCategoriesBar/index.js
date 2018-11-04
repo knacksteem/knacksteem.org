@@ -9,7 +9,7 @@ const ProfileCategoriesBar = (props) => {
 
   return (
     <div style={{...style}} className="profile-categories-bar">
-      <Layout.Sider width={250}>
+      <Layout.Sider width={250} style={{ background: '#fff' }}>
         <div className="profile-categories-bar-container">
           <h2 className="profile-categories-bar-title">Categories</h2>
 

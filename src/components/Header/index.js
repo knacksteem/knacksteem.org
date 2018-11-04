@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import {userLogout} from '../../actions/user';
 import {toggleHeader} from '../../actions/header';
 import './index.css';
-import logo from '../../assets/images/logo_black.png';
 import SteemConnect from '../../services/SteemConnect';
 import Logo from '../../assets/images/logo_black.png';
 import {KnackSelect} from '../../components/Select';
@@ -48,8 +47,7 @@ class KnackHeader extends React.Component {
 
   render(){
 
-    const {user} = this.props;
-    const {header} = this.props;
+    const {header, user} = this.props;
     const styles = {
       header: {
         display: !header.isHeaderVisible ?
@@ -104,7 +102,9 @@ class KnackHeader extends React.Component {
                 <div >
                   <Dropdown overlay={menu}>
                     <a className="ant-dropdown-link" >
-                      <Avatar size="small" src={`https://steemitimages.com/u/${user.username}/avatar`}  icon="user" />
+                      <a title="Visit profile" href={`/@${user.username}`}>
+                        <Avatar size="small" src={`https://steemitimages.com/u/${user.username}/avatar`}  icon="user" />
+                      </a>
                     </a>
                   </Dropdown>
                 </div>

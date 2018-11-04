@@ -20,7 +20,9 @@ const styles = {
   articlesList: {
     display: 'flex',
     flexDirection: 'column',
-    marginRight: '30px'
+    width: '90%',
+    margin: '0 15px'
+
   }
 };
 
@@ -153,7 +155,10 @@ class Profile extends Component {
                 signupDate={signupDate}
               />
 
-              <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+              <div
+                className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item"
+                style={styles.articlesList}
+              >
                 {articles.data.map((data) => {
                   return (
                     <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticlesUser} />

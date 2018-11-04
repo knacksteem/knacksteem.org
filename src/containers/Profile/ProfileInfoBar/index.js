@@ -26,10 +26,10 @@ const ProfileInfoBar = (props) => {
 
   return (
     <div style={{...style}} className="profile-info-bar">
-      <Layout.Sider width={250}>
+      <Layout.Sider width={250} style={{ background: '#fff' }}>
         <div className="profile-info-bar-container">
           {(about !== undefined && about.length > 0) &&   
-            <h3 className="profile-info-bar-title">{about}</h3>
+            <h4 className="profile-info-bar-title">{about}</h4>
           }
 
           <Menu style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
@@ -47,12 +47,10 @@ const ProfileInfoBar = (props) => {
             </Menu.Item>
             }
 
-            {('website' !== undefined && 'website'.length > 0) &&
             <Menu.Item key="time" disabled={false}>
               <i style={styles.barIcon} className="far fa-clock"/>
               <span className="profile-info-bar-label">Joined {signupDate}</span>
             </Menu.Item>
-            }
 
             {(votingPower !== undefined) &&
             <Menu.Item key="power" disabled={false}>
