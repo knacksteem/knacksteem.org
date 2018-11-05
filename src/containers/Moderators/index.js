@@ -22,7 +22,7 @@ export default class Moderators extends Component {
     return (
       <div className="moderators-container">
         <h1 className="moderators-h1">Moderators</h1>
-        <p className="moderators-about">Aenean gravida tellus purus, ac tincidunt dolor sodales ornare. Duis et nunc porta, auctor ligula accumsan, viverra justo. Vestibulum tempus ornare elit. Nullam id malesuada lectus, quis pharetra felis. Aliquam et vehicula arcu. </p>
+        <p className="moderators-about">Meet KnackSteem moderators. They are a team of professionals who review/scrutinize all incoming contributions and make sure that they are up to standard. They also give valuable feedback to our contributors to help them improve.</p>
 
         <div className="moderators-data-container">
           {this.state.moderators.map(moderator => {

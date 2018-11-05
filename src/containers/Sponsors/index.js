@@ -39,7 +39,7 @@ export default class Sponsors extends Component {
     return (
       <div className="sponsors-container">
         <h1 className="sponsors-h1">Sponsors</h1>
-        <p className="sponsors-about">Aenean gravida tellus purus, ac tincidunt dolor sodales ornare. Duis et nunc porta, auctor ligula accumsan, viverra justo. Vestibulum tempus ornare elit. Nullam id malesuada lectus, quis pharetra felis. Aliquam et vehicula arcu. </p>
+        <p className="sponsors-about">Welcome to knacksteem sponsor's page. KnackSteem sponsors are the supporter of the project who have delegated some Steem power to the project to increase our voting strength. These will increase our contributor's potential rewards. Sponsors are eligible for 12% reward from all the post made through our front-end.</p>
 
         <div className="sponsors-data-container">
           {this.state.sponsors.map(sponsor => {
