@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Layout, Menu } from 'antd';
+import { Button, Dropdown, Icon, Layout, Menu } from 'antd';
 import './ProfileInfoBar.css';
 
 const styles = {
@@ -10,6 +10,18 @@ const styles = {
     color: '#999',
     display: 'inline-block',
     width: '20px'
+  },
+  modButton: {
+    borderWidth: '2px',
+    fontWeight: 'bold',
+    width: 'inherit',
+    marginBottom: '10px'
+  },
+  banButton: {
+    borderWidth: '2px',
+    fontWeight: 'bold',
+    width: 'inherit',
+    background: 'transparent'
   }
 };
 
@@ -19,9 +31,12 @@ const ProfileInfoBar = (props) => {
     signupDate,
     about,
     location,
+    name,
     votingPower,
     voteValue,
-    website
+    website,
+    onModChoiceSelect,
+    user
   } = props;
 
   return (
@@ -70,26 +85,62 @@ const ProfileInfoBar = (props) => {
         </div>
       </Layout.Sider>
 
+      {Object.keys(user).length &&
       <Layout.Sider width={250} style={{ background: 'transparent', boxShadow: 'none' }}>
         <div style={{ width: '100%', marginTop: '20px' }}>
-          <Button type="primary" size="large" style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', marginBottom: '10px' }}>
-            Make a Mod / Sup
-          </Button>
-
-          <Button size="large" type="primary" ghost style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
-            Ban / Unban
+          <Dropdown
+            overlay={
+              <Menu onClick={({ item }) => onModChoiceSelect(item.props.choice, item.props.action)}>
+                <Menu.Item
+                  choice={'moderator'}
+                  action={user.roles.indexOf('moderator') === -1 ? 'add' : 'remove'}
+                  key="1"
+                >
+                  <Icon type="solution" />
+                  {user.roles.indexOf('moderator') === -1 ? `Make ${name} a ` : `Remove ${name} as a `}
+                  <b>Moderator</b>
+                </Menu.Item>
+                <Menu.Item
+                  choice={'supervisor'}
+                  key="2"
+                  action={user.roles.indexOf('supervisor') === -1 ? 'add' : 'remove'}
+                >
+                  <Icon type="user" />
+                  {user.roles.indexOf('supervisor') === -1 ? `Make ${name} a ` : `Remove ${name} as a `}
+                  <b>Supervisor</b>
+                </Menu.Item>
+              </Menu>          
+            }
+            trigger={['click']}
+          >
+            <Button
+              type="primary"
+              size="large"
+              style={styles.modButton}
+            >
+              {user.roles.indexOf('moderator') > -1 ? 'Strip Mod' : 'Make Mod'}
+              / {user.roles.indexOf('supervisor') > -1 ? 'Remove Sup' : 'Make Sup'}
+              <Icon type="down" />
+            </Button>
+          </Dropdown>
+          <Button size="large" type="primary" ghost style={styles.banButton}>
+            Ban {name}
           </Button>
         </div>
       </Layout.Sider>
+      }
     </div>
   );
 };
 
 ProfileInfoBar.propTypes = {
   style: PropTypes.object,
+  user: PropTypes.object,
   signupDate: PropTypes.string,
   about: PropTypes.string,
+  name: PropTypes.string,
   location: PropTypes.string,
+  onModChoiceSelect: PropTypes.func,
   website: PropTypes.string,
   votingPower: PropTypes.string,
   voteValue: PropTypes.string

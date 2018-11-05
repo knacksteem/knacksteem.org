@@ -7,8 +7,18 @@ import fecha from 'fecha';
 
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesByUsername} from '../../actions/articles';
-import {getRemoteUserData, getRemoteUserFollowData} from '../../actions/user';
-import {getRewardFund, getCurrentMedianHistoryPrice, getDynamicGlobalProperties} from '../../actions/stats';
+import {
+  getKnacksteemUserData,
+  updateKnacksteemUser,
+  getRemoteUserData,
+  getRemoteUserFollowData
+} from '../../actions/user';
+import {
+  getRewardFund,
+  getCurrentMedianHistoryPrice,
+  getDynamicGlobalProperties,
+  moderateUser
+} from '../../actions/stats';
 import { calculateVotePower, calculateVoteValue, uppercaseFirst, repLog10 } from '../../services/functions';
 
 import ProfileCategoriesBar from './ProfileCategoriesBar';
@@ -26,8 +36,37 @@ const styles = {
   }
 };
 
+const hasLoadedAll = (items) => {
+  return Object.keys(items[0]).length > 0
+        && Object.keys(items[1]).length > 0
+        && Object.keys(items[2]).length > 0
+        && Object.keys(items[3]).length > 0;
+};
+
 class Profile extends Component {
   
+  handleModChoiceSelect(choice, action) {
+    const {dispatch, match, user} = this.props;
+    const {knacksteemUserObject} = user;
+    let updatedRoles;
+
+    const intention = choice === 'moderator' ? `${action}Moderator` : `${action}Supervisor`;
+    
+    if (action === 'remove') {
+      updatedRoles = knacksteemUserObject.roles.filter(role => role !== choice);
+    } else {
+      updatedRoles = [...knacksteemUserObject.roles, choice];
+    }
+
+    let updatedKnacksteemUserObject = {
+      ...knacksteemUserObject,
+      roles: updatedRoles
+    };
+
+    dispatch(updateKnacksteemUser(updatedKnacksteemUserObject));
+    dispatch(moderateUser(match.params.username, intention));
+  }
+
   loadArticlesUser() {
     const {dispatch, match} = this.props;
 
@@ -55,6 +94,7 @@ class Profile extends Component {
   loadRemoteUserData() {
     const {dispatch, match} = this.props;
 
+    dispatch(getKnacksteemUserData(match.params.username));
     dispatch(getRemoteUserData(match.params.username));
     dispatch(getRemoteUserFollowData(match.params.username));
   }
@@ -71,6 +111,7 @@ class Profile extends Component {
     let 
       about,
       coverImage,
+      displayName,
       name,
       reputation,
       location,
@@ -81,19 +122,17 @@ class Profile extends Component {
       remoteUserObjectMeta;
 
     const {articles, user, stats, match} = this.props;
-    const { remoteUserObject, remoteUserFollowObject } = user;
+    const { remoteUserObject, knacksteemUserObject, remoteUserFollowObject } = user;
     const { rewardFundObject, dynamicGlobalPropertiesObject, currentMedianHistoryPriceObject } = stats;
+    const hasLoadedRemoteUserObject = hasLoadedAll([
+      knacksteemUserObject,
+      remoteUserObject,
+      rewardFundObject,
+      dynamicGlobalPropertiesObject,
+      currentMedianHistoryPriceObject
+    ]);
 
-    const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
-    const hasLoadedRewardFundObject = Object.keys(rewardFundObject).length > 0;
-    const hasLoadedDynamicGlobalPropertiesObject = Object.keys(dynamicGlobalPropertiesObject).length > 0;
-    const hasLoadedCurrentMedianHistoryPriceObject = Object.keys(currentMedianHistoryPriceObject).length > 0;
-
-    if (hasLoadedRemoteUserObject
-        && hasLoadedRewardFundObject
-        && hasLoadedDynamicGlobalPropertiesObject
-        && hasLoadedCurrentMedianHistoryPriceObject
-    ) {
+    if (hasLoadedRemoteUserObject) {
       signupDate = fecha.format(
         fecha.parse(
           remoteUserObject.created.split('T')[0],
@@ -104,6 +143,7 @@ class Profile extends Component {
   
       remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
       name = remoteUserObjectMeta.name;
+      displayName = name && name !== '' ? name : uppercaseFirst(match.params.username);
       location = remoteUserObjectMeta.location;
       website = remoteUserObjectMeta.website;
       coverImage = remoteUserObjectMeta.cover_image;
@@ -126,7 +166,7 @@ class Profile extends Component {
     }
 
     return (
-      <div>        
+      <div>
         <section style={{minHeight: 1080}}>
           {hasLoadedRemoteUserObject && <div>
             <ProfileHero
@@ -135,7 +175,7 @@ class Profile extends Component {
               }}
               coverImage={coverImage}
               username={match.params.username}
-              name={name && name !== '' ? name : uppercaseFirst(match.params.username) }
+              name={displayName}
               reputation={reputation}
             />
             <Layout>
@@ -147,12 +187,15 @@ class Profile extends Component {
             
             <Layout id="content-layout">
               <ProfileInfoBar
+                name={displayName}
                 about={about}
                 location={location}
                 website={website}
                 votingPower={votingPower}
                 voteValue={voteValue}
                 signupDate={signupDate}
+                onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
+                user={knacksteemUserObject}
               />
 
               <div
