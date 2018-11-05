@@ -1,10 +1,14 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,700");
 body {
   margin: 0;
   background-color: #efefef;
   font-family: Montserrat, "Open Sans", Helvetica, Arial, sans-serif;
 }
 
-div, p, span, img {
+div,
+p,
+span,
+img {
   box-sizing: border-box;
 }
 

@@ -1,0 +1,34 @@
+.sponsors-container {
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+
+  width: 80%;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
+.sponsors-flex-container {
+  min-height: 1080px;
+  width: 77%;
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+}
+.sponsors-h1 {
+  color: #22429d;
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 44.44pt;
+}
+
+.sponsors-about {
+  color: #2a2a2a;
+  line-height: 20pt;
+  margin-bottom: 41.7px;
+}
+.sponsors-data-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 130px;
+  grid-row-gap: 6.4px;
+}
