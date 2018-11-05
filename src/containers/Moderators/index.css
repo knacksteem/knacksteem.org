@@ -1,9 +1,17 @@
 .moderators-container {
-  min-height: 1080px;
   font-family: "Montserrat", sans-serif;
-  padding: 16px;
+  width: 80%;
+  margin: auto;
+  display: flex;
+  justify-content: center;
 }
-
+.moderators-flex-container {
+  min-height: 1080px;
+  width: 77%;
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+}
 .moderators-h1 {
   color: #22429d;
   font-size: 32px;
