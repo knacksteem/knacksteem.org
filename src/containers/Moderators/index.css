@@ -1,0 +1,23 @@
+.moderators-container {
+  min-height: 1080px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.moderators-h1 {
+  color: #22429d;
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 44.44pt;
+}
+
+.moderators-about {
+  color: #2a2a2a;
+  line-height: 20pt;
+  margin-bottom: 41.7px;
+}
+.moderators-data-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 130px;
+  grid-row-gap: 6.4px;
+}

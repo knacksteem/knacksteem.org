@@ -23,6 +23,7 @@ import 'antd/dist/antd.min.css';
 import './assets/styles/index.css';
 import './assets/styles/ant-overrides.css';
 import Sponsors from './containers/Sponsors';
+import Moderators from './containers/Moderators';
 const App = () => {
   return (
     <Layout id="page-layout">
@@ -41,6 +42,7 @@ const App = () => {
         <Route exact path="/moderation/reserved" component={Review} />
         <Route exact path="/users" component={Users} />
         <Route exact path="/sponsors" component={Sponsors} />
+        <Route exact path="/moderators" component={Moderators} />
         <Route exact path="/callback" component={Callback} />
         <Route exact path="/mycontributions" component={Home} />
         <Route exact path="/new" component={NewContribution} />
