@@ -1,6 +1,11 @@
 import * as types from './types';
+import axios from 'axios';
+import {message} from 'antd';
+
 import {apiGet, apiPost} from '../services/api';
 import Cookies from 'js-cookie';
+
+const REMOTE_STEEM_API = 'https://api.steemjs.com';
 
 /**
  * get list of users (for moderative actions)
@@ -28,7 +33,7 @@ export const getUserList = (skip, banned, search) => {
         payload: response.data.results
       });
     } catch (error) {
-      console.log(error);
+      window.console.log(error);
       dispatch({
         type: types.USERLIST_GET,
         payload: []
@@ -65,6 +70,75 @@ export const moderateUser = (username, action, banReason, bannedUntil) => {
       dispatch(getUserList());
     } catch (error) {
       //error handled in api post service
+    }
+  };
+};
+
+export const getRewardFund = (method='get') => {
+  return async (dispatch) => {
+    const url = `${REMOTE_STEEM_API}/getRewardFund?name=post`;
+    const params = {};
+
+    try {
+      let steemRewardFundData = await axios({
+        method,
+        url,
+        params,
+        responseType: 'json'
+      });
+
+      dispatch({
+        type: types.STEEM_REWARD_FUND_GET,
+        rewardFundObject: (steemRewardFundData) ? steemRewardFundData.data : {}
+      });  
+    } catch (error) {
+      message.error('We were unable to fetch information.');
+    }
+  };
+};
+
+export const getCurrentMedianHistoryPrice = (method='get') => {
+  return async (dispatch) => {
+    const url = `${REMOTE_STEEM_API}/getCurrentMedianHistoryPrice`;
+    const params = {};
+
+    try {
+      let currentMedianHistoryPriceData = await axios({
+        method,
+        url,
+        params,
+        responseType: 'json'
+      });
+
+      dispatch({
+        type: types.CURRENT_MEDIAN_HISTORY_PRICE_GET,
+        currentMedianHistoryPriceObject: (currentMedianHistoryPriceData) ? currentMedianHistoryPriceData.data : {}
+      });  
+    } catch (error) {
+      message.error('We were unable to fetch information.');
+    }
+  };
+};
+
+export const getDynamicGlobalProperties = (method='get') => {
+  return async (dispatch) => {
+    const url = `${REMOTE_STEEM_API}/getDynamicGlobalProperties`;
+    const params = {};
+
+    try {
+      let dynamicGlobalPropertiesData = await axios({
+        method,
+        url,
+        params,
+        responseType: 'json'
+      });
+
+      dispatch({
+        type: types.DYNAMIC_GLOBAL_PROPERTIES_GET,
+        dynamicGlobalPropertiesObject: (dynamicGlobalPropertiesData) ? dynamicGlobalPropertiesData.data : {}
+      });
+    } catch (error) {
+      message.error('We were unable to fetch information.');
     }
   };
 };
