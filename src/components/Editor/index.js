@@ -181,7 +181,6 @@ class Editor extends Component {
           value={value}
           onChange={this.onChange}
           autoFocus={true}
-          onClick={e => alert('clicked')}
           className="editor-rte"  
         />
         <h3>Tags</h3>

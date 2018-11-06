@@ -1,107 +1,67 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
-import './index.css';
-import {Layout, Spin} from 'antd';
+import { Layout, Spin } from 'antd';
+
 import ArticleListItem from '../../components/ArticleListItem';
-import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
-const { Content} = Layout;
+import {getArticlesByUsername} from '../../actions/articles';
+import {getRemoteUserData, getRemoteUserFollowData} from '../../actions/user';
+import {getRewardFund, getCurrentMedianHistoryPrice, getDynamicGlobalProperties} from '../../actions/stats';
+import { calculateVotePower, calculateVoteValue, repLog10 } from '../../services/functions';
+
+import AnnoucementMetaBar from '../Home/AnnouncementMetaBar';
+import ContributionMetaBar from '../Home/ContributionMetaBar';
+
 
 const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column'}
+  articlesList: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginRight: '30px'
+  }
 };
 
-//Article Overview
 class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      searchString: ''
-    };
+  
+  constructor() {
+    super()
   }
-  //scroll handler for lazy loading
-  onScroll = () => {
-    const {searchString} = this.state;
-    const {articles, location} = this.props;
 
-    //if in loading process, don´t do anything
-    if (articles.isBusy) {
-      return;
-    }
-    //if user hits bottom, load next batch of items
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(articles.data.length, searchString);
-      } else {
-        this.loadArticles(articles.data.length, searchString);
-      }
-    }
-  };
-  componentDidMount() {
-    const {location} = this.props;
+  render () {
 
-    if (location.pathname === '/mycontributions') {
-      this.loadArticlesUser();
-    } else {
-      this.loadArticles();
-    }
 
-    //on scroll, load the next batch of articles
-    window.addEventListener('scroll', this.onScroll);
-  }
-  componentWillUnmount() {
-    //remove scroll event again when hitting another route
-    window.removeEventListener('scroll', this.onScroll);
-  }
-  componentDidUpdate(prevProps, prevState) {
-    const {searchString} = this.state;
-    const {location} = this.props;
+    const {articles, user, stats, match} = this.props;
+    
 
-    if (prevProps.location.pathname !== location.pathname || searchString !== prevState.searchString) {
-      //location change detected, load new data
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(0, searchString);
-      } else {
-        this.loadArticles(0, searchString);
-      }
-    }
-  }
-  //load general articles
-  loadArticles = (skip = 0, search) => {
-    const {dispatch, match} = this.props;
+       return (
+      <div>        
+        <section style={{minHeight: 1080}}>
+           
+          <div>
+            <Layout id="content-layout">
+              
+              <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+                {articles.data.map((data) => {
+                  return (
+                    <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticlesUser} />
+                  );
+                })}
+              </div>
 
-    dispatch(getArticlesByCategory(match.params.category, skip, search));
-  };
-  //load own contributions
-  loadArticlesUser = (skip = 0, search) => {
-    const {dispatch} = this.props;
+              {!articles.data.length && (
+                <div style={{ flex: 4, marginTop: '20px', marginRight: '20px', padding: '30px', background: '#fff' }}>
+                  No articles found for this user.
+                </div>
+              )}
 
-    dispatch(getArticlesByUser(skip, search));
-  };
-  render() {
-    const {articles} = this.props;
+              
 
-    return (
-      <div id="home-body">
-        <Layout id="home-articles">
-          <Content>
-            <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-              {articles.data.map((data) => {
-                return (
-                  <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
-                );
-              })}
-            </div>
-            {articles.isBusy && <Spin/>}
-          </Content>
-        </Layout>
-        {/*
-        <Layout id="home-announcements">
-          Announcements
-        </Layout>
-        */}
+              {articles.isBusy && <Layout><Spin/></Layout>}
+            </Layout>
+          </div>
+          
+        </section>
       </div>
     );
   }
@@ -110,12 +70,16 @@ class Home extends Component {
 Home.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
+  user: PropTypes.object,
   dispatch: PropTypes.func,
-  articles: PropTypes.object
+  articles: PropTypes.object,
+  stats: PropTypes.object
 };
 
 const mapStateToProps = state => ({
-  articles: state.articles
+  articles: state.articles,
+  user: state.user,
+  stats: state.stats
 });
 
 export default withRouter(connect(mapStateToProps)(Home));
