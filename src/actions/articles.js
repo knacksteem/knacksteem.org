@@ -406,3 +406,4 @@ export const deleteElement = (permlink) => {
     }
   };
 };
+

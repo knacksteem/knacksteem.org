@@ -20,11 +20,11 @@
 
 .ant-list-item.list-item-article {
   border: solid 1px #DDDDDD;
-  margin: 1rem 0;
 }
 
 .ant-list-lg .ant-list-item.list-item-article {
   padding: 0;
+  margin: 0 30px 30px 30px;
 }
 
 .ant-list-split .ant-list-item.list-item-article:last-child {
@@ -32,7 +32,7 @@
 }
 
 .ant-list-item.list-item-article .article-content-wrapper {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1rem 0 ;
 }
 
 .ant-list-item.list-item-article .article-content-wrapper .ant-list-item-content {
@@ -42,4 +42,11 @@
 .ant-list-item.list-item-article .article-meta {
   padding: 1rem;
   background: #FFF;
+}
+.ant-list .article-content-wrapper {
+  font-family: Montserrat, "Open Sans", Helvetica, Arial, sans-serif;
+}
+.ant-list-item-content {
+  font-weight: lighter;
+  font-size: 12px;
 }

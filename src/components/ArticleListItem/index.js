@@ -20,6 +20,7 @@ const styles = {
   articleItemImage: {
     maxWidth: '100%',
     height: 'auto',
+    paddingButtom: 0,
     verticalAlign: 'center',
     display: 'inline-block'
   }
@@ -53,13 +54,13 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
             </Link>
           </div>
         }
-        <Row gutter={0} style={{ width: 'calc(100% - 200px)' }}>
+        <Row gutter={0} style={{ width: '100%'}}>
           <div className="article-content-wrapper">
             <Link to={`/articles/${data.author}/${data.permlink}`}>
               <h2 className="ant-list-item-title">{data.title}</h2>
             </Link>
             <Link to={`/articles/${data.author}/${data.permlink}`}>
-              <div className="ant-list-item-content">{truncateString(data.description, 60)}</div>
+              <div className="ant-list-item-content">{truncateString(data.description, 150 )}</div>
             </Link>
           </div>
         </Row>
