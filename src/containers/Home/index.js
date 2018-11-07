@@ -8,7 +8,9 @@ import ArticleListItem from '../../components/ArticleListItem';
 import AnnouncementMetaBar from '../Home/AnnouncementMetaBar'
 import ContributionMetaBar from '../Home/ContributionMetaBar'
 import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
-const { Content} = Layout;
+import {getRemoteUserData} from '../../actions/user';
+import { repLog10 } from '../../services/functions';
+import Cookies from 'js-cookie';
 
 const styles = {
   articlesList: {display: 'flex', flexDirection: 'column', width: '50%'}
@@ -41,8 +43,15 @@ class Home extends Component {
       }
     }
   };
+//get User data
+  loadRemoteUserData() {
+    const {dispatch} = this.props;
+    dispatch(getRemoteUserData('sirfreeman'));
+  
+  }
+
   componentDidMount() {
-    const {location} = this.props;
+    const {location,user} = this.props;
 
     if (location.pathname === '/mycontributions') {
       this.loadArticlesUser();
@@ -52,6 +61,7 @@ class Home extends Component {
 
     //on scroll, load the next batch of articles
     window.addEventListener('scroll', this.onScroll);
+    this.loadRemoteUserData();
   }
   componentWillUnmount() {
     //remove scroll event again when hitting another route
@@ -83,14 +93,32 @@ class Home extends Component {
     dispatch(getArticlesByUser(skip, search));
   };
   render() {
-    const {articles} = this.props;
+    let 
+      coverImage,
+      name,
+      reputation,
+      remoteUserObjectMeta;
+
+    const {articles, user} = this.props
+    const { remoteUserObject} = user;
+    const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
+
+    if (hasLoadedRemoteUserObject) {
+      remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
+      name = remoteUserObjectMeta.name;
+      coverImage = remoteUserObjectMeta.cover_image;
+      reputation = repLog10(parseFloat(remoteUserObject.reputation)); 
+      console.log(name);
+    }  
+    
+
 
     return (
         <Layout className="home-container" justify="center">
           <Row type="flex" className="home-inner-container" justify="center">
               <Row type="flex" className="contribution-container">
                 <Col>
-                  <ContributionMetaBar/>
+                  <ContributionMetaBar metaImage={coverImage} reputation={reputation} name={name} />
                 </Col>
               </Row>
               <Row className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
@@ -120,7 +148,9 @@ Home.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  articles: state.articles
+  articles: state.articles,
+  user: state.user,
 });
+
 
 export default withRouter(connect(mapStateToProps)(Home));

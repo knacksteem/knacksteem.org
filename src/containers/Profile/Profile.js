@@ -114,7 +114,7 @@ class Profile extends Component {
     }
 
     return (
-      <div>        
+      <div style={{marginTop: '100px'}}>        
         <section style={{minHeight: 1080}}>
           {hasLoadedRemoteUserObject && <div>
             <ProfileHero

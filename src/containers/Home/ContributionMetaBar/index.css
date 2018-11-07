@@ -1,0 +1,20 @@
+.contribution-info-bar {
+    margin-top: 20px;
+}
+
+.contribution-info-bar-container {
+    padding: 20px 0;
+}
+
+.contribution-info-bar-title {
+    text-align: center;
+    padding: 10px;
+}
+
+.contribution-info-bar-label {
+    padding-left: 25px;
+    line-height: 2;
+}
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+     background-color: #fff !important;
+}

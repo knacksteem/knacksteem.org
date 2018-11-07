@@ -35,7 +35,7 @@ div, p, span, img {
 
 #page-layout > .ant-layout-footer {
   box-shadow: inset 0px 1px 1px 0px rgba(0,0,0, 0.2);
-  padding: 5px;
+  padding: 3px;
   width: 100%;
 }
 

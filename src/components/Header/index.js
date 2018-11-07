@@ -69,7 +69,7 @@ class KnackHeader extends React.Component {
     );
 
     return (
-      <Header className="navbar">
+      <Header className="navbar" style={{position: 'fixed', zIndex: 1000}}>
         <Row type="flex" justify="center" align="middle" className="header-container"  >    
           <Row  className="logo"  align="middle"  justify="center" type="flex">
             <Col className="brand">
