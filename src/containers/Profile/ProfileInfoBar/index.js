@@ -28,6 +28,8 @@ const styles = {
 const ProfileInfoBar = (props) => {
   const {
     style,
+    isSupervisor,
+    isModerator,
     signupDate,
     about,
     location,
@@ -36,6 +38,7 @@ const ProfileInfoBar = (props) => {
     voteValue,
     website,
     onModChoiceSelect,
+    onBanButtonClick,
     user
   } = props;
 
@@ -85,9 +88,10 @@ const ProfileInfoBar = (props) => {
         </div>
       </Layout.Sider>
 
-      {Object.keys(user).length &&
+      {(Object.keys(user).length) &&
       <Layout.Sider width={250} style={{ background: 'transparent', boxShadow: 'none' }}>
         <div style={{ width: '100%', marginTop: '20px' }}>
+          { isSupervisor &&
           <Dropdown
             overlay={
               <Menu onClick={({ item }) => onModChoiceSelect(item.props.choice, item.props.action)}>
@@ -123,9 +127,18 @@ const ProfileInfoBar = (props) => {
               <Icon type="down" />
             </Button>
           </Dropdown>
-          <Button size="large" type="primary" ghost style={styles.banButton}>
-            Ban {name}
+          }
+          { (isSupervisor || isModerator) &&
+          <Button
+            onClick={e => onBanButtonClick(e)}
+            size="large"
+            type="primary"
+            ghost
+            style={styles.banButton}
+          >
+            {user.isBanned ? 'Unban': 'Ban'} {name}
           </Button>
+          }
         </div>
       </Layout.Sider>
       }
@@ -136,14 +149,21 @@ const ProfileInfoBar = (props) => {
 ProfileInfoBar.propTypes = {
   style: PropTypes.object,
   user: PropTypes.object,
+  isSupervisor: PropTypes.bool,
+  isModerator: PropTypes.bool,
   signupDate: PropTypes.string,
   about: PropTypes.string,
   name: PropTypes.string,
   location: PropTypes.string,
   onModChoiceSelect: PropTypes.func,
+  onBanButtonClick: PropTypes.func,
   website: PropTypes.string,
   votingPower: PropTypes.string,
   voteValue: PropTypes.string
+};
+
+ProfileInfoBar.defaultProps = {
+  isSupervisor: false
 };
 
 export default ProfileInfoBar;

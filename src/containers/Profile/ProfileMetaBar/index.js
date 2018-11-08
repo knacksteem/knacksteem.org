@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Layout, Button, Icon, Menu } from 'antd';
 import './ProfileMetaBar.css';
 
 const ProfileMetaBar = (props) => {
-  const {style, followingCount, followersCount} = props;
+  const {style, followingCount, followersCount, username} = props;
 
   return (
     <div style={{...style}} className="profile-meta-bar">
@@ -21,26 +22,34 @@ const ProfileMetaBar = (props) => {
             <div style={{ display: 'inline-block' }}>
               <Menu mode="horizontal" style={{height: '100%', borderRight: 0, borderBottom: 0}}>
                 <Menu.Item key="location">
-                  <span className="profile-meta-bar-label">Followers <strong>{ followersCount }</strong> </span>
+                  <a href={`https://steemit.com/@${username}/followers`}>
+                    <span className="profile-meta-bar-label">Followers <strong>{ followersCount }</strong> </span>
+                  </a>
                 </Menu.Item>
 
                 <Menu.Item key="url" disabled={false}>
-                  <span className="profile-meta-bar-label">Following <strong>{ followingCount }</strong> </span>
+                  <a href={`https://steemit.com/@${username}/following`}>
+                    <span className="profile-meta-bar-label">Following <strong>{ followingCount }</strong> </span>
+                  </a>
                 </Menu.Item>
 
                 <Menu.Item key="time" disabled={false}>
-                  <span className="profile-meta-bar-label">Wallet</span>
+                  <a href={`https://steemit.com/@${username}/transfers`}>
+                    <span className="profile-meta-bar-label">Wallet</span>
+                  </a>
                 </Menu.Item>
 
                 <Menu.Item key="power" disabled={false}>
-                  <span className="profile-meta-bar-label">Activity</span>
+                  <a href={`https://steemit.com/@${username}/recent-replies`}>
+                    <span className="profile-meta-bar-label">Activity</span>
+                  </a>
                 </Menu.Item>
 
               </Menu>
             </div>
 
             <div style={{ display: 'inline-block', marginLeft: '10px' }}>
-              <Button size="large" style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
+              <Button href={`https://steemit.com/@${username}/settings`} size="large" style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
                 Edit profile
               </Button>
             </div>
@@ -54,7 +63,7 @@ const ProfileMetaBar = (props) => {
 
 ProfileMetaBar.propTypes = {
   style: PropTypes.object,
-  user: PropTypes.object,
+  username: PropTypes.string,
   followingCount: PropTypes.number,
   followersCount: PropTypes.number
 };

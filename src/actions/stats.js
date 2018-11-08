@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import {apiGet, apiPost} from '../services/api';
 import Cookies from 'js-cookie';
+import {message} from 'antd';
 
 const REMOTE_STEEM_API = 'https://api.steemjs.com';
 
@@ -59,12 +60,14 @@ export const moderateUser = (username, action, banReason, bannedUntil) => {
       unban: '/moderation/unban'
     };
     try {
-      await apiPost(modEndpoints[action], {
+      let req = await apiPost(modEndpoints[action], {
         access_token: Cookies.get('accessToken'),
         username: username,
         banReason: banReason,
         bannedUntil: bannedUntil,
       });
+
+      message.success(req.data.message);
 
       dispatch(getUserList());
     } catch (error) {

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
-import { Layout, Spin } from 'antd';
+import { Button, Input, InputNumber, Layout, Spin, Modal } from 'antd';
 import fecha from 'fecha';
 
 import ArticleListItem from '../../components/ArticleListItem';
@@ -36,6 +36,64 @@ const styles = {
   }
 };
 
+const BanModal = (props) => {
+  const {
+    isVisible,
+    onCloseBanModal,
+    onBanDurationInputChange,
+    onBanReasonInputChange,
+    onSubmitBanModal,
+    isBanSubmitDisabled
+  } = props;
+
+  return (
+    <Modal
+      visible={isVisible}
+      title="Really Ban Kay?"
+      onOk={onSubmitBanModal}
+      onCancel={onCloseBanModal}
+      footer={[
+        <Button key="back" onClick={onCloseBanModal}>Cancel</Button>,
+        <Button key="submit" disabled={isBanSubmitDisabled} type="primary" onClick={() => onSubmitBanModal()}>
+          Ban Kay
+        </Button>,
+      ]}
+    >
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginBottom: '5px', display: 'block' }}>Ban reason (minimum of ten words).</label>
+        <Input.TextArea
+          onChange={e => onBanReasonInputChange(e)}
+          rows={4}
+        />
+      </div>
+
+      <div>
+        <label style={{ marginBottom: '5px', display: 'block' }}>Ban duration (in hours)</label>
+        <InputNumber
+          onChange={e => onBanDurationInputChange(e)}
+          min={1}
+          defaultValue={1000}
+        />
+      </div>
+    </Modal>
+  );
+};
+
+BanModal.propTypes = {
+  isBanSubmitDisabled: PropTypes.bool,
+  isVisible: PropTypes.bool,
+  banReason: PropTypes.string,
+  onCloseBanModal: PropTypes.func,
+  onBanDurationInputChange: PropTypes.func,
+  onBanReasonInputChange: PropTypes.func,
+  onSubmitBanModal: PropTypes.func
+};
+
+BanModal.defaultProps = {
+  isBanSubmitDisabled: false,
+  isVisible: false
+};
+
 const hasLoadedAll = (items) => {
   return Object.keys(items[0]).length > 0
         && Object.keys(items[1]).length > 0
@@ -44,7 +102,61 @@ const hasLoadedAll = (items) => {
 };
 
 class Profile extends Component {
-  
+  constructor(props) {
+    super(props);
+    this.state = {
+      isBanModalOpen: false,
+      banReason: '',
+      banDuration: 1000
+    };
+  }
+
+  handleBanModalStatusToggle() {
+    this.setState(({ isBanModalOpen }) => {
+      return {
+        isBanModalOpen: !isBanModalOpen
+      };
+    });
+  }
+
+  handleBanStatusToggle() {
+    const {dispatch, match, user} = this.props;
+    const { banDuration, banReason } = this.state;
+    const {knacksteemUserObject} = user;
+
+    const intention = knacksteemUserObject.isBanned ? 'unban' : 'ban';
+
+    if (intention === 'ban'
+      && this.state.banReason.length <= 10
+    ) {
+      this.setState({
+        isBanModalOpen: true
+      });
+      return false;
+    }
+
+    let updatedKnacksteemUserObject = {
+      ...knacksteemUserObject,
+      isBanned: !knacksteemUserObject.isBanned
+    };
+
+    dispatch(moderateUser(
+      match.params.username,
+      intention,
+      banReason,
+      banDuration || 1000000
+    ));
+
+    dispatch(updateKnacksteemUser(updatedKnacksteemUserObject));
+
+    if (intention === 'ban') {
+      this.setState({
+        banReason: '',
+        isBanModalOpen: false
+      });
+    }
+  }
+
   handleModChoiceSelect(choice, action) {
     const {dispatch, match, user} = this.props;
     const {knacksteemUserObject} = user;
@@ -122,7 +234,7 @@ class Profile extends Component {
       remoteUserObjectMeta;
 
     const {articles, user, stats, match} = this.props;
-    const { remoteUserObject, knacksteemUserObject, remoteUserFollowObject } = user;
+    const { userObject, remoteUserObject, knacksteemUserObject, remoteUserFollowObject } = user;
     const { rewardFundObject, dynamicGlobalPropertiesObject, currentMedianHistoryPriceObject } = stats;
     const hasLoadedRemoteUserObject = hasLoadedAll([
       knacksteemUserObject,
@@ -168,7 +280,22 @@ class Profile extends Component {
     return (
       <div>
         <section style={{minHeight: 1080}}>
-          {hasLoadedRemoteUserObject && <div>
+          {hasLoadedRemoteUserObject
+            && 
+          <div>
+            <BanModal
+              isVisible={this.state.isBanModalOpen}
+              isBanSubmitDisabled={this.state.banReason.length <= 10}
+              banReason={this.state.banReason}
+              onCloseBanModal={() => this.handleBanModalStatusToggle()}
+              onSubmitBanModal={() => this.handleBanStatusToggle()}
+              onBanReasonInputChange={(e) => this.setState({
+                banReason: e.target.value
+              })}
+              onBanDurationInputChange={(value) => this.setState({
+                banDuration: value
+              })}
+            />
             <ProfileHero
               style={{
                 marginTop: '-31px'
@@ -182,6 +309,7 @@ class Profile extends Component {
               <ProfileMetaBar
                 followersCount={remoteUserFollowObject.follower_count}
                 followingCount={remoteUserFollowObject.following_count}
+                username={match.params.username}
               />
             </Layout>
             
@@ -194,8 +322,21 @@ class Profile extends Component {
                 votingPower={votingPower}
                 voteValue={voteValue}
                 signupDate={signupDate}
-                onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
                 user={knacksteemUserObject}
+                banReason={this.state.banReason}
+                banDuration={this.state.banDuration}
+                onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
+                onBanButtonClick={() => this.handleBanStatusToggle()}
+                isModerator={
+                  Object.keys(userObject).length > 0 ? 
+                    userObject.roles.includes('moderator') :
+                    false
+                }
+                isSupervisor={
+                  Object.keys(userObject).length > 0 ? 
+                    userObject.roles.includes('supervisor') :
+                    false
+                }
               />
 
               <div
