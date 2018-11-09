@@ -90,7 +90,7 @@ class KnackHeader extends React.Component {
               <Link to="/new"><Icon  style={{fontSize: '22px'}} type="edit"  /></Link>
             </Col>
             }
-            {!user.username && <a href={this.getOathURL()}><Button>Login</Button></a>}
+            {!user.username && <a href={this.getOathURL()}><Button style={{backgroundColor: '#22429d', color: '#fff' }}>Login</Button></a>}
             {user.username &&
             <Col className="ml">
               <span className="mx-auto ml" style={{ marginRight: 24 }}>

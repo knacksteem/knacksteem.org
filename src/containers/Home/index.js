@@ -10,7 +10,7 @@ import ContributionMetaBar from '../Home/ContributionMetaBar'
 import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
 import {getRemoteUserData} from '../../actions/user';
 import { repLog10 } from '../../services/functions';
-import Cookies from 'js-cookie';
+
 
 const styles = {
   articlesList: {display: 'flex', flexDirection: 'column', width: '50%'}
@@ -46,7 +46,7 @@ class Home extends Component {
 //get User data
   loadRemoteUserData() {
     const {dispatch} = this.props;
-    dispatch(getRemoteUserData('sirfreeman'));
+    dispatch(getRemoteUserData('knacksteemtest'));
   
   }
 
@@ -108,7 +108,7 @@ class Home extends Component {
       name = remoteUserObjectMeta.name;
       coverImage = remoteUserObjectMeta.cover_image;
       reputation = repLog10(parseFloat(remoteUserObject.reputation)); 
-      console.log(name);
+      console.log(remoteUserObjectMeta);
     }  
     
 
@@ -118,10 +118,10 @@ class Home extends Component {
           <Row type="flex" className="home-inner-container" justify="center">
               <Row type="flex" className="contribution-container">
                 <Col>
-                  <ContributionMetaBar metaImage={coverImage} reputation={reputation} name={name} />
+                  <ContributionMetaBar metaImage={coverImage} reputation={reputation} name={name} username={'sirfreeman'}/>
                 </Col>
               </Row>
-              <Row className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+              <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
                 {articles.data.map((data) => {
                   return (
                     <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />

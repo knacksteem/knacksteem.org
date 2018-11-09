@@ -155,7 +155,7 @@ class Editor extends Component {
     const {isMarkdownEditorActive} = this.state;
     return (
 
-      <div className={`editor ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
+      <div style={{marginTop: '100px'}} className={`editor ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
         <h3>Title</h3>
         {!isComment && <Input style={{
           backgroundColor: '#eee', 

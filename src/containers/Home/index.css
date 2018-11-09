@@ -10,3 +10,23 @@
 .home-inner-container {
     justify-items: space-between !important;
 }
+
+@media (max-width: 768px) {
+  .announcement-container,
+  .contribution-container {
+      display: none !important;
+  }
+  .item-feed {
+      width: 100% !important;
+  }
+}
+
+@media (max-width: 928px) {
+    .announcement-container,
+    .contribution-container {
+        display: none !important;
+    }
+    .item-feed {
+        width: 100% !important;
+    }
+  }

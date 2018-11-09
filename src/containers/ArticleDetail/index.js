@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
-import {Layout, Divider, Spin, Tag} from 'antd';
+import {Layout, Divider, Spin, Tag, Row, Col} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
@@ -84,9 +84,9 @@ class ArticleDetail extends Component {
     }
 
     return (
-      <div id="article-body">
-        <Layout id="article-detail">
-          <Content className="article-detail">
+      <Row id="article-body" style={{width: '80%', margin: 'auto', marginTop: '100px'}}>
+        <Row type="flex" justify="center" id="article-detail">
+          <Row className="article-detail">
             {!isEditMode && <h1>{data.title}</h1>}
             <div className="article-author">Author: {data.author}</div>
             <div className="article-category">Category: {data.category}</div>
@@ -106,14 +106,9 @@ class ArticleDetail extends Component {
             <Divider/>
             {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
             <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
-          </Content>
-        </Layout>
-        {/*
-        <Layout id="article-announcements">
-          Announcements
-        </Layout>
-        */}
-      </div>
+          </Row>
+        </Row>
+      </Row>
     );
   }
 }

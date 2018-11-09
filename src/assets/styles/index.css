@@ -33,15 +33,17 @@ div, p, span, img {
   padding: 0;
 }
 
+.ant-card-body {
+  padding: 10px;
+  zoom: 1;
+}
+
 #page-layout > .ant-layout-footer {
   box-shadow: inset 0px 1px 1px 0px rgba(0,0,0, 0.2);
   padding: 3px;
   width: 100%;
 }
 
-a {
-  font-weight: bold;
-}
 
 a:hover {
   color: #22429d !important;
