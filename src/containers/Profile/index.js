@@ -39,6 +39,7 @@ const styles = {
 
 const BanModal = (props) => {
   const {
+    name,
     isVisible,
     onCloseBanModal,
     onBanDurationInputChange,
@@ -50,7 +51,7 @@ const BanModal = (props) => {
   return (
     <Modal
       visible={isVisible}
-      title="Really Ban Kay?"
+      title={`Really Ban ${name}?`}
       onOk={onSubmitBanModal}
       onCancel={onCloseBanModal}
       footer={[
@@ -84,6 +85,7 @@ BanModal.propTypes = {
   isBanSubmitDisabled: PropTypes.bool,
   isVisible: PropTypes.bool,
   banReason: PropTypes.string,
+  name: PropTypes.string,
   onCloseBanModal: PropTypes.func,
   onBanDurationInputChange: PropTypes.func,
   onBanReasonInputChange: PropTypes.func,
@@ -223,7 +225,6 @@ class Profile extends Component {
 
   componentDidMount() {
     let { category } = queryString.parse(this.props.location.search);
-    console.log(category);
 
     this.loadArticlesUser(category);
     this.loadSteemRewardFunds();
@@ -299,6 +300,7 @@ class Profile extends Component {
             && 
           <div>
             <BanModal
+              name={displayName}
               isVisible={this.state.isBanModalOpen}
               isBanSubmitDisabled={this.state.banReason.length <= 10}
               banReason={this.state.banReason}
