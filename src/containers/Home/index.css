@@ -10,6 +10,10 @@
 .home-inner-container {
     justify-items: space-between !important;
 }
+.select-container {
+    display: flex;
+    justify-content: center;
+}
 
 @media (max-width: 768px) {
   .announcement-container,
@@ -28,5 +32,9 @@
     }
     .item-feed {
         width: 100% !important;
+    }
+
+    .mobile-select {
+        display: flex !important;
     }
   }

@@ -3,17 +3,25 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Spin, Row, Col } from 'antd';
+import {Layout, Spin, Row, Col, Select } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import AnnouncementMetaBar from '../Home/AnnouncementMetaBar'
 import ContributionMetaBar from '../Home/ContributionMetaBar'
 import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
 import {getRemoteUserData} from '../../actions/user';
 import { repLog10 } from '../../services/functions';
+const Option = Select.Option;
+
 
 
 const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column', width: '50%'}
+  articlesList: {display: 'flex', flexDirection: 'column', width: '50%'},
+  barIcon: {
+    fontSize: '16px',
+    color: '#999',
+    marginRight: '20px',
+    fontWeight: 'bold'
+  }
 };
 
 //Article Overview
@@ -115,6 +123,31 @@ class Home extends Component {
 
     return (
         <Layout className="home-container" justify="center">
+          <Row type="flex" className="mobile-select" justify="center" style={{marginBottom: '20px', display: 'none'}}>
+            <Col className="select-container" style={{width: '70%'}}>
+              <Select
+                style={{margin: 'auto', width: '100%'}}
+                showSearch
+                size={'large'}
+                placeholder="Select from the list"
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              >
+              <Option value="contribution"><i style={styles.barIcon} className="fas fa-bookmark"/>Contribution</Option>
+              <Option value="review"><i style={styles.barIcon} className="fas fa-bookmark"/>Review</Option>
+              <Option value="sponsor"><i style={styles.barIcon} className="fas fa-bookmark"/>Sponsor</Option>
+              <Option value="moderator"><i style={styles.barIcon} className="fas fa-bookmark"/>Moderator</Option>
+              <Option value="pending"><i style={styles.barIcon} className="fas fa-bookmark"/>Pending</Option>
+              <Option value="reserved"><i style={styles.barIcon} className="fas fa-bookmark"/>Reserved</Option>
+              <Option value="guidelines"><i style={styles.barIcon} className="fas fa-bookmark"/>Guidelines</Option>
+              <Option value="faq"><i style={styles.barIcon} className="fas fa-bookmark"/>FAQ</Option>
+              <Option value="tos"><i style={styles.barIcon} className="fas fa-bookmark"/>TOS</Option>
+              <Option value="announcement"><i style={styles.barIcon} className="fas fa-bookmark"/>Announcement</Option>
+              
+              </Select>
+            </Col>
+            
+          </Row>
           <Row type="flex" className="home-inner-container" justify="center">
               <Row type="flex" className="contribution-container">
                 <Col>
