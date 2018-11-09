@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Dropdown, Icon, Layout, Menu } from 'antd';
+import { Affix, Button, Dropdown, Icon, Layout, Menu } from 'antd';
 import './ProfileInfoBar.css';
 
 const styles = {
@@ -44,7 +44,7 @@ const ProfileInfoBar = (props) => {
 
   return (
     <div style={{...style}} className="profile-info-bar">
-      <Layout.Sider width={250} style={{ background: '#fff' }}>
+      <Layout.Sider width={250} style={{ background: '#fff', width: '100%' }}>
         <div className="profile-info-bar-container">
           {(about !== undefined && about.length > 0) &&   
             <h4 className="profile-info-bar-title">{about}</h4>

@@ -48,7 +48,7 @@ const ProfileMetaBar = (props) => {
               </Menu>
             </div>
 
-            <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+            <div style={{ display: 'inline-block', marginLeft: '50px' }}>
               <Button href={`https://steemit.com/@${username}/settings`} size="large" style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
                 Edit profile
               </Button>

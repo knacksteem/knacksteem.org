@@ -5,7 +5,12 @@ import { Button, Layout, Menu } from 'antd';
 import './ProfileCategoriesBar.css';
 
 const ProfileCategoriesBar = (props) => {
-  const {style, categories} = props;
+  const {
+    style,
+    activeCategory,
+    categories,
+    username
+  } = props;
 
   return (
     <div style={{...style}} className="profile-categories-bar">
@@ -13,11 +18,14 @@ const ProfileCategoriesBar = (props) => {
         <div className="profile-categories-bar-container">
           <h2 className="profile-categories-bar-title">Categories</h2>
 
-          <Menu style={{height: '100%', borderRight: 0, marginTop: '10px'}}>
+          <Menu
+            style={{height: '100%', borderRight: 0, marginTop: '10px'}}
+            defaultSelectedKeys={[`/${activeCategory}`]}
+          >
             {categories.length > 0 && categories.map((elem) => {
               return (
-                <Menu.Item key={`/categories/${elem.key}`}>
-                  <Link to={`/categories/${elem.key}`}>
+                <Menu.Item key={`/${elem.key}`}>
+                  <Link to={`/@${username}?category=${elem.key}`}>
                     <span className="profile-info-bar-label">{elem.name}</span>
                   </Link>
                 </Menu.Item>
@@ -41,8 +49,9 @@ const ProfileCategoriesBar = (props) => {
 
 ProfileCategoriesBar.propTypes = {
   style: PropTypes.object,
-  user: PropTypes.object,
-  categories: PropTypes.array
+  categories: PropTypes.array,
+  activeCategory: PropTypes.string,
+  username: PropTypes.string
 };
 
 export default ProfileCategoriesBar;

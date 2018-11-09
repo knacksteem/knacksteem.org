@@ -99,12 +99,12 @@ export const getArticlesByUser = (skip, search) => {
   };
 };
 
-export const getArticlesByUsername = (username, skip, search) => {
+export const getArticlesByUsername = (username, skip, search, category = '') => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
       skip: skip || undefined,
-      category: ''
+      category
     });
 
     //get user articles from server
@@ -113,7 +113,8 @@ export const getArticlesByUsername = (username, skip, search) => {
         username: username || undefined,
         author: username,
         skip: skip || undefined, //skip elements for paging
-        search: search || undefined
+        search: search || undefined,
+        category: category || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,

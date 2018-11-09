@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import queryString from 'query-string';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import { Button, Input, InputNumber, Layout, Spin, Modal } from 'antd';
@@ -30,7 +31,7 @@ const styles = {
   articlesList: {
     display: 'flex',
     flexDirection: 'column',
-    width: '90%',
+    width: '80%',
     margin: '0 15px'
 
   }
@@ -179,10 +180,19 @@ class Profile extends Component {
     dispatch(moderateUser(match.params.username, intention));
   }
 
-  loadArticlesUser() {
+  loadArticlesUser(category) {
     const {dispatch, match} = this.props;
+    const skip = 0;
+    const search = undefined;
 
-    dispatch(getArticlesByUsername(match.params.username));
+    dispatch(
+      getArticlesByUsername(
+        match.params.username,
+        skip,
+        search,
+        category
+      )
+    );
   }
 
   loadSteemRewardFunds() {
@@ -212,7 +222,10 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    this.loadArticlesUser();
+    let { category } = queryString.parse(this.props.location.search);
+    console.log(category);
+
+    this.loadArticlesUser(category);
     this.loadSteemRewardFunds();
     this.loadCurrentMedianHistoryPrice();
     this.loadDynamicGlobalProperties();
@@ -243,6 +256,8 @@ class Profile extends Component {
       dynamicGlobalPropertiesObject,
       currentMedianHistoryPriceObject
     ]);
+
+    const activeCategory = queryString.parse(this.props.location.search).category;
 
     if (hasLoadedRemoteUserObject) {
       signupDate = fecha.format(
@@ -345,7 +360,11 @@ class Profile extends Component {
               >
                 {articles.data.map((data) => {
                   return (
-                    <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticlesUser} />
+                    <ArticleListItem
+                      key={data.permlink}
+                      data={data}
+                      onUpvoteSuccess={this.loadArticlesUser}
+                    />
                   );
                 })}
               </div>
@@ -356,7 +375,11 @@ class Profile extends Component {
                 </div>
               )}
 
-              <ProfileCategoriesBar categories={articles.categories}/>
+              <ProfileCategoriesBar
+                activeCategory={activeCategory}
+                categories={articles.categories}
+                username={match.params.username}
+              />
 
               {articles.isBusy && <Layout><Spin/></Layout>}
             </Layout>
