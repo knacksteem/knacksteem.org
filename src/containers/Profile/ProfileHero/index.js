@@ -11,14 +11,24 @@ let styles = {
   }
 };
 
-const ProfileHero = (props) => {
-  let {
-    style,
-    name,
-    username,
-    reputation,
-    coverImage
-  } = props;
+/**
+ * Displays the information about a user in a prominent hero area.
+ * 
+ * @param {Object}  Object.style      - Style attributes.
+ * @param {String}  Object.name       - Profile user's name.
+ * @param {String}  Object.username   - Profile user's username.
+ * @param {Integer} Object.reputation - Profile user's reputation score.
+ * @param {String}  Object.coverImage - Profile user's cover image URL.
+ * 
+ * @return {Object<JSXElement>}
+ */
+const ProfileHero = ({
+  style,
+  name,
+  username,
+  reputation,
+  coverImage
+}) => {
 
   if (typeof coverImage === 'undefined' || coverImage === '') {
     coverImage = coverFallbackImage;

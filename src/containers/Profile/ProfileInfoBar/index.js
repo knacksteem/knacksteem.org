@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Affix, Button, Dropdown, Icon, Layout, Menu } from 'antd';
+import { Button, Dropdown, Icon, Layout, Menu } from 'antd';
 import './ProfileInfoBar.css';
 
 const styles = {
@@ -25,23 +25,42 @@ const styles = {
   }
 };
 
-const ProfileInfoBar = (props) => {
-  const {
-    style,
-    isSupervisor,
-    isModerator,
-    signupDate,
-    about,
-    location,
-    name,
-    votingPower,
-    voteValue,
-    website,
-    onModChoiceSelect,
-    onBanButtonClick,
-    user
-  } = props;
-
+/**
+ * Displays information for a user's profile.
+ * 
+ * @param {Object}    Object.style                - Style attributes for this SFC.
+ * @param {Boolean}   Object.isSupervisor         - Is the logged in user a supervisor?
+ * @param {Boolean}   Object.isModerator          - Is the logged in user a moderator?
+ * @param {String}    Object.signupDate           - Profile user sign up date.
+ * @param {String}    Object.about                - Profile user bio.
+ * @param {String}    Object.location             - Profile user location.
+ * @param {String}    Object.name                 - Profile user name.
+ * @param {Double}    Object.votingPower          - Profile user levels of voting power.
+ * @param {Double}    Object.voteValue            - Profile user vote worth.
+ * @param {String}    Object.website              - Profile user website (if provided). 
+ * @param {Function}  Object.onModChoiceSelect    - Callback function called when the moderator
+ *                                                  choice is changed.
+ * @param {Function}  Object.onBanButtonClick     - Callback function called when the ban button
+ *                                                  is clicked.
+ * @param {Object}    Object.user                 - The logged in user object.
+ * 
+ * @return {Object}
+ */
+const ProfileInfoBar = ({
+  style,
+  isSupervisor,
+  isModerator,
+  signupDate,
+  about,
+  location,
+  name,
+  votingPower,
+  voteValue,
+  website,
+  onModChoiceSelect,
+  onBanButtonClick,
+  user
+}) => {
   return (
     <div style={{...style}} className="profile-info-bar">
       <Layout.Sider width={250} style={{ background: '#fff', width: '100%' }}>

@@ -4,9 +4,22 @@ import PropTypes from 'prop-types';
 import { Layout, Button, Icon, Menu } from 'antd';
 import './ProfileMetaBar.css';
 
-const ProfileMetaBar = (props) => {
-  const {style, followingCount, followersCount, username} = props;
-
+/**
+ * Displays meta information about the profile user.
+ * 
+ * @param {Object}  Object.style          - Style attributes for this SFC.
+ * @param {Integer} Object.followingCount - Total Steemians following the profile user.  
+ * @param {Integer} Object.followersCount - Profile user total followers.
+ * @param {Integer} Object.username       - Profile user's username followers.
+ * 
+ * @return {Object<JSXElement>}
+ */
+const ProfileMetaBar = ({
+  style,
+  followingCount,
+  followersCount,
+  username
+}) => {
   return (
     <div style={{...style}} className="profile-meta-bar">
       <Layout className="content-layout">

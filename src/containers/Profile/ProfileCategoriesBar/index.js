@@ -4,13 +4,22 @@ import { Link } from 'react-router-dom';
 import { Button, Layout, Menu } from 'antd';
 import './ProfileCategoriesBar.css';
 
-const ProfileCategoriesBar = (props) => {
-  const {
-    style,
-    activeCategory,
-    categories,
-    username
-  } = props;
+/**
+ * Displays available categories within the profile.
+ * 
+ * @param {Object}  Object.style          - Style attributes for this SFC.
+ * @param {String}  Object.activeCategory - The category that is currently active.
+ * @param {Array}   Object.categories     - Array of categories available.
+ * @param {String}  Object.username       - Profile user's username.
+ * 
+ * @returns {Object<JSXElement>}
+ */
+const ProfileCategoriesBar = ({
+  style,
+  activeCategory,
+  categories,
+  username
+}) => {
 
   return (
     <div style={{...style}} className="profile-categories-bar">
