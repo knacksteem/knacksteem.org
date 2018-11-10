@@ -104,7 +104,10 @@ export const getArticlesByUser = (skip, search) => {
  * @param search search string
  */
 export const getArticlesModeration = (route, skip, search) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+
+    const store = getState();
+
     dispatch({
       type: types.ARTICLES_REQUEST,
       skip: skip || undefined,
@@ -115,7 +118,8 @@ export const getArticlesModeration = (route, skip, search) => {
     try {
       let response = await apiGet(`/stats${route}`, {
         skip: skip || undefined, //skip elements for paging
-        search: search || undefined
+        search: search || undefined,
+        username: store.user.isSupervisor ? undefined : store.user.username
       });
       dispatch({
         type: types.ARTICLES_GET,
