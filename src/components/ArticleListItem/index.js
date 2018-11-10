@@ -31,11 +31,13 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
         </Link>
       </div>
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
-      {(status === 'pending' || status === 'reserved') &&
+      {(status === 'pending') &&
         <div className="mod-functions">
-          {(status === 'pending') &&
-            <Button size="small" type="secondary" onClick={onReserveClick}>Reserve</Button>
-          }
+            <Button size="small" type="primary" onClick={onReserveClick}>Reserve for review</Button>
+        </div>
+      }
+      {(status === 'reserved') &&
+        <div className="mod-functions">
           <Button size="small" type="primary" onClick={onApproveClick}>Approve</Button>
           <Button size="small" type="danger" onClick={onRejectClick}>Reject</Button>
         </div>
