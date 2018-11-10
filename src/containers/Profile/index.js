@@ -3,10 +3,18 @@ import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
-import { Button, Input, InputNumber, Layout, Spin, Modal } from 'antd';
+import { Layout, Spin } from 'antd';
 import fecha from 'fecha';
 
+// Profile core components.
+import ProfileCategoriesBar from './ProfileCategoriesBar';
+import ProfileInfoBar from './ProfileInfoBar';
+import ProfileHero from './ProfileHero';
+import ProfileMetaBar from './ProfileMetaBar';
+
 import ArticleListItem from '../../components/ArticleListItem';
+import BanModal from '../../components/BanModal';
+
 import {getArticlesByUsername} from '../../actions/articles';
 import {
   getKnacksteemUserData,
@@ -20,100 +28,51 @@ import {
   getDynamicGlobalProperties,
   moderateUser
 } from '../../actions/stats';
-import { calculateVotePower, calculateVoteValue, uppercaseFirst, repLog10 } from '../../services/functions';
+import {
+  calculateVotePower,
+  calculateVoteValue,
+  containsEmptyMap,
+  uppercaseFirst,
+  repLog10
+} from '../../services/functions';
 
-import ProfileCategoriesBar from './ProfileCategoriesBar';
-import ProfileInfoBar from './ProfileInfoBar';
-import ProfileHero from './ProfileHero';
-import ProfileMetaBar from './ProfileMetaBar';
-
+// CSS styles in concise maps for reference.
 const styles = {
   articlesList: {
     display: 'flex',
     flexDirection: 'column',
     width: '80%',
     margin: '0 15px'
-
   }
-};
-
-const BanModal = (props) => {
-  const {
-    name,
-    isVisible,
-    onCloseBanModal,
-    onBanDurationInputChange,
-    onBanReasonInputChange,
-    onSubmitBanModal,
-    isBanSubmitDisabled
-  } = props;
-
-  return (
-    <Modal
-      visible={isVisible}
-      title={`Really Ban ${name}?`}
-      onOk={onSubmitBanModal}
-      onCancel={onCloseBanModal}
-      footer={[
-        <Button key="back" onClick={onCloseBanModal}>Cancel</Button>,
-        <Button key="submit" disabled={isBanSubmitDisabled} type="primary" onClick={() => onSubmitBanModal()}>
-          Ban Kay
-        </Button>,
-      ]}
-    >
-      <div style={{ marginBottom: '10px' }}>
-        <label style={{ marginBottom: '5px', display: 'block' }}>Ban reason (minimum of ten words).</label>
-        <Input.TextArea
-          onChange={e => onBanReasonInputChange(e)}
-          rows={4}
-        />
-      </div>
-
-      <div>
-        <label style={{ marginBottom: '5px', display: 'block' }}>Ban duration (in hours)</label>
-        <InputNumber
-          onChange={e => onBanDurationInputChange(e)}
-          min={1}
-          defaultValue={1000}
-        />
-      </div>
-    </Modal>
-  );
-};
-
-BanModal.propTypes = {
-  isBanSubmitDisabled: PropTypes.bool,
-  isVisible: PropTypes.bool,
-  banReason: PropTypes.string,
-  name: PropTypes.string,
-  onCloseBanModal: PropTypes.func,
-  onBanDurationInputChange: PropTypes.func,
-  onBanReasonInputChange: PropTypes.func,
-  onSubmitBanModal: PropTypes.func
-};
-
-BanModal.defaultProps = {
-  isBanSubmitDisabled: false,
-  isVisible: false
-};
-
-const hasLoadedAll = (items) => {
-  return Object.keys(items[0]).length > 0
-        && Object.keys(items[1]).length > 0
-        && Object.keys(items[2]).length > 0
-        && Object.keys(items[3]).length > 0;
 };
 
 class Profile extends Component {
+  propTypes = {
+    location: PropTypes.object,
+    match: PropTypes.object,
+    user: PropTypes.object,
+    dispatch: PropTypes.func,
+    articles: PropTypes.object,
+    stats: PropTypes.object
+  };
+
+  state = {
+    isBanModalOpen: false,
+    banReason: '',
+    banDuration: 1000
+  };
+
   constructor(props) {
     super(props);
-    this.state = {
-      isBanModalOpen: false,
-      banReason: '',
-      banDuration: 1000
-    };
   }
 
+  /**
+   * Toggles the ban modal visibility on and off.
+   * 
+   * @method handleBanModalStatusToggle
+   * 
+   * @return {void}
+   */
   handleBanModalStatusToggle() {
     this.setState(({ isBanModalOpen }) => {
       return {
@@ -122,6 +81,13 @@ class Profile extends Component {
     });
   }
 
+  /**
+   * Toggles the ban status of a user.
+   * 
+   * @method handleBanStatusToggle
+   * 
+   * @return {void}
+   */
   handleBanStatusToggle() {
     const {dispatch, match, user} = this.props;
     const { banDuration, banReason } = this.state;
@@ -129,9 +95,7 @@ class Profile extends Component {
 
     const intention = knacksteemUserObject.isBanned ? 'unban' : 'ban';
 
-    if (intention === 'ban'
-      && this.state.banReason.length <= 10
-    ) {
+    if (intention === 'ban' && banReason.length <= 10) {
       this.setState({
         isBanModalOpen: true
       });
@@ -160,6 +124,15 @@ class Profile extends Component {
     }
   }
 
+  /**
+   * Sets or removes moderation roles. Sets user as moderator or supervisor.
+   * 
+   * @method handleModChoiceSelect
+   * @param {String} choice - Moderator choice selected. Example: 'moderator' or 'supervisor'. 
+   * @param {String} action - Action to carry out. Example: 'remove' or 'add'.
+   * 
+   * @return {void}
+   */
   handleModChoiceSelect(choice, action) {
     const {dispatch, match, user} = this.props;
     const {knacksteemUserObject} = user;
@@ -182,6 +155,14 @@ class Profile extends Component {
     dispatch(moderateUser(match.params.username, intention));
   }
 
+  /**
+   * Load articles created by a specified user from the Knacksteem backend.
+   * 
+   * @method loadArticlesUser
+   * @param {String} category - Category of user articles to load.
+   * 
+   * @return {void}
+   */
   loadArticlesUser(category) {
     const {dispatch, match} = this.props;
     const skip = 0;
@@ -197,24 +178,52 @@ class Profile extends Component {
     );
   }
 
+  /**
+   * Load STEEM reward funds from the STEEM api.
+   * 
+   * @method loadSteemRewardFunds
+   * 
+   * @return {void}
+   */
   loadSteemRewardFunds() {
     const {dispatch} = this.props;
 
     dispatch(getRewardFund());
   }
 
+  /**
+   * Loads the current median history price for STEEM from the STEEM api.
+   * 
+   * @method loadCurrentMedianHistoryPrice
+   * 
+   * @return {void}
+   */
   loadCurrentMedianHistoryPrice() {
     const {dispatch} = this.props;
 
     dispatch(getCurrentMedianHistoryPrice());
   }
 
+  /**
+   * Loads dynamic global properties for STEEM from the STEEM api.
+   * 
+   * @method loadDynamicGlobalProperties
+   * 
+   * @return {void}
+   */
   loadDynamicGlobalProperties() {
     const {dispatch} = this.props;
 
     dispatch(getDynamicGlobalProperties());
   }
 
+  /**
+   * Loads user data from the Knacksteem backend for the profile being viewed.
+   * 
+   * @method loadRemoteUserData
+   * 
+   * @return {void}
+   */
   loadRemoteUserData() {
     const {dispatch, match} = this.props;
 
@@ -250,7 +259,7 @@ class Profile extends Component {
     const {articles, user, stats, match} = this.props;
     const { userObject, remoteUserObject, knacksteemUserObject, remoteUserFollowObject } = user;
     const { rewardFundObject, dynamicGlobalPropertiesObject, currentMedianHistoryPriceObject } = stats;
-    const hasLoadedRemoteUserObject = hasLoadedAll([
+    const hasLoadedRemoteUserObject = !containsEmptyMap([
       knacksteemUserObject,
       remoteUserObject,
       rewardFundObject,
@@ -260,6 +269,7 @@ class Profile extends Component {
 
     const activeCategory = queryString.parse(this.props.location.search).category;
 
+    // If we've loaded all core objects...
     if (hasLoadedRemoteUserObject) {
       signupDate = fecha.format(
         fecha.parse(
@@ -392,15 +402,6 @@ class Profile extends Component {
     );
   }
 }
-
-Profile.propTypes = {
-  location: PropTypes.object,
-  match: PropTypes.object,
-  user: PropTypes.object,
-  dispatch: PropTypes.func,
-  articles: PropTypes.object,
-  stats: PropTypes.object
-};
 
 const mapStateToProps = state => ({
   articles: state.articles,

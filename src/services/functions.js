@@ -215,7 +215,7 @@ export const calculateVoteValue = ({
 /**
  * Returns a string with first character in uppercase.
  * 
- * @param {String} str
+ * @param {String} str  - String to be transformed.
  * 
  * @return {String}
  */
@@ -234,11 +234,11 @@ export function uppercaseFirst(str) {
  * @return {Boolean}
  */
 export function containsEmptyMap(maps) {
-  let foundEmptyMap = true;
+  let foundEmptyMap = false;
   
   maps.forEach(function (item) {
     if (!Object.keys(item).length) {
-      foundEmptyMap = false;
+      foundEmptyMap = true;
     }
   });
   
