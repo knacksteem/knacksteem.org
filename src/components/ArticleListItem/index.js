@@ -4,12 +4,16 @@ import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {Button} from 'antd';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
-import {approveArticle, rejectArticle} from '../../actions/articles';
+import {reserveArticle, approveArticle, rejectArticle} from '../../actions/articles';
 import './index.css';
 
 //Single Item for Article Overview
 const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
-  //approve the current article with an api call and reload the pending articles for redux
+  //reserve the current article with an api call and reload the pending articles for redux
+  const onReserveClick = () => {
+    dispatch(reserveArticle(data.permlink, status));
+  };
+  //approve the current article
   const onApproveClick = () => {
     dispatch(approveArticle(data.permlink, status));
   };
@@ -29,6 +33,9 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
       {(status === 'pending' || status === 'reserved') &&
         <div className="mod-functions">
+          {(status === 'pending') &&
+            <Button size="small" type="secondary" onClick={onReserveClick}>Reserve</Button>
+          }
           <Button size="small" type="primary" onClick={onApproveClick}>Approve</Button>
           <Button size="small" type="danger" onClick={onRejectClick}>Reject</Button>
         </div>
