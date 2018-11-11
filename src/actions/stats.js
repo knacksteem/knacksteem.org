@@ -142,3 +142,30 @@ export const getDynamicGlobalProperties = (method='get') => {
     }
   };
 };
+
+export const getUserListBySearch = (skip, search) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.USERLIST_REQUEST
+    });
+
+    try {
+      //get user details from database, including the user role (supervisor, moderator, contributor)
+      let response = await apiGet('/stats/users', {
+        skip: skip || 0,
+        search: search || undefined
+      });
+
+      dispatch({
+        type: types.USERLIST_GET_SEARCH,
+        payload: response.data.results
+      });
+    } catch (error) {
+      window.console.log(error);
+      dispatch({
+        type: types.USERLIST_GET_SEARCH,
+        payload: []
+      });
+    }
+  };
+};
