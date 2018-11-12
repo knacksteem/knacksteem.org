@@ -43,8 +43,13 @@ img {
   width: 100%;
 }
 
-a {
-  font-weight: bold;
+#content-layout,
+.content-layout {
+  width: 100%;
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 0 2rem;
+  align-items: flex-start;
 }
 
 a:hover {

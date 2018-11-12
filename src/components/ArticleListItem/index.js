@@ -55,11 +55,11 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
         }
         <Row gutter={0} style={{ width: 'calc(100% - 200px)' }}>
           <div className="article-content-wrapper">
-            <Link to={`/articles/${data.author}/${data.permlink}`}>
+            <Link to={`/articles/${data.author}/${data.permlink}`} style={{ padding: 0 }}>
               <h2 className="ant-list-item-title">{data.title}</h2>
             </Link>
-            <Link to={`/articles/${data.author}/${data.permlink}`}>
-              <div className="ant-list-item-content">{truncateString(data.description, 60)}</div>
+            <Link to={`/articles/${data.author}/${data.permlink}`} style={{ padding: 0 }}>
+              <div className="ant-list-item-content">{truncateString(data.description, 85)}</div>
             </Link>
           </div>
         </Row>

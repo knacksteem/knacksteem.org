@@ -4,6 +4,7 @@ export const USER_GET = 'USER_GET';
 export const USER_LOGOUT = 'USER_LOGOUT';
 export const REMOTE_USER_GET = 'REMOTE_USER_GET';
 export const REMOTE_USER_FOLLOW_GET = 'REMOTE_USER_FOLLOW_GET';
+export const KNACKSTEEM_USER_GET = 'KNACKSTEEM_USER_GET';
 
 //articles
 export const CATEGORIES_GET = 'CATEGORIES_GET';

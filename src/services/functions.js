@@ -72,6 +72,13 @@ function log10(str) {
   return n + (log - parseInt(log, 10));
 }
 
+/**
+ * Returns a representation of a decimal digit to log10.
+ * 
+ * @param {Double} rep2 - Value to be represented.
+ * 
+ * @return {Double}
+ */
 export const repLog10 = rep2 => {
   if(rep2 == null) return rep2;
   let rep = String(rep2);
@@ -88,6 +95,15 @@ export const repLog10 = rep2 => {
   return out;
 };
 
+/**
+ * Converts vests to STEEM.
+ * 
+ * @param {String}  vestingShares               -  Total vesting shares.
+ * @param {String}  totalVestingShares          -  Vesting shares for user.
+ * @param {String}  totalVestingFundSteem       -  Total vesting funds in STEEM.
+ * 
+ * @return {Double}
+ */
 function vestToSteem (
   vestingShares,
   totalVestingShares,
@@ -98,7 +114,20 @@ function vestToSteem (
   );
 }
 
-function calculateTotalVests (vestingShares, delegatedVestingShares, receivedVestingShares) {
+/**
+ * Calculates the total number of vests.
+ * 
+ * @param {String}  vestingShares               -  Total vesting shares.
+ * @param {String}  delegatedVestingShares      -  Total of delegated vesting shares.
+ * @param {String}  receivedVestingShares       -  Total of received vesting shares.
+ * 
+ * @return {Double}
+ */
+function calculateTotalVests (
+  vestingShares,
+  delegatedVestingShares,
+  receivedVestingShares
+) {
   const vestingSharesParts = vestingShares.split(' ');
 
   const receivedSharesParts = receivedVestingShares.split(' ');
@@ -113,6 +142,14 @@ function calculateTotalVests (vestingShares, delegatedVestingShares, receivedVes
   return vests;
 }
 
+/**
+ * Calculates the vote power for a user.
+ * 
+ * @param {Integer} votingPower   -  Available voting power at the time. 
+ * @param {Date}    lastVoteTime  -  Time at which the last vote was cast for a user.
+ * 
+ * @return {Object}
+ */
 export const calculateVotePower = (votingPower, lastVoteTime) => {
   let secondsAgo = (new Date() - new Date(lastVoteTime + 'Z')) / 1000;
   let vp = votingPower + (10000 * secondsAgo / 432000);
@@ -124,6 +161,22 @@ export const calculateVotePower = (votingPower, lastVoteTime) => {
   };
 };
 
+/**
+ * Calculates the value of a users vote.
+ * 
+ * @param {Integer} votingPower                 -  Available voting power at the time. 
+ * @param {Date}    lastVoteTime                -  Time at which the last vote was cast for a user.
+ * @param {Double}  rewardBalance               -  Total reward pool at the time.
+ * @param {Object}  recentClaims                -  List of recent claims from the reward pool.
+ * @param {Double}  currentMedianHistoryPrice   -  Median price for recent transactions.
+ * @param {String}  vestingShares               -  Total vesting shares.
+ * @param {String}  delegatedVestingShares      -  Total of delegated vesting shares.
+ * @param {String}  receivedVestingShares       -  Total of received vesting shares.
+ * @param {String}  totalVestingFundSteem       -  Total vesting funds in STEEM.
+ * @param {String}  totalVestingShares          -  Vesting shares for user.
+ * 
+ * @return {Double}
+ */
 export const calculateVoteValue = ({
   votingPower,
   lastVoteTime,
@@ -158,3 +211,36 @@ export const calculateVoteValue = ({
 
   return (vote / 100).toFixed(2);
 };
+
+/**
+ * Returns a string with first character in uppercase.
+ * 
+ * @param {String} str  - String to be transformed.
+ * 
+ * @return {String}
+ */
+export function uppercaseFirst(str) {
+  return str
+    .charAt(0)
+    .toUpperCase()
+    .concat(str.slice(1, str.length));
+}
+
+/**
+ * Checks for empty objects in an array.
+ * 
+ * @param {Array<Object>} maps  - Array of maps (objects) to be checked.
+ * 
+ * @return {Boolean}
+ */
+export function containsEmptyMap(maps) {
+  let foundEmptyMap = false;
+  
+  maps.forEach(function (item) {
+    if (!Object.keys(item).length) {
+      foundEmptyMap = true;
+    }
+  });
+  
+  return foundEmptyMap;
+}
