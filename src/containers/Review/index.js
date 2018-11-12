@@ -51,7 +51,7 @@ class Review extends Component {
     dispatch(getArticlesModeration(location.pathname, skip, search));
   };
   render() {
-    const {articles, location} = this.props;
+    const {articles, location, user} = this.props;
 
     return (
       <div>
@@ -66,7 +66,7 @@ class Review extends Component {
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articles.data.map((data) => {
               return (
-                <ArticleListItem key={data.permlink} data={data} status={location.pathname.replace('/moderation/', '')} onUpvoteSuccess={this.loadArticles} />
+                <ArticleListItem key={data.permlink} data={data} user={user} status={location.pathname.replace('/moderation/', '')} onUpvoteSuccess={this.loadArticles} />
               );
             })}
             {(!articles.data.length && !articles.isBusy) && <div>No pending articles...</div>}
@@ -82,10 +82,12 @@ Review.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
-  articles: PropTypes.object
+  articles: PropTypes.object,
+  user: PropTypes.object
 };
 
 const mapStateToProps = state => ({
+  user: state.user,
   articles: state.articles
 });
 
