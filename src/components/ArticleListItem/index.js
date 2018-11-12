@@ -31,12 +31,13 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
         </Link>
       </div>
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
-      {(status === 'reserved' && (user.username !== data.moderation.reservedBy)) && 
-        <div>Reserved for review by {data.moderation.reservedBy}</div>}
-      {(status === 'pending') &&
+      {(status === 'pending' && data.author !== user.username) &&
         <div className="mod-functions">
             <Button size="small" type="primary" onClick={onReserveClick}>Reserve for review</Button>
         </div>
+      }
+      {(status === 'reserved' && (user.username !== data.moderation.reservedBy)) && 
+        <div>Reserved for review by {data.moderation.reservedBy}</div>
       }
       {(status === 'reserved' && user.username === data.moderation.reservedBy) &&
         <div className="mod-functions">
