@@ -307,7 +307,7 @@ class Profile extends Component {
     const { userObject, remoteUserObject, knacksteemUserObject, remoteUserFollowObject } = user;
     const { rewardFundObject, dynamicGlobalPropertiesObject, currentMedianHistoryPriceObject } = stats;
     const hasLoadedRemoteUserObject = !containsEmptyMap([
-      knacksteemUserObject,
+      // knacksteemUserObject,
       remoteUserObject,
       rewardFundObject,
       dynamicGlobalPropertiesObject,
@@ -319,8 +319,6 @@ class Profile extends Component {
     const articlesList = typeof activeCategory !== 'undefined' ?
       articles.data.filter(article => article.category === activeCategory) : 
       articles.data;
-
-    console.log(articlesList);
 
     // If we've loaded all core objects...
     if (hasLoadedRemoteUserObject) {

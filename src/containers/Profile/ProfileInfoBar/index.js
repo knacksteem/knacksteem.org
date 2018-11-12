@@ -107,7 +107,7 @@ const ProfileInfoBar = ({
         </div>
       </Layout.Sider>
 
-      {(Object.keys(user).length) &&
+      {(Object.keys(user).length) > 0 &&
       <Layout.Sider width={250} style={{ background: 'transparent', boxShadow: 'none' }}>
         <div style={{ width: '100%', marginTop: '20px' }}>
           { isSupervisor &&
