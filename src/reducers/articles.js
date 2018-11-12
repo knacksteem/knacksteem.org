@@ -5,6 +5,7 @@ const initialState = {
   currentCategory: '',
   searchString: '',
   data: [],
+  approvedArticles: [],
   categories: []
 };
 

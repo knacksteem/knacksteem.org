@@ -7,10 +7,13 @@ import {Layout, Spin, Row, Col, Select } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import AnnouncementMetaBar from '../Home/AnnouncementMetaBar'
 import ContributionMetaBar from '../Home/ContributionMetaBar'
-import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
+import { getArticlesModeration} from '../../actions/articles';
 import {getRemoteUserData} from '../../actions/user';
+import Cookies from 'js-cookie';
+import SteemConnect from '../../services/SteemConnect';
 import { repLog10 } from '../../services/functions';
 const Option = Select.Option;
+
 
 
 
@@ -31,81 +34,63 @@ class Home extends Component {
     this.state = {
       searchString: ''
     };
+    this.getOathURL = this.getOathURL.bind(this);
   }
-  //scroll handler for lazy loading
-  onScroll = () => {
-    const {searchString} = this.state;
+
+  // //scroll handler for lazy loading
+   onScroll = () => {
     const {articles, location} = this.props;
 
-    //if in loading process, don´t do anything
+   //if in loading process, don´t do anything
     if (articles.isBusy) {
       return;
     }
-    //if user hits bottom, load next batch of items
+  //   //if user hits bottom, load next batch of items
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(articles.data.length, searchString);
-      } else {
-        this.loadArticles(articles.data.length, searchString);
-      }
+        this.loadArticles(articles.data.length);
     }
   };
 //get User data
   loadRemoteUserData() {
-    const {dispatch} = this.props;
-    dispatch(getRemoteUserData('knacksteemtest'));
-  
+    const {dispatch, user} = this.props;
+    dispatch(getRemoteUserData(Cookies.get('username')));
+  }
+
+  getOathURL () {
+    return SteemConnect.getLoginURL();
   }
 
   componentDidMount() {
-    const {location,user} = this.props;
-
-    if (location.pathname === '/mycontributions') {
-      this.loadArticlesUser();
+    const username = Cookies.get('username');
+    if (username === undefined || null){
+      this.loadArticles();
     } else {
       this.loadArticles();
+      this.loadRemoteUserData();
     }
-
-    //on scroll, load the next batch of articles
-    window.addEventListener('scroll', this.onScroll);
-    this.loadRemoteUserData();
+    // //on scroll, load the next batch of articles
+     window.addEventListener('scroll', this.onScroll);
   }
   componentWillUnmount() {
     //remove scroll event again when hitting another route
     window.removeEventListener('scroll', this.onScroll);
   }
-  componentDidUpdate(prevProps, prevState) {
-    const {searchString} = this.state;
-    const {location} = this.props;
-
-    if (prevProps.location.pathname !== location.pathname || searchString !== prevState.searchString) {
-      //location change detected, load new data
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(0, searchString);
-      } else {
-        this.loadArticles(0, searchString);
-      }
-    }
-  }
-  //load general articles
-  loadArticles = (skip = 0, search) => {
-    const {dispatch, match} = this.props;
-
-    dispatch(getArticlesByCategory(match.params.category, skip, search));
-  };
-  //load own contributions
-  loadArticlesUser = (skip = 0, search) => {
+  
+  //load  approved general articles
+  loadArticles = (skip = 0, ) => {
     const {dispatch} = this.props;
 
-    dispatch(getArticlesByUser(skip, search));
+    dispatch(getArticlesModeration('/moderation/approved', skip));
   };
+
   render() {
     let 
       coverImage,
       name,
       reputation,
-      remoteUserObjectMeta;
+      remoteUserObjectMeta,
+      username;
 
     const {articles, user} = this.props
     const { remoteUserObject} = user;
@@ -117,6 +102,7 @@ class Home extends Component {
       coverImage = remoteUserObjectMeta.cover_image;
       reputation = repLog10(parseFloat(remoteUserObject.reputation)); 
       console.log(remoteUserObjectMeta);
+      username = Cookies.get('username');
     }  
     
 
@@ -151,7 +137,7 @@ class Home extends Component {
           <Row type="flex" className="home-inner-container" justify="center">
               <Row type="flex" className="contribution-container">
                 <Col>
-                  <ContributionMetaBar metaImage={coverImage} reputation={reputation} name={name} username={'sirfreeman'}/>
+                  <ContributionMetaBar metaImage={coverImage} reputation={reputation} name={name}  handleLogin={this.getOathURL()} username={username}/>
                 </Col>
               </Row>
               <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>

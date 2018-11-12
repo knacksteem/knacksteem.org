@@ -1,41 +1,59 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Layout, Menu, Row, Col} from 'antd';
+import { Button, Layout, Menu, Row, Col, Badge} from 'antd';
+import defaultCover from '../../../assets/images/cover.jpg';
 import './index.css';
 
 const styles = {
   barIcon: {
     fontSize: '16px',
     color: '#999'
-  }
+  },
+  metaImageContainer: {},
+  userImageContainer: {}
 };
 
+styles.metaImageContainer.backgroundImage = `url(${defaultCover})`;
+
+
 const ContributionMetaBar = (props) => {
-  const {metaImage, name, reputation, username} = props
+  const {metaImage, name, reputation, username, handleLogin} = props
+  styles.userImageContainer.backgroundImage = `url(${metaImage})`;
 
   return (
     <div className="contribution-bar ">
       <Layout style={{ backgroundColor: '#fff' }}>
         <div className="contribution-info-bar-container">
-            
-          <div className="image" style={{width: '200px'}}>
-            <img src={metaImage} style={{width: '100%'}}/>
-            <Row style={{position: 'absolute', top: '140px', marginLeft: '20px'}} type="flex" justify='center' align="middle">
-              <Col >
-                <h1 style={{color: 'blue'}}>{name}</h1>
-              </Col>
-              <Col style={{marginLeft: '10px'}}>
-                <Button style={{fontWeight:'600'}}>{reputation}</Button>
-              </Col>
-              <Col>
-                <Col>
-                  <span style={{color: '#eee'}}>@{username}</span>
+        {username &&
+            <Row type="flex" justify="center"  align="middle" className="image" style={{width: '200px',flexDirection: 'column', ...styles.userImageContainer}}>
+              <Row  type="flex" justify='center' align="middle">
+                <Col >
+                  <h1 style={{color: '#fff', fontWeight: 'bolder', fontSize: '12px'}}>{name}</h1>
                 </Col>
-            </Col>
+                <Col style={{marginLeft: '10px'}}>
+                  <Button  style={{color: '#000', padding: '3px',fontWeight: 'bolder'}}>{reputation}</Button>
+                </Col>
+              </Row>
+              <Row type="flex" justify='center' align="middle">
+                  <Col>
+                    <Col>
+                      <span style={{color: '#eee'}}>@{username}</span>
+                    </Col>
+                  </Col>
+                </Row>
             </Row>
-            
-          </div>
-          
+          }  
+          {!username &&
+
+            <Row type="flex"  justify='center' className="image" style={{width: '200px', ...styles.metaImageContainer}}>
+              <Row type="flex" justify='center' align="middle">
+                <Col style={{margin: 'auto'}}>
+                <a href={handleLogin}><Button style={{backgroundColor: '#22429d',border: '1px solid #22429d ',color: '#fff', margin: 'auto' }}>Login</Button></a>
+                </Col>
+              </Row>
+           </Row>
+
+          }
 
           <Menu style={{height: '100%', borderRight: 0}}>
             <Menu.Item key="contibution">
