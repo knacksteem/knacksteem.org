@@ -316,6 +316,12 @@ class Profile extends Component {
 
     const activeCategory = queryString.parse(this.props.location.search).category;
 
+    const articlesList = typeof activeCategory !== 'undefined' ?
+      articles.data.filter(article => article.category === activeCategory) : 
+      articles.data;
+
+    console.log(articlesList);
+
     // If we've loaded all core objects...
     if (hasLoadedRemoteUserObject) {
       signupDate = fecha.format(
@@ -414,12 +420,12 @@ class Profile extends Component {
                     false
                 }
               />
-              {articles.data.length > 0 &&
+              {articlesList.length > 0 &&
               <div
                 className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item"
                 style={styles.articlesList}
               >
-                {articles.data.map((data) => {
+                {articlesList.map((data) => {
                   return (
                     data.author === match.params.username
                     && (
@@ -433,8 +439,7 @@ class Profile extends Component {
                 })}
               </div>
               }
-
-              {!articles.data.length && (
+              {!articlesList.length && (
                 <div style={{
                   margin: 'auto 20px',
                   padding: '30px',
