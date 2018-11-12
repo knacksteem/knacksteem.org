@@ -136,7 +136,7 @@ export const getArticlesByUsername = (username, skip, search, category = '') => 
  * @param skip number of elemnts to skip, used for lazy loading
  * @param search search string
  */
-export const getArticlesModeration = (route, skip, search) => {
+export const getArticlesModeration = (route, skip, search, username) => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -148,7 +148,8 @@ export const getArticlesModeration = (route, skip, search) => {
     try {
       let response = await apiGet(`/stats${route}`, {
         skip: skip || undefined, //skip elements for paging
-        search: search || undefined
+        search: search || undefined,
+        username: username || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,

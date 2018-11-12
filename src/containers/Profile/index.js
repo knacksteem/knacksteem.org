@@ -15,7 +15,11 @@ import ProfileMetaBar from './ProfileMetaBar';
 import ArticleListItem from '../../components/ArticleListItem';
 import BanModal from '../../components/BanModal';
 
-import {getArticlesByUsername} from '../../actions/articles';
+import {
+  getArticlesByUsername,
+  getArticlesModeration
+} from '../../actions/articles';
+
 import {
   getKnacksteemUserData,
   updateKnacksteemUser,
@@ -47,8 +51,9 @@ const styles = {
 };
 
 class Profile extends Component {
-  propTypes = {
+  static propTypes = {
     location: PropTypes.object,
+    history: PropTypes.object,
     match: PropTypes.object,
     user: PropTypes.object,
     dispatch: PropTypes.func,
@@ -59,12 +64,9 @@ class Profile extends Component {
   state = {
     isBanModalOpen: false,
     banReason: '',
-    banDuration: 1000
+    banDuration: 1000,
+    filterBy: ''
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   /**
    * Toggles the ban modal visibility on and off.
@@ -122,6 +124,43 @@ class Profile extends Component {
         isBanModalOpen: false
       });
     }
+  }
+
+  /**
+   * Sets articles filter criteria.
+   * 
+   * @method handleArticlesFilterSelect
+   * @param {String} filterBy - Criteria to filter articles by. Example: 'accepted' or 'pending'. 
+   * 
+   * @return {void}
+   */
+  handleArticlesFilterSelect(filterBy) {
+    const {dispatch, match} = this.props;
+    let moderationEndpoints = {
+      'accepted': '/moderation/approved',
+      'pending': '/moderation/pending',
+      'declined': '/moderation/not-approved',
+    };
+
+    this.setState({
+      filterBy
+    });
+
+    if (filterBy !== '') {
+      dispatch(
+        getArticlesModeration(
+          moderationEndpoints[filterBy],
+          0,
+          '',
+          match.params.username
+        )
+      );
+    } else {
+      let { category } = queryString.parse(this.props.location.search);
+
+      this.loadArticlesUser(category);  
+    }
+
   }
 
   /**
@@ -233,13 +272,21 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    let { category } = queryString.parse(this.props.location.search);
+    const { location, history } = this.props;
+
+    let { category } = queryString.parse(location.search);
 
     this.loadArticlesUser(category);
     this.loadSteemRewardFunds();
     this.loadCurrentMedianHistoryPrice();
     this.loadDynamicGlobalProperties();
     this.loadRemoteUserData();
+
+    history.listen(newLocation => {
+      let newCategory = queryString.parse(newLocation.search).category;
+
+      this.loadArticlesUser(newCategory);
+    });
   }
 
   render () {
@@ -337,6 +384,8 @@ class Profile extends Component {
                 followersCount={remoteUserFollowObject.follower_count}
                 followingCount={remoteUserFollowObject.following_count}
                 username={match.params.username}
+                onArticlesFilterSelect={filterBy => this.handleArticlesFilterSelect(filterBy)}
+                filterBy={this.state.filterBy}
               />
             </Layout>
             
@@ -365,25 +414,38 @@ class Profile extends Component {
                     false
                 }
               />
-
+              {articles.data.length > 0 &&
               <div
                 className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item"
                 style={styles.articlesList}
               >
                 {articles.data.map((data) => {
                   return (
-                    <ArticleListItem
-                      key={data.permlink}
-                      data={data}
-                      onUpvoteSuccess={this.loadArticlesUser}
-                    />
+                    data.author === match.params.username
+                    && (
+                      <ArticleListItem
+                        key={data.permlink}
+                        data={data}
+                        onUpvoteSuccess={this.loadArticlesUser}
+                      />
+                    )
                   );
                 })}
               </div>
+              }
 
               {!articles.data.length && (
-                <div style={{ flex: 4, marginTop: '20px', marginRight: '20px', padding: '30px', background: '#fff' }}>
-                  No articles found for this user.
+                <div style={{
+                  margin: 'auto 20px',
+                  padding: '30px',
+                  background: '#fff',
+                  width: '80%'
+                }}>
+               
+                  {articles.isBusy ? 
+                    <Layout><Spin/></Layout> :
+                    <p>No articles found.</p>
+                  }                  
                 </div>
               )}
 
