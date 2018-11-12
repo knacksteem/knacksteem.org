@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {Button} from 'antd';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {reserveArticle, approveArticle, rejectArticle} from '../../actions/articles';
+import Cookies from 'js-cookie';
 import './index.css';
 
 //Single Item for Article Overview
@@ -31,12 +32,14 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
         </Link>
       </div>
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
+      {(status === 'reserved' && (Cookies.get('username') !== data.moderation.reservedBy)) && 
+        <div>Reserved for review by {data.moderation.reservedBy}</div>}
       {(status === 'pending') &&
         <div className="mod-functions">
             <Button size="small" type="primary" onClick={onReserveClick}>Reserve for review</Button>
         </div>
       }
-      {(status === 'reserved') &&
+      {(status === 'reserved' && Cookies.get('username') === data.moderation.reservedBy) &&
         <div className="mod-functions">
           <Button size="small" type="primary" onClick={onApproveClick}>Approve</Button>
           <Button size="small" type="danger" onClick={onRejectClick}>Reject</Button>
