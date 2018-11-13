@@ -2,16 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  Layout,
   Button,
   Dropdown,
   Icon,
   Menu,
   Row,
-  Col
 } from 'antd';
 import './ProfileMetaBar.css';
-import { getRemoteUserFollowData } from '../../../actions/user';
 
 /**
  * Displays meta information about the profile user.
@@ -60,7 +57,7 @@ const ProfileMetaBar = ({
           style={{ borderRight: 0, borderBottom: 0, whiteSpace: 'pre-wrap !important'}}
         >
           <Menu.Item key="post">
-          <div>
+            <div>
               <Dropdown
                 overlay={
                   <Menu

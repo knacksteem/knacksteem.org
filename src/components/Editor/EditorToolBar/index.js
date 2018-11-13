@@ -70,5 +70,4 @@ EditorToolbar.propTypes = {
   onSelect: PropTypes.func,
 };
 
-
 export default EditorToolbar;

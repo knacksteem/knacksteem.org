@@ -50,7 +50,6 @@ const styles = {
   }
 };
 
-
 class Profile extends Component {
   static propTypes = {
     location: PropTypes.object,
@@ -396,7 +395,7 @@ class Profile extends Component {
             <Row type="flex" justify="center" style={{marginTop: '30px'}}>
               <Row className="profile-bar">
                 <Col>
-                    <ProfileInfoBar
+                  <ProfileInfoBar
                     name={displayName}
                     about={about}
                     location={location}
@@ -424,9 +423,9 @@ class Profile extends Component {
               </Row>
               {articlesList.length &&
                 <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-              {articlesList.map((data) => {
-                  return (
-                    data.author === match.params.username
+                  {articlesList.map((data) => {
+                    return (
+                      data.author === match.params.username
                     && (
                       <ArticleListItem
                         key={data.permlink}
@@ -434,9 +433,9 @@ class Profile extends Component {
                         onUpvoteSuccess={this.loadArticlesUser}
                       />
                     )
-                  );
-                })}
-              </Row>
+                    );
+                  })}
+                </Row>
               }
               
               {!articlesList.length && (
@@ -449,16 +448,15 @@ class Profile extends Component {
                   </div>
                 </Row>
               )}
-
               
               <Row className="category-bar">
-              <Col>
-                <ProfileCategoriesBar
-                  activeCategory={activeCategory}
-                  categories={articles.categories}
-                  username={match.params.username}
-                />
-              </Col>
+                <Col>
+                  <ProfileCategoriesBar
+                    activeCategory={activeCategory}
+                    categories={articles.categories}
+                    username={match.params.username}
+                  />
+                </Col>
               </Row>
             </Row>
           </div>}

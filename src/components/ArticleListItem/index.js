@@ -8,8 +8,6 @@ import {approveArticle, rejectArticle} from '../../actions/articles';
 import { truncateString } from '../../services/functions';
 import './index.css';
 
-
-
 //Single Item for Article Overview
 const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
   //approve the current article with an api call and reload the pending articles for redux

@@ -5,17 +5,14 @@ import PropTypes from 'prop-types';
 import './index.css';
 import {Layout, Spin, Row, Col, Select } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import AnnouncementMetaBar from '../Home/AnnouncementMetaBar'
-import ContributionMetaBar from '../Home/ContributionMetaBar'
+import AnnouncementMetaBar from '../Home/AnnouncementMetaBar';
+import ContributionMetaBar from '../Home/ContributionMetaBar';
 import { getArticlesModeration} from '../../actions/articles';
 import {getRemoteUserData} from '../../actions/user';
 import Cookies from 'js-cookie';
 import SteemConnect from '../../services/SteemConnect';
 import { repLog10 } from '../../services/functions';
 const Option = Select.Option;
-
-
-
 
 const styles = {
   articlesList: {display: 'flex', flexDirection: 'column', width: '50%'},
@@ -39,43 +36,43 @@ class Home extends Component {
 
   // //scroll handler for lazy loading
    onScroll = () => {
-    const {articles, location} = this.props;
+     const {articles} = this.props;
 
-   //if in loading process, don´t do anything
-    if (articles.isBusy) {
-      return;
-    }
-  //   //if user hits bottom, load next batch of items
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-        this.loadArticles(articles.data.length);
-    }
-  };
-//get User data
-  loadRemoteUserData() {
-    const {dispatch, user} = this.props;
-    dispatch(getRemoteUserData(Cookies.get('username')));
-  }
+     //if in loading process, don´t do anything
+     if (articles.isBusy) {
+       return;
+     }
+     //   //if user hits bottom, load next batch of items
+     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
+       this.loadArticles(articles.data.length);
+     }
+   };
+  //get User data
+   loadRemoteUserData() {
+     const {dispatch} = this.props;
+     dispatch(getRemoteUserData(Cookies.get('username')));
+   }
 
-  getOathURL () {
-    return SteemConnect.getLoginURL();
-  }
+   getOathURL () {
+     return SteemConnect.getLoginURL();
+   }
 
-  componentDidMount() {
-    const username = Cookies.get('username');
-    if (username === undefined || null){
-      this.loadArticles();
-    } else {
-      this.loadArticles();
-      this.loadRemoteUserData();
-    }
-    // //on scroll, load the next batch of articles
+   componentDidMount() {
+     const username = Cookies.get('username');
+     if (username === undefined || null){
+       this.loadArticles();
+     } else {
+       this.loadArticles();
+       this.loadRemoteUserData();
+     }
+     // //on scroll, load the next batch of articles
      window.addEventListener('scroll', this.onScroll);
-  }
-  componentWillUnmount() {
-    //remove scroll event again when hitting another route
-    window.removeEventListener('scroll', this.onScroll);
-  }
+   }
+   componentWillUnmount() {
+     //remove scroll event again when hitting another route
+     window.removeEventListener('scroll', this.onScroll);
+   }
   
   //load  approved general articles
   loadArticles = (skip = 0, ) => {
@@ -92,7 +89,7 @@ class Home extends Component {
       remoteUserObjectMeta,
       username;
 
-    const {articles, user} = this.props
+    const {articles, user} = this.props;
     const { remoteUserObject} = user;
     const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
 
@@ -101,24 +98,21 @@ class Home extends Component {
       name = remoteUserObjectMeta.name;
       coverImage = remoteUserObjectMeta.cover_image;
       reputation = repLog10(parseFloat(remoteUserObject.reputation)); 
-      console.log(remoteUserObjectMeta);
       username = Cookies.get('username');
     }  
-    
-
 
     return (
-        <Layout className="home-container" justify="center">
-          <Row type="flex" className="mobile-select" justify="center" style={{marginBottom: '20px', display: 'none'}}>
-            <Col className="select-container" style={{width: '70%'}}>
-              <Select
-                style={{margin: 'auto', width: '100%'}}
-                showSearch
-                size={'large'}
-                placeholder="Select from the list"
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-              >
+      <Layout className="home-container" justify="center">
+        <Row type="flex" className="mobile-select" justify="center" style={{marginBottom: '20px', display: 'none'}}>
+          <Col className="select-container" style={{width: '70%'}}>
+            <Select
+              style={{margin: 'auto', width: '100%'}}
+              showSearch
+              size={'large'}
+              placeholder="Select from the list"
+              optionFilterProp="children"
+              filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+            >
               <Option value="contribution"><i style={styles.barIcon} className="fas fa-bookmark"/>Contribution</Option>
               <Option value="review"><i style={styles.barIcon} className="fas fa-bookmark"/>Review</Option>
               <Option value="sponsor"><i style={styles.barIcon} className="fas fa-bookmark"/>Sponsor</Option>
@@ -130,31 +124,31 @@ class Home extends Component {
               <Option value="tos"><i style={styles.barIcon} className="fas fa-bookmark"/>TOS</Option>
               <Option value="announcement"><i style={styles.barIcon} className="fas fa-bookmark"/>Announcement</Option>
               
-              </Select>
-            </Col>
+            </Select>
+          </Col>
             
+        </Row>
+        <Row type="flex" className="home-inner-container" justify="center">
+          <Row type="flex" className="contribution-container">
+            <Col>
+              <ContributionMetaBar metaImage={coverImage} reputation={reputation} name={name}  handleLogin={this.getOathURL()} username={username}/>
+            </Col>
           </Row>
-          <Row type="flex" className="home-inner-container" justify="center">
-              <Row type="flex" className="contribution-container">
-                <Col>
-                  <ContributionMetaBar metaImage={coverImage} reputation={reputation} name={name}  handleLogin={this.getOathURL()} username={username}/>
-                </Col>
-              </Row>
-              <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-                {articles.data.map((data) => {
-                  return (
-                    <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
-                  );
-                })}
-              </Row>
-              <Row type="flex" className="announcement-container">
-                <Col>
-                  <AnnouncementMetaBar/>
-                </Col>
-              </Row>
-              {articles.isBusy && <Spin/>}
+          <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+            {articles.data.map((data) => {
+              return (
+                <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
+              );
+            })}
           </Row>
-        </Layout>
+          <Row type="flex" className="announcement-container">
+            <Col>
+              <AnnouncementMetaBar/>
+            </Col>
+          </Row>
+          {articles.isBusy && <Spin/>}
+        </Row>
+      </Layout>
     );
   }
 }
@@ -163,13 +157,13 @@ Home.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
-  articles: PropTypes.object
+  articles: PropTypes.object,
+  user: PropTypes.object
 };
 
 const mapStateToProps = state => ({
   articles: state.articles,
   user: state.user,
 });
-
 
 export default withRouter(connect(mapStateToProps)(Home));

@@ -48,7 +48,6 @@ const styles = {
  * @return {Object}
  */
 const ProfileInfoBar = ({
-  style,
   isSupervisor,
   isModerator,
   signupDate,
@@ -72,41 +71,41 @@ const ProfileInfoBar = ({
             }
           </Col>
           <Col>
-              <Menu style={{height: '100%', borderRight: 0}}>
-                {(location !== undefined && location.length > 0) &&
+            <Menu style={{height: '100%', borderRight: 0}}>
+              {(location !== undefined && location.length > 0) &&
                 <Menu.Item key="location">
                   <i style={styles.barIcon} className="fas fa-map-marker-alt"/>
                   <span className="profile-info-bar-label">{location}</span>
                 </Menu.Item>
-                }
+              }
 
-                {(website !== undefined && website.length > 0) &&
+              {(website !== undefined && website.length > 0) &&
                 <Menu.Item key="url" disabled={false}>
                   <i style={styles.barIcon} className="fas fa-globe-asia"/>
                   <span className="profile-info-bar-label">{website}</span>
                 </Menu.Item>
-                }
+              }
 
-                <Menu.Item key="time" disabled={false}>
-                  <i style={styles.barIcon} className="far fa-clock"/>
-                  <span className="profile-info-bar-label">Joined {signupDate}</span>
-                </Menu.Item>
+              <Menu.Item key="time" disabled={false}>
+                <i style={styles.barIcon} className="far fa-clock"/>
+                <span className="profile-info-bar-label">Joined {signupDate}</span>
+              </Menu.Item>
 
-                {(votingPower !== undefined) &&
+              {(votingPower !== undefined) &&
                 <Menu.Item key="power" disabled={false}>
                   <i style={styles.barIcon} className="fas fa-bolt"/>
                   <span className="profile-info-bar-label">Voting power: {votingPower}%</span>
                 </Menu.Item>
-                }
+              }
 
-                {(voteValue !== undefined) &&
+              {(voteValue !== undefined) &&
                 <Menu.Item key="value" disabled={false}>
                   <i style={styles.barIcon} className="fas fa-dollar-sign"/>
                   <span className="profile-info-bar-label">Vote value: ${voteValue}</span>
                 </Menu.Item>
-                }
+              }
 
-              </Menu>
+            </Menu>
           </Col>
           
         </Row>
@@ -125,7 +124,7 @@ const ProfileInfoBar = ({
                   key="1"
                 >
                   <Icon type="solution" />
-                  {user.roles.indexOf('moderator') === -1 ? `Make  a ` : ` as a `}
+                  {user.roles.indexOf('moderator') === -1 ? 'Make  a ' : ' as a '}
                   <b>Moderator</b>
                 </Menu.Item>
                 <Menu.Item
@@ -134,7 +133,7 @@ const ProfileInfoBar = ({
                   action={user.roles.indexOf('supervisor') === -1 ? 'add' : 'remove'}
                 >
                   <Icon type="user" />
-                  {user.roles.indexOf('supervisor') === -1 ? `Make  ` : ` as a `}
+                  {user.roles.indexOf('supervisor') === -1 ? 'Make  ' : ' as a '}
                   <b>Supervisor</b>
                 </Menu.Item>
               </Menu>          
