@@ -1,0 +1,19 @@
+@media (max-width: 768px) {
+    .profile-bar,
+    .category-bar {
+        display: none !important;
+    }
+    .item-feed {
+        width: 100% !important;
+    }
+}
+  
+@media (max-width: 929px) {
+    .profile-bar,
+    .category-bar {
+        display: none !important;
+    }
+    .item-feed {
+        width: 100% !important;
+    }
+}

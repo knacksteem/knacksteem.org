@@ -95,6 +95,27 @@ export const getRemoteUserData = (username, method='get') => {
   };
 };
 
+export const getKnacksteemUserData = (username) => {
+  const accessToken = Cookies.get('accessToken');
+
+  return async (dispatch) => {
+    try {
+      //get user details from database, including the user role (supervisor, moderator, contributor)
+      let userData = await apiGet('/stats/users', {
+        username,
+        access_token: accessToken
+      });
+
+      dispatch({
+        type: types.KNACKSTEEM_USER_GET,
+        knacksteemUserObject: (userData.data && userData.data.results) ? userData.data.results[0] : {}
+      });
+    } catch (error) {
+      message.error('We were unable to fetch information about this user.');
+    }
+  };
+};
+
 export const getRemoteUserFollowData = (username, method='get') => {
   return async (dispatch) => {
     const url = `${REMOTE_USER_API}/getFollowCount?account=${username}`;
@@ -115,5 +136,14 @@ export const getRemoteUserFollowData = (username, method='get') => {
     } catch (error) {
       message.error(`We were unable to fetch followers/following count for "${username}".`);
     }
+  };
+};
+
+export const updateKnacksteemUser = (knacksteemUserObject) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.KNACKSTEEM_USER_GET,
+      knacksteemUserObject
+    });
   };
 };

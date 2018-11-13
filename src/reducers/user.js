@@ -1,6 +1,7 @@
 import {
   USER_AUTH,
   USER_GET,
+  KNACKSTEEM_USER_GET,
   REMOTE_USER_GET,
   REMOTE_USER_FOLLOW_GET,
   USER_LOGOUT
@@ -9,6 +10,7 @@ import {
 const initialState = {
   username: '',
   userObject: {},
+  knacksteemUserObject: {},
   remoteUserObject: {},
   remoteUserFollowObject: {
     follower_count: 0,
@@ -40,6 +42,11 @@ const user = (state = initialState, action) => {
       return {
         ...state,
         remoteUserObject: action.remoteUserObject
+      };
+    case KNACKSTEEM_USER_GET:
+      return {
+        ...state,
+        knacksteemUserObject: action.knacksteemUserObject
       };
     case REMOTE_USER_FOLLOW_GET:
       return {

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import {userLogout} from '../../actions/user';
 import {toggleHeader} from '../../actions/header';
 import './index.css';
-import logo from '../../assets/images/logo_black.png';
 import SteemConnect from '../../services/SteemConnect';
 import Logo from '../../assets/images/logo_black.png';
 import {KnackSelect} from '../../components/Select';
@@ -48,8 +47,7 @@ class KnackHeader extends React.Component {
 
   render(){
 
-    const {user} = this.props;
-    const {header} = this.props;
+    const {header, user} = this.props;
     const styles = {
       header: {
         display: !header.isHeaderVisible ?
@@ -69,7 +67,7 @@ class KnackHeader extends React.Component {
     );
 
     return (
-      <Header className="navbar" style={{position: 'fixed', zIndex: 1000}}>
+      <Header className="navbar" style={{position: 'fixed', width: '100%', zIndex: 1000}}>
         <Row type="flex" justify="center" align="middle" className="header-container"  >    
           <Row  className="logo"  align="middle"  justify="center" type="flex">
             <Col className="brand">

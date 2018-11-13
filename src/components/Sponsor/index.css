@@ -1,0 +1,41 @@
+.sponsor-container {
+  display: grid;
+  grid-template-columns: 46px auto 87px;
+  align-items: center;
+  grid-column-gap: 8px;
+  font-family: "Montserrat", sans-serif;
+  margin-bottom: 17.6px;
+}
+.sponsor-avatar-container {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.sponsor-avatar {
+  width: 100%;
+  height: auto;
+}
+.sponsor-username-container {
+  margin: 0;
+}
+.sponsor-username {
+  font-size: 16px;
+  padding: 0px !important;
+  font-weight: bold;
+  margin: 0;
+  color: #2a2a2a;
+  transition: 0.2s;
+}
+.sponsor-username:hover {
+  color: #22429d;
+}
+
+.sponsor-delegation {
+  font-size: 14px;
+  margin: 0;
+  color: #a0a0a0;
+  line-height: 24px;
+}
