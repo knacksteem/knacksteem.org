@@ -23,9 +23,9 @@ const ProfileCategoriesBar = ({
 
   return (
     <div style={{...style}} className="profile-categories-bar">
-      <Layout.Sider width={250} style={{ background: '#fff' }}>
-        <div className="profile-categories-bar-container">
-          <h2 className="profile-categories-bar-title">Categories</h2>
+      <Layout style={{ background: '#fff' }}>
+        <div className="profile-categories-bar-container" style={{padding: '10px'}}>
+          <h2 style={{textAlign: 'center'}} className="profile-categories-bar-title">Categories</h2>
 
           <Menu
             style={{height: '100%', borderRight: 0, marginTop: '10px'}}
@@ -51,7 +51,7 @@ const ProfileCategoriesBar = ({
 
         </div>
 
-      </Layout.Sider>
+      </Layout>
     </div>
   );
 };

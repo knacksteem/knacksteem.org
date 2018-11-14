@@ -409,7 +409,6 @@ export const deleteElement = (permlink) => {
   };
 };
 
-
 /**
  * get articles by search term
  */

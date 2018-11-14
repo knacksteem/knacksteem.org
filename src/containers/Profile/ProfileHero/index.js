@@ -1,14 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Layout } from 'antd';
+import { Button, Layout, Row } from 'antd';
 import coverFallbackImage from '../../../assets/images/cover.jpg';
 import './ProfileHero.css';
 
 let styles = {
   heroContainer: {},
-  counterDisplay: {
-    marginTop: '-25px'
-  }
 };
 
 /**
@@ -37,7 +34,7 @@ const ProfileHero = ({
   styles.heroContainer.backgroundImage = `url(${coverImage})`;
   
   return (
-    <div style={{...styles.heroContainer, ...style}} className="hero-container">
+    <Row  type="flex" style={{...styles.heroContainer, minWidth: '100%',...style}} className="hero-container">
       <Layout id="content-layout">
         <div className="hero-container-inner">
           <div className="hero-content">
@@ -48,7 +45,7 @@ const ProfileHero = ({
                   {name}
                 </h1>
                 <span style={styles.counterDisplay}>
-                  <Button className="inline-element" size="large">
+                  <Button className="inline-element" size="small">
                     <strong style={{ fontSize: '18px' }}>{reputation}</strong>
                   </Button>
                 </span>
@@ -60,7 +57,7 @@ const ProfileHero = ({
           </div>
         </div>
       </Layout>
-    </div>
+    </Row>
   );
 };
 

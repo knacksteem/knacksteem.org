@@ -11,6 +11,7 @@
   margin: 0;
 }
 
+
 .ant-list-vertical .ant-list-item-meta {
   margin-bottom: 0;
 }
@@ -29,4 +30,8 @@
 .ant-menu-item-selected, .ant-menu-item-selected>a, .ant-menu-item-selected>a:hover {
   color: #22429d;
   font-weight: bold;
+}
+
+.ant-menu-horizontal {
+  white-space: pre-wrap !important;
 }

@@ -20,7 +20,6 @@
     background-size: cover;
     background-repeat: no-repeat;
     width: 100%;
-    position: relative;
 }
 
 .hero-container-inner {
@@ -47,4 +46,35 @@
     color: #eee;
     font-size: 16px;
     display: block;
+}
+
+@media (max-width: 375px) {
+    .hero-container-inner {
+        font-size: 20px;
+        width: 100%;
+        position: absolute;
+    }
+    
+    .hero-content {
+        position: relative;
+        top: 20px;
+        transform: translateY(0); 
+    }
+    
+    .hero-title {
+        color: #fff;
+        width: 100%;
+        font-size: 1.3em;
+        margin-bottom: 0;
+        margin-right: 10px;
+    }
+    .hero-avatar {
+        width: 120px;
+        height: 120px;
+    }
+    .hero-title-sub,
+    .hero-title {
+        margin-left: 10px;
+
+    }
 }
