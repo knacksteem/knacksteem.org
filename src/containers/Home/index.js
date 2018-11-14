@@ -24,7 +24,9 @@ const styles = {
   }
 };
 
-//Article Overview
+/**
+ *  @class Home
+ */
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -54,6 +56,9 @@ class Home extends Component {
      dispatch(getRemoteUserData(Cookies.get('username')));
    }
 
+   /**
+    * @method st
+    */
    getOathURL () {
      return SteemConnect.getLoginURL();
    }
@@ -74,7 +79,15 @@ class Home extends Component {
      window.removeEventListener('scroll', this.onScroll);
    }
   
-  //load  approved general articles
+   /** load articles that are approved by a mod
+    * 
+    * @method loadArticles
+    * 
+    * @param {Integer}  
+    * 
+    * @returns {Array}
+    */
+   
   loadArticles = (skip = 0, ) => {
     const {dispatch} = this.props;
 

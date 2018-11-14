@@ -15,6 +15,18 @@ const styles = {
 
 styles.metaImageContainer.backgroundImage = `url(${defaultCover})`;
 
+/**
+ * Displays available list of contributions.
+ * 
+ * @param {String}  Object.metaImage          -Background Image of User of Block Chain.
+ * @param {String}  Object.name           - Name of user.
+ * @param {Sting}   Object.reputation    - Reputation of user.
+ * @param {String}  Object.username       - Profile user's username.
+ * @param {Method}  Object.handleLogin    - 
+ * 
+ * @returns {Object<JSXElement>}
+ */
+
 const ContributionMetaBar = (props) => {
   const {metaImage, name, reputation, username, handleLogin} = props;
   styles.userImageContainer.backgroundImage = `url(${metaImage})`;
