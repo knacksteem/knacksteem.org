@@ -99,12 +99,12 @@ export const getArticlesByUser = (skip, search) => {
   };
 };
 
-export const getArticlesByUsername = (username, skip, search) => {
-  return async (dispatch, getState) => {
+export const getArticlesByUsername = (username, skip, search, category = '') => {
+  return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
       skip: skip || undefined,
-      category: ''
+      category
     });
 
     //get user articles from server
@@ -113,7 +113,8 @@ export const getArticlesByUsername = (username, skip, search) => {
         username: username || undefined,
         author: username,
         skip: skip || undefined, //skip elements for paging
-        search: search || undefined
+        search: search || undefined,
+        category: category || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,
@@ -135,7 +136,7 @@ export const getArticlesByUsername = (username, skip, search) => {
  * @param skip number of elemnts to skip, used for lazy loading
  * @param search search string
  */
-export const getArticlesModeration = (route, skip, search) => {
+export const getArticlesModeration = (route, skip, search, username) => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -147,7 +148,8 @@ export const getArticlesModeration = (route, skip, search) => {
     try {
       let response = await apiGet(`/stats${route}`, {
         skip: skip || undefined, //skip elements for paging
-        search: search || undefined
+        search: search || undefined,
+        username: username || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,
@@ -403,6 +405,37 @@ export const deleteElement = (permlink) => {
       ]);
     } catch (error) {
       message.error('error deleting element');
+    }
+  };
+};
+
+/**
+ * get articles by search term
+ */
+export const getArticlesBySearchTerm = (skip, searchterm) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
+      category: ''
+    });
+
+    //get articles by search term from server
+    try {
+      let response = await apiGet('/posts', {
+        skip: skip || undefined, //skip elements for paging
+        search: searchterm || undefined
+      });
+      dispatch({
+        type: types.ARTICLES_GET_SEARCH,
+        skip: skip || undefined,
+        payload: response.data.results
+      });
+    } catch (error) {
+      dispatch({
+        type: types.ARTICLES_GET_SEARCH,
+        payload: []
+      });
     }
   };
 };
