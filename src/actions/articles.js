@@ -6,6 +6,8 @@ import Cookies from 'js-cookie';
 import SteemConnect from '../services/SteemConnect';
 import {message} from 'antd';
 
+const IMAGE_REGEX = /!\[.*?]\((.*?)\)/g;
+
 /**
  * get categories from server
  */
@@ -97,17 +99,46 @@ export const getArticlesByUser = (skip, search) => {
   };
 };
 
+export const getArticlesByUsername = (username, skip, search, category = '') => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
+      category
+    });
+
+    //get user articles from server
+    try {
+      let response = await apiGet('/posts', {
+        username: username || undefined,
+        author: username,
+        skip: skip || undefined, //skip elements for paging
+        search: search || undefined,
+        category: category || undefined
+      });
+      dispatch({
+        type: types.ARTICLES_GET,
+        skip: skip || undefined,
+        payload: response.data.results
+      });
+    } catch (error) {
+      dispatch({
+        type: types.ARTICLES_GET,
+        payload: []
+      });
+    }
+  };
+};
+
 /**
  * get articles for moderation
  * @param route can be /moderation/pending or /moderation/reserved, for example
  * @param skip number of elemnts to skip, used for lazy loading
  * @param search search string
  */
-export const getArticlesModeration = (route, skip, search) => {
-  return async (dispatch, getState) => {
 
-    const store = getState();
-
+export const getArticlesModeration = (route, skip, search, username) => {
+  return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
       skip: skip || undefined,
@@ -119,7 +150,7 @@ export const getArticlesModeration = (route, skip, search) => {
       let response = await apiGet(`/stats${route}`, {
         skip: skip || undefined, //skip elements for paging
         search: search || undefined,
-        username: store.user.isSupervisor ? undefined : store.user.username
+        username: username || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,
@@ -139,13 +170,23 @@ export const getArticlesModeration = (route, skip, search) => {
  * post article to blockchain and knacksteem backend
  */
 export const postArticle = (title, body, tags, isComment, parentPermlink, parentAuthor) => {
+  let images = [];
+  let matches;
+
+  // eslint-disable-next-line
+  while ((matches = IMAGE_REGEX.exec(body))) {
+    if (images.indexOf(matches[1]) === -1 && matches[1].search(/https?:\/\//) === 0) {
+      images.push(matches[1]);
+    }
+  }
+
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_POSTING
     });
 
     const store = getState();
-
+  
     try {
       //post to blockchain
       if (isComment) {
@@ -155,7 +196,7 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
       } else {
         //generate unique permalink for new article
         const newPermLink = getUniquePermalink(title);
-
+    
         //post with beneficiaries
         const operations = [
           ['comment',
@@ -167,7 +208,8 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
               title: title,
               body: body,
               json_metadata: JSON.stringify({
-                tags: tags
+                tags: tags,
+                image: images
               })
             }
           ],

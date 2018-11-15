@@ -10,5 +10,4 @@ const api = sc2.Initialize({
   callbackURL: Config.SteemConnect.callbackURL,
   scope: Config.SteemConnect.scope
 });
-
 export default api;

@@ -1,8 +1,13 @@
 import * as types from './types';
+import axios from 'axios';
 import Cookies from 'js-cookie';
+import {message} from 'antd';
+
 import {push} from 'react-router-redux';
 import {apiGet} from '../services/api';
 import SteemConnect from '../services/SteemConnect';
+
+const REMOTE_USER_API = 'https://api.steemjs.com';
 
 /**
  * check if the user is logged in already (with a cookie)
@@ -64,5 +69,81 @@ export const userLogout = () => {
       type: types.USER_LOGOUT
     });
     dispatch(push('/'));
+  };
+};
+
+export const getRemoteUserData = (username, method='get') => {
+  return async (dispatch) => {
+    const url = `${REMOTE_USER_API}/getAccounts?names[]=${username}`;
+    const params = {};
+
+    try {
+      let remoteUserData = await axios({
+        method,
+        url,
+        params,
+        responseType: 'json'
+      });
+
+      dispatch({
+        type: types.REMOTE_USER_GET,
+        remoteUserObject: (remoteUserData && remoteUserData.data.length) ? remoteUserData.data[0] : {}
+      });  
+    } catch (error) {
+      message.error('We were unable to fetch information about this user.');
+    }
+  };
+};
+
+export const getKnacksteemUserData = (username) => {
+  const accessToken = Cookies.get('accessToken');
+
+  return async (dispatch) => {
+    try {
+      //get user details from database, including the user role (supervisor, moderator, contributor)
+      let userData = await apiGet('/stats/users', {
+        username,
+        access_token: accessToken
+      });
+
+      dispatch({
+        type: types.KNACKSTEEM_USER_GET,
+        knacksteemUserObject: (userData.data && userData.data.results) ? userData.data.results[0] : {}
+      });
+    } catch (error) {
+      message.error('We were unable to fetch information about this user.');
+    }
+  };
+};
+
+export const getRemoteUserFollowData = (username, method='get') => {
+  return async (dispatch) => {
+    const url = `${REMOTE_USER_API}/getFollowCount?account=${username}`;
+    const params = {};
+
+    try {
+      let remoteUserFollowData = await axios({
+        method,
+        url,
+        params,
+        responseType: 'json'
+      });
+
+      dispatch({
+        type: types.REMOTE_USER_FOLLOW_GET,
+        remoteUserFollowObject: (remoteUserFollowData) ? remoteUserFollowData.data : {}
+      }); 
+    } catch (error) {
+      message.error(`We were unable to fetch followers/following count for "${username}".`);
+    }
+  };
+};
+
+export const updateKnacksteemUser = (knacksteemUserObject) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.KNACKSTEEM_USER_GET,
+      knacksteemUserObject
+    });
   };
 };

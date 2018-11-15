@@ -1,0 +1,18 @@
+.profile-info-bar {
+    margin-top: 20px;
+    width: 250px;
+}
+
+.profile-info-bar-container {
+    padding: 20px 0;
+}
+
+.profile-info-bar-title {
+    text-align: center;
+    padding: 10px;
+}
+
+.profile-info-bar-label {
+    padding-left: 5px;
+    line-height: 2;
+}
