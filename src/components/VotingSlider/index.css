@@ -1,0 +1,17 @@
+.voting-container {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+}
+.voting-buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.voting-button {
+  padding-left: 0;
+  background: transparent;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
