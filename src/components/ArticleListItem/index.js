@@ -46,7 +46,7 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
         </Col>
       </Row>
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
-      {(status === 'pending' && data.author !== user.username) &&
+      {((status === 'pending' || (data.moderation.approved && user.isSupervisor)) && data.author !== user.username) &&
         <div className="mod-functions">
             <Button size="small" type="primary" onClick={onReserveClick}>Reserve for review</Button>
         </div>
