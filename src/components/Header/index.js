@@ -9,7 +9,7 @@ import './index.css';
 import SteemConnect from '../../services/SteemConnect';
 import Logo from '../../assets/images/logo_black.png';
 import {KnackSelect} from '../../components/Select';
-import {KnackSearch} from '../../components/Search';
+import KnackSearch from '../../components/Search';
 import {getArticlesByCategory} from '../../actions/articles';
 const {Header} = Layout;
 
@@ -67,7 +67,7 @@ class KnackHeader extends React.Component {
     );
 
     return (
-      <Header className="navbar">
+      <Header className="navbar" style={{position: 'fixed', width: '100%', zIndex: 1000}}>
         <Row type="flex" justify="center" align="middle" className="header-container"  >    
           <Row  className="logo"  align="middle"  justify="center" type="flex">
             <Col className="brand">
@@ -88,7 +88,7 @@ class KnackHeader extends React.Component {
               <Link to="/new"><Icon  style={{fontSize: '22px'}} type="edit"  /></Link>
             </Col>
             }
-            {!user.username && <a href={this.getOathURL()}><Button>Login</Button></a>}
+            {!user.username && <a href={this.getOathURL()}><Button style={{backgroundColor: '#22429d', color: '#fff' }}>Login</Button></a>}
             {user.username &&
             <Col className="ml">
               <span className="mx-auto ml" style={{ marginRight: 24 }}>
@@ -101,11 +101,9 @@ class KnackHeader extends React.Component {
               <Col className="ml" >
                 <div >
                   <Dropdown overlay={menu}>
-                    <span className="ant-dropdown-link" >
-                      <a title="Visit profile" href={`/@${user.username}`}>
-                        <Avatar size="small" src={`https://steemitimages.com/u/${user.username}/avatar`}  icon="user" />
-                      </a>
-                    </span>
+                    <a className="ant-dropdown-link" >
+                      <Avatar size="small" src={`https://steemitimages.com/u/${user.username}/avatar`}  icon="user" />
+                    </a>
                   </Dropdown>
                 </div>
               </Col>

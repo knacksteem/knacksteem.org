@@ -47,11 +47,13 @@ class Review extends Component {
     window.removeEventListener('scroll', this.onScroll);
   }
   loadArticles = (skip = 0, search) => {
-    const {dispatch, location} = this.props;
-    dispatch(getArticlesModeration(location.pathname, skip, search));
+    const {dispatch, location, user} = this.props;
+    const username = user.isSupervisor ? undefined : user.username;
+    dispatch(getArticlesModeration(location.pathname, skip, search, username));
   };
   render() {
     const {articles, location, user} = this.props;
+    const path = location.pathname.replace('/moderation/', '')
 
     return (
       <div>
@@ -66,10 +68,12 @@ class Review extends Component {
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articles.data.map((data) => {
               return (
-                <ArticleListItem key={data.permlink} data={data} user={user} status={location.pathname.replace('/moderation/', '')} onUpvoteSuccess={this.loadArticles} />
+                <ArticleListItem key={data.permlink} data={data} user={user} status={path} onUpvoteSuccess={this.loadArticles} />
               );
             })}
-            {(!articles.data.length && !articles.isBusy) && <div>No pending articles...</div>}
+            {(!articles.data.length && !articles.isBusy) && 
+              (path==="pending" ? <div>No pending articles...</div> : <div>No reserved articles...</div>)
+            }
           </div>
           {articles.isBusy && <Spin/>}
         </Content>

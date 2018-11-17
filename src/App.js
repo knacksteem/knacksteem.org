@@ -24,6 +24,7 @@ import './assets/styles/index.css';
 import './assets/styles/ant-overrides.css';
 import Sponsors from './containers/Sponsors';
 import Moderators from './containers/Moderators';
+import Search from './containers/Search';
 const App = () => {
   return (
     <Layout id="page-layout">
@@ -48,6 +49,7 @@ const App = () => {
         <Route exact path="/new" component={NewContribution} />
         <Route exact path="/categories/:category" component={Home} />
         <Route exact path="/articles/:author/:permlink" component={ArticleDetail} />
+        <Route exact path="/search" component={Search} />
       </Layout>
       <KnackFooter/>
     </Layout>

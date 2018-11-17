@@ -97,9 +97,9 @@ class ArticleMetaBottom extends Component {
         <span
           className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
           onClick={this.onUpvoteClick}>
-            <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-arrow-up"/>
-            <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
-            <i style={{...styles.barIcon, marginLeft: '5px', color: '#eee'}} className="fas fa-arrow-down"/>
+          <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-arrow-up"/>
+          <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
+          <i style={{...styles.barIcon, marginLeft: '5px', color: '#eee'}} className="fas fa-arrow-down"/>
         </span>
         {/* <IconText type="wallet" text={`$${data.totalPayout}`} /> */}
         <span style={{ float: 'right' }}>

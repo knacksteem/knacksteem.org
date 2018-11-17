@@ -1,108 +1,166 @@
 import React, {Component} from 'react';
-import {withRouter} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Spin} from 'antd';
+import {Layout, Spin, Row, Col, Select } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
-const { Content} = Layout;
+import AnnouncementMetaBar from '../Home/AnnouncementMetaBar';
+import ContributionMetaBar from '../Home/ContributionMetaBar';
+import { getArticlesModeration} from '../../actions/articles';
+import {getRemoteUserData} from '../../actions/user';
+import Cookies from 'js-cookie';
+import SteemConnect from '../../services/SteemConnect';
+import { repLog10 } from '../../services/functions';
+const Option = Select.Option;
 
 const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column'}
+  articlesList: {display: 'flex', flexDirection: 'column', width: '50%'},
+  barIcon: {
+    fontSize: '16px',
+    color: '#999',
+    marginRight: '20px',
+    fontWeight: 'bold'
+  }
 };
 
-//Article Overview
+/**
+ *  @class Home
+ */
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       searchString: ''
     };
+    this.getOathURL = this.getOathURL.bind(this);
   }
-  //scroll handler for lazy loading
-  onScroll = () => {
-    const {searchString} = this.state;
-    const {articles, location} = this.props;
 
-    //if in loading process, don´t do anything
-    if (articles.isBusy) {
-      return;
-    }
-    //if user hits bottom, load next batch of items
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(articles.data.length, searchString);
-      } else {
-        this.loadArticles(articles.data.length, searchString);
-      }
-    }
-  };
-  componentDidMount() {
-    const {location} = this.props;
+  // //scroll handler for lazy loading
+   onScroll = () => {
+     const {articles} = this.props;
 
-    if (location.pathname === '/mycontributions') {
-      this.loadArticlesUser();
-    } else {
-      this.loadArticles();
-    }
+     //if in loading process, don´t do anything
+     if (articles.isBusy) {
+       return;
+     }
+     //   //if user hits bottom, load next batch of items
+     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
+       this.loadArticles(articles.data.length);
+     }
+   };
+  //get User data
+   loadRemoteUserData() {
+     const {dispatch} = this.props;
+     dispatch(getRemoteUserData(Cookies.get('username')));
+   }
 
-    //on scroll, load the next batch of articles
-    window.addEventListener('scroll', this.onScroll);
-  }
-  componentWillUnmount() {
-    //remove scroll event again when hitting another route
-    window.removeEventListener('scroll', this.onScroll);
-  }
-  componentDidUpdate(prevProps, prevState) {
-    const {searchString} = this.state;
-    const {location} = this.props;
+   /**
+    * @method st
+    */
+   getOathURL () {
+     return SteemConnect.getLoginURL();
+   }
 
-    if (prevProps.location.pathname !== location.pathname || searchString !== prevState.searchString) {
-      //location change detected, load new data
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(0, searchString);
-      } else {
-        this.loadArticles(0, searchString);
-      }
-    }
-  }
-  //load general articles
-  loadArticles = (skip = 0, search) => {
-    const {dispatch, match} = this.props;
-
-    dispatch(getArticlesByCategory(match.params.category, skip, search));
-  };
-  //load own contributions
-  loadArticlesUser = (skip = 0, search) => {
+   componentDidMount() {
+     const username = Cookies.get('username');
+     if (username === undefined || null){
+       this.loadArticles();
+     } else {
+       this.loadArticles();
+       this.loadRemoteUserData();
+     }
+     // //on scroll, load the next batch of articles
+     window.addEventListener('scroll', this.onScroll);
+   }
+   componentWillUnmount() {
+     //remove scroll event again when hitting another route
+     window.removeEventListener('scroll', this.onScroll);
+   }
+  
+   /** load articles that are approved by a mod
+    * 
+    * @method loadArticles
+    * 
+    * @param {Integer}  
+    * 
+    * @returns {Array}
+    */
+   
+  loadArticles = (skip = 0, ) => {
     const {dispatch} = this.props;
 
-    dispatch(getArticlesByUser(skip, search));
+    dispatch(getArticlesModeration('/moderation/approved', skip));
   };
+
   render() {
-    const {articles} = this.props;
+    let 
+      coverImage,
+      name,
+      reputation,
+      remoteUserObjectMeta,
+      username;
+
+    const {articles, user} = this.props;
+    const { remoteUserObject} = user;
+    const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
+
+    if (hasLoadedRemoteUserObject) {
+      remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
+      name = remoteUserObjectMeta.name;
+      coverImage = remoteUserObjectMeta.cover_image;
+      reputation = repLog10(parseFloat(remoteUserObject.reputation)); 
+      username = Cookies.get('username');
+    }  
 
     return (
-      <div id="home-body">
-        <Layout id="home-articles">
-          <Content>
-            <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-              {articles.data.map((data) => {
-                return (
-                  <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
-                );
-              })}
-            </div>
-            {articles.isBusy && <Spin/>}
-          </Content>
-        </Layout>
-        {/*
-        <Layout id="home-announcements">
-          Announcements
-        </Layout>
-        */}
-      </div>
+      <Layout className="home-container" justify="center">
+        <Row type="flex" className="mobile-select" justify="center" style={{marginBottom: '20px', display: 'none'}}>
+          <Col className="select-container" style={{width: '70%'}}>
+            <Select
+              style={{margin: 'auto', width: '100%'}}
+              showSearch
+              size={'large'}
+              placeholder="Select from the list"
+              optionFilterProp="children"
+              filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+            >
+              <Option value="contribution"><i style={styles.barIcon} className="fas fa-bookmark"/><Link to='/contribute'>Contribution</Link></Option>
+              <Option value="sponsor"><i style={styles.barIcon} className="fas fa-bookmark"/><Link to='/sponsors'>Sponsor</Link></Option>
+              <Option value="moderator"><i style={styles.barIcon} className="fas fa-bookmark"/><Link to='/moderators'>Moderator</Link></Option>
+              <Option value="pending"><i style={styles.barIcon} className="fas fa-bookmark"/><Link to='/moderation/pending'>Pending</Link></Option>
+              <Option value="reserved"><i style={styles.barIcon} className="fas fa-bookmark"/><Link to='/moderation/reserved'>Reserved</Link></Option>
+              <Option value="guidelines"><i style={styles.barIcon} className="fas fa-bookmark"/><Link to='/guidelines'>guidelines</Link></Option>
+              <Option value="faq"><i style={styles.barIcon} className="fas fa-bookmark"/><Link to='/faq'>FAQ</Link></Option>
+              <Option value="tos"><i style={styles.barIcon} className="fas fa-bookmark"/><Link to='/tos'>TOS</Link></Option>
+              <Option value="announcement"><i style={styles.barIcon} className="fas fa-bookmark"/>Announcement</Option>
+              
+            </Select>
+          </Col>
+            
+        </Row>
+        <Row type="flex" className="home-inner-container" justify="center">
+          <Row type="flex" className="contribution-container">
+            <Col>
+              <ContributionMetaBar metaImage={coverImage} reputation={reputation} name={name}  handleLogin={this.getOathURL()} username={username}/>
+            </Col>
+          </Row>
+          <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+            {articles.data.map((data) => {
+              return (
+                <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
+              );
+            })}
+          </Row>
+          <Row type="flex" className="announcement-container">
+            <Col>
+              <AnnouncementMetaBar/>
+            </Col>
+          </Row>
+          {articles.isBusy && <Spin/>}
+        </Row>
+      </Layout>
     );
   }
 }
@@ -111,11 +169,13 @@ Home.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
-  articles: PropTypes.object
+  articles: PropTypes.object,
+  user: PropTypes.object
 };
 
 const mapStateToProps = state => ({
-  articles: state.articles
+  articles: state.articles,
+  user: state.user,
 });
 
 export default withRouter(connect(mapStateToProps)(Home));
