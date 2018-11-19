@@ -147,7 +147,28 @@ class Editor extends Component {
       this.resizeTextarea();
     }
   };
-  
+  //post article on blockchain and in backend db
+  onPostClick = async () => {
+    const {dispatch, isComment, isEdit, articleData, onDone, parentPermlink, parentAuthor} = this.props;
+    const {title, value, tags} = this.state;
+
+    if (this.checkFieldErrors()) {
+      return;
+    }
+
+    try {
+      if (isEdit) {
+        await dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment, parentPermlink, parentAuthor));
+      } else {
+        await dispatch(postArticle(title, value.toString('markdown'), tags, isComment, parentPermlink, parentAuthor));
+      }
+      if (onDone) {
+        onDone();
+      }
+    } catch(err) {
+      //already handled in redux actions
+    }
+  };
 
   //toggle Editor display
   handleEditorToggle() {
@@ -317,7 +338,105 @@ class Editor extends Component {
     this.onUpdate();
   };
 
- 
+  insertCode = (type) => {
+    if (!this.input) return;
+    this.input.focus();
+
+    switch (type) {
+      case 'h1':
+        this.insertAtCursor('# ', '', 2, 2);
+        break;
+      case 'h2':
+        this.insertAtCursor('## ', '', 3, 3);
+        break;
+      case 'h3':
+        this.insertAtCursor('### ', '', 4, 4);
+        break;
+      case 'h4':
+        this.insertAtCursor('#### ', '', 5, 5);
+        break;
+      case 'h5':
+        this.insertAtCursor('##### ', '', 6, 6);
+        break;
+      case 'h6':
+        this.insertAtCursor('###### ', '', 7, 7);
+        break;
+      case 'b':
+        this.insertAtCursor('**', '**', 2, 2);
+        break;
+      case 'i':
+        this.insertAtCursor('*', '*', 1, 1);
+        break;
+      case 'q':
+        this.insertAtCursor('> ', '', 2, 2);
+        break;
+      case 'link':
+        this.insertAtCursor('[', '](url)', 1, 1);
+        break;
+      case 'image':
+        this.insertAtCursor('![', '](url)', 2, 2);
+        break;
+      case 'code':
+        this.insertAtCursor('``` language\n', '\n```', 4, 12);
+        break;
+      case 'unorderlist':
+        this.insertAtCursor('- ','', 2, 2);
+        break;
+      default:
+        break;
+    }
+
+    this.resizeTextarea();
+    this.renderMarkdown(this.input.value);
+    this.onUpdate();
+  };
+
+  getValues = (e) => {
+    // NOTE: antd API is inconsistent and returns event or just value depending of input type.
+    // this code extracts value from event based of event type
+    // (array or just value for Select, proxy event for inputs and checkboxes)
+
+    const values = {
+      ...this.props.form.getFieldsValue(['title']),
+      body: this.input.value,
+    };
+
+
+    if (!e) return values;
+
+    return values;
+  };
+
+  onUpdate = (e) => {
+    const values =  this.getValues(e);
+      this.props.onUpdate(values);
+  };
+
+  handlers = {
+    h1: () => this.insertCode('h1'),
+    h2: () => this.insertCode('h2'),
+    h3: () => this.insertCode('h3'),
+    h4: () => this.insertCode('h4'),
+    h5: () => this.insertCode('h5'),
+    h6: () => this.insertCode('h6'),
+    bold: () => this.insertCode('b'),
+    italic: () => this.insertCode('i'),
+    quote: () => this.insertCode('q'),
+    link: (e) => {
+      e.preventDefault();
+      this.insertCode('link');
+    },
+    image: () => this.insertCode('image'),
+    code: () => this.insertCode('code'),
+    unorderlist: () => this.insertCode('unorderlist')
+  };
+
+  renderMarkdown = (value) => {
+    this.setState({
+      contentHtml: value,
+    });
+  };
+
 
   render() {
     const {title, value, tags, inputTagsVisible, inputTagsValue, previewMarkdown,} = this.state;
