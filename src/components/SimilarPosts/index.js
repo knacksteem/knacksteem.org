@@ -3,7 +3,7 @@ import { Button, Layout, Card, Icon } from 'antd';
 import {Link} from 'react-router-dom';
 import './index.css';
 
-const SimilarPosts = ({data}) => {
+const SimilarPosts = ({data, showMore, disableShowMore}) => {
 
 	return (
     <div className="contribution-bar ">
@@ -20,7 +20,7 @@ const SimilarPosts = ({data}) => {
         		);
           })}
           <div style={{width: '170px', margin: '15px'}} >
-            <Button style={{width: 'inherit', backgroundColor: '#22429d'}} type="primary">Show more</Button>
+            <Button onClick={showMore} disabled={disableShowMore} style={{width: 'inherit', backgroundColor: '#22429d'}} type="primary">Show more</Button>
           </div>
         </div>
       </Layout>

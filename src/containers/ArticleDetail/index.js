@@ -22,35 +22,39 @@ class ArticleDetail extends Component {
       data: {},
       isLoading: true,
       isEditMode: false,
-      isReplyMode: false
+      isReplyMode: false,
+      limit: 1,
+      disableShowMore: false
     };
   };
   componentDidMount() {
     this.getArticle();
   };
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate (prevProps, prevState) {
     // This had to be made because of Update Blocking -> https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/guides/blocked-updates.md
     // None of the solutions were solving this issue. Not sure if this is the correct way or if it is a low-quality workaround
-    if (prevProps.match.url !== this.props.match.url)
-      this.getArticle()
+    if (prevProps.match.url !== this.props.match.url) {
+      this.getArticle();
+    }
   };
 
   getArticle = async () => {
     const {match, dispatch} = this.props;
     try {
       this.setState({
+        limit: 1,
+        disableShowMore: false,
         isLoading: true
       });
       let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`, {username: Cookies.get('username') || undefined});
       //no article found, go back to main route
-      let similarPosts;
       if (response && response.data && response.data.results) {
-        similarPosts = await apiGet(`/posts`, {category: response.data.results.category, search: `${response.data.results.title} ${response.data.results.description}  ${response.data.results.permlink}`});
         this.setState({
-          data: {...response.data.results, similarPosts: (similarPosts.data.results.filter(similarPost => similarPost.permlink !== match.params.permlink)) },
+          data: response.data.results,
           isLoading: false
         });
+      await this.getSimilarPosts();
       } else {
         dispatch(push('/'));
       }
@@ -59,6 +63,23 @@ class ArticleDetail extends Component {
       dispatch(push('/'));
     }
   };
+
+  getSimilarPosts = async () => {
+    let {match} = this.props;
+    let {data, limit} = this.state;
+    console.log(limit);
+    let similarPosts = await apiGet(`/posts`, {category: data.category, search: `${data.title} ${data.description}  ${data.permlink}`, limit: this.state.limit});
+    if(similarPosts.data.results.length != this.state.limit){
+      this.setState({
+        disableShowMore: true
+      });
+    }
+    this.setState((prevState) => ({
+      data: {...prevState.data, similarPosts: (similarPosts.data.results.filter(similarPost => similarPost.permlink !== match.params.permlink)) },
+      limit: prevState.limit * 2
+    }));
+
+  }
   onEditClick = () => {
     this.setState({
       isEditMode: true
@@ -83,6 +104,9 @@ class ArticleDetail extends Component {
     });
     //reload after update
     this.getArticle();
+  };
+  showMore = () => {
+      this.getSimilarPosts();
   };
   render() {
     const {data, isLoading, isEditMode, isReplyMode} = this.state;
@@ -115,7 +139,7 @@ class ArticleDetail extends Component {
               </div>
             </div>
             <Divider/>
-            {data.similarPosts && <SimilarPosts data={data.similarPosts}/>}
+            {data.similarPosts && <SimilarPosts data={data.similarPosts} showMore={this.showMore} disableShowMore={this.state.disableShowMore}/>}
             {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
             <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Row>
