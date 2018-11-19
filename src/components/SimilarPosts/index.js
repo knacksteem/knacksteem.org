@@ -17,7 +17,7 @@ const SimilarPosts = ({data, showMore, disableShowMore}) => {
                       style={{backgroundImage: `url(https://steemitimages.com/100x100/${similarPost.coverImage})`}}>
                 </div>}
 		            <h4 style={{textAlign: 'center'}}>{similarPost.title}</h4>
-		            <p>{similarPost.description}</p>
+		            <p>{similarPost.description.substr(0, 30)}</p>
 		            <Link to={`/articles/${similarPost.author}/${similarPost.permlink}`}>Read more <Icon type="arrow-right" theme="outlined" /></Link>
 		          </Card>
         		);
