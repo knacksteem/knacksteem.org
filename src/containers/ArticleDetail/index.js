@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
-import {Layout, Divider, Spin, Tag, Row} from 'antd';
+import {Layout, Divider, Spin, Tag, Row, Col} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
@@ -137,11 +137,15 @@ class ArticleDetail extends Component {
                 })}
               </div>
             </div>
+          </Row>
+          <Row type="flex" justify="right">
+            <Col offset={16}>
+              {data.similarPosts && <SimilarPosts data={data.similarPosts} showMore={this.showMore} disableShowMore={this.state.disableShowMore}/>}
+            </Col>
+          </Row>
             <Divider/>
-            {data.similarPosts && <SimilarPosts data={data.similarPosts} showMore={this.showMore} disableShowMore={this.state.disableShowMore}/>}
             {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
             <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
-          </Row>
         </Row>
       </Row>
     );

@@ -9,10 +9,13 @@ const SimilarPosts = ({data, showMore, disableShowMore}) => {
     <div className="contribution-bar ">
       <Layout style={{ backgroundColor: '#fff' }}>
         <div className="profile-info-bar-container" style={{width: '200px'}}>  
-          <h3 style={{textAlign: 'center'}} className="profile-info-bar-title">Similar posts</h3>
+          <h3 style={{textAlign: 'left'}} className="column-title">Similar posts</h3>
           {data.map((similarPost) => {
           	return (
 		          <Card key={similarPost.permlink} style={{margin: '15px'}}>
+                {similarPost.coverImage && <div className="similarPostImg" 
+                      style={{backgroundImage: `url(https://steemitimages.com/100x100/${similarPost.coverImage})`}}>
+                </div>}
 		            <h4 style={{textAlign: 'center'}}>{similarPost.title}</h4>
 		            <p>{similarPost.description}</p>
 		            <Link to={`/articles/${similarPost.author}/${similarPost.permlink}`}>Read more <Icon type="arrow-right" theme="outlined" /></Link>

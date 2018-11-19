@@ -1,0 +1,10 @@
+.column-title {
+	padding: 20px;
+	font-weight: 600;
+}
+
+.similarPostImg {
+	background-size: cover;
+	height: 150px;
+
+}
