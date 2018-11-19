@@ -23,7 +23,7 @@ class ArticleDetail extends Component {
       isLoading: true,
       isEditMode: false,
       isReplyMode: false,
-      limit: 1,
+      limit: 3,
       disableShowMore: false
     };
   };
@@ -43,7 +43,7 @@ class ArticleDetail extends Component {
     const {match, dispatch} = this.props;
     try {
       this.setState({
-        limit: 1,
+        limit: 3,
         disableShowMore: false,
         isLoading: true
       });
@@ -67,7 +67,6 @@ class ArticleDetail extends Component {
   getSimilarPosts = async () => {
     let {match} = this.props;
     let {data, limit} = this.state;
-    console.log(limit);
     let similarPosts = await apiGet(`/posts`, {category: data.category, search: `${data.title} ${data.description}  ${data.permlink}`, limit: this.state.limit});
     if(similarPosts.data.results.length != this.state.limit){
       this.setState({
