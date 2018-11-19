@@ -33,6 +33,7 @@ class Editor extends Component {
   }
 
   componentDidMount() {
+    console.log(this);
     if (this.input) {
       this.input.addEventListener('input', throttle(e => this.renderMarkdown(e.target.value), 500));
       this.input.addEventListener('paste', this.handlePastedImage);
@@ -146,7 +147,7 @@ class Editor extends Component {
       this.resizeTextarea();
     }
   };
-
+  
 
   //toggle Editor display
   handleEditorToggle() {
@@ -154,7 +155,31 @@ class Editor extends Component {
       isMarkdownEditorActive: !this.state.isMarkdownEditorActive
     });
   }
-  
+  //check for correct input before posting/editing
+  checkFieldErrors = () => {
+    const {title, value, tags} = this.state;
+    const {isComment} = this.props;
+    const {categories} = this.props.articles;
+    let error = false;
+
+    //check if title is existing
+    if (!isComment && !title.length) {
+      message.error('title is missing');
+      error = true;
+    }
+    //check if there is something in the rich text editor
+    if (!value.getEditorState().getCurrentContent().hasText()) {
+      message.error('content is missing');
+      error = true;
+    }
+    //check if the second tag is one of the predefined categories
+    if (!isComment && categories.map(elem => elem.key).indexOf(tags[1]) === -1) {
+      message.error('second tag must be one of the predefined categories');
+      error = true;
+    }
+
+    return error;
+  };
   //reference to default input for new tags
   refInputTags = input => this.inputTags = input;
   //reference to autocomplete input for second tag (category)
@@ -260,37 +285,39 @@ class Editor extends Component {
 
   handleDragLeave = () => this.setState({ dropzoneActive: false });
 
-  
+  insertAtCursor = (before, after, deltaStart = 0, deltaEnd = 0) => {
+    if (!this.input) return;
 
-  getValues = (e) => {
-    // NOTE: antd API is inconsistent and returns event or just value depending of input type.
-    // this code extracts value from event based of event type
-    // (array or just value for Select, proxy event for inputs and checkboxes)
+    const startPos = this.input.selectionStart;
+    const endPos = this.input.selectionEnd;
+    this.input.value =
+      this.input.value.substring(0, startPos) +
+      before +
+      this.input.value.substring(startPos, endPos) +
+      after +
+      this.input.value.substring(endPos, this.input.value.length);
 
-    const values = {
-      ...this.props.form.getFieldsValue(['title']),
-      body: this.input.value,
-    };
-
-
-    if (!e) return values;
-
-    return values;
+    this.input.selectionStart = startPos + deltaStart;
+    this.input.selectionEnd = endPos + deltaEnd;
   };
 
-  onUpdate = (e) => {
-    const values =  this.getValues(e);
-      this.props.onUpdate(values);
+  insertImage = (image, imageName = 'image') => {
+    if (!this.input) return;
+
+    const startPos = this.input.selectionStart;
+    const endPos = this.input.selectionEnd;
+    const imageText = `![${imageName}](${image})\n`;
+    this.input.value = `${this.input.value.substring(
+      0,
+      startPos,
+    )}${imageText}${this.input.value.substring(endPos, this.input.value.length)}`;
+    this.resizeTextarea();
+    this.renderMarkdown(this.input.value);
+    this.setInputCursorPosition(startPos + imageText.length);
+    this.onUpdate();
   };
 
-  
-
-  renderMarkdown = (value) => {
-    this.setState({
-      contentHtml: value,
-    });
-  };
-
+ 
 
   render() {
     const {title, value, tags, inputTagsVisible, inputTagsValue, previewMarkdown,} = this.state;
@@ -325,7 +352,7 @@ class Editor extends Component {
             </a>
           </Col>
         </Row>
-        
+        <EditorToolbar onSelect={this.insertCode} />
         <div className="Editor__dropzone-base">
               <Dropzone
                 disableClick
@@ -420,6 +447,7 @@ class Editor extends Component {
           <Button style={{width: 'inherit', backgroundColor: '#22429d'}} type="primary" onClick={this.onPostClick} loading={isBusy}>{isEdit ? 'Update' : 'Post'}</Button>
           {onCancel && <Button type="secondary" onClick={onCancel} className="button-cancel">Cancel</Button>}
         </Row>
+        <ReactMarkdown className={'preview'}  source={previewMarkdown} />
         <Row type="flex" className="preview">
         </Row> 
       </div>
