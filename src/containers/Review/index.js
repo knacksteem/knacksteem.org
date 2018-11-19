@@ -10,7 +10,7 @@ const {Header, Content} = Layout;
 const Search = Input.Search;
 
 const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column'}
+  articlesList: {display: 'flex', flexDirection: 'column', width: '50%'}
 };
 
 //Pending Overview

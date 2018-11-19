@@ -12,7 +12,12 @@ import './index.css';
 const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
   //reserve the current article with an api call and reload the pending articles for redux
   const onReserveClick = () => {
-    dispatch(reserveArticle(data.permlink, status));
+    // In case supervisor clicked on reserve for review in the Home page.
+    // status undefined means it is not on approved or review page;
+    if(status == undefined)
+      dispatch(reserveArticle(data.permlink, 'approved'));
+    else
+      dispatch(reserveArticle(data.permlink, status));
   };
   //approve the current article
   const onApproveClick = () => {
@@ -52,7 +57,7 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
         </div>
       }
       {(status === 'reserved' && (user.username !== data.moderation.reservedBy)) && 
-        <div>Reserved for review by {data.moderation.reservedBy}</div>
+        <div className="reservedBy">Reserved for review by <Link to={`/@${data.moderation.reservedBy}`}>{data.moderation.reservedBy}</Link></div>
       }
       {(status === 'reserved' && user.username === data.moderation.reservedBy) &&
         <div className="mod-functions">
