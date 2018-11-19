@@ -409,3 +409,34 @@ export const deleteElement = (permlink) => {
   };
 };
 
+
+/**
+ * get articles by search term
+ */
+export const getArticlesBySearchTerm = (skip, searchterm) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
+      category: ''
+    });
+
+    //get articles by search term from server
+    try {
+      let response = await apiGet('/posts', {
+        skip: skip || undefined, //skip elements for paging
+        search: searchterm || undefined
+      });
+      dispatch({
+        type: types.ARTICLES_GET_SEARCH,
+        skip: skip || undefined,
+        payload: response.data.results
+      });
+    } catch (error) {
+      dispatch({
+        type: types.ARTICLES_GET_SEARCH,
+        payload: []
+      });
+    }
+  };
+};

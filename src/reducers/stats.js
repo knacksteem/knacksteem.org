@@ -20,7 +20,7 @@ const stats = (state = initialState, action) => {
       return {
         ...state,
         isBusy: true,
-        users: action.skip ? state.users : [] //if lazyloading detected, keep data
+        users: action.skip ? state.users  : [] //if lazyloading detected, keep data
       };
     case USERLIST_GET:
       return {

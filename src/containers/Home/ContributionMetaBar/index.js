@@ -115,10 +115,10 @@ const ContributionMetaBar = (props) => {
 
 ContributionMetaBar.propTypes = {
   metaImage: PropTypes.string,
-  reputation: PropTypes.string,
+  reputation: PropTypes.number,
   name: PropTypes.string,
   username: PropTypes.string,
-  handleLogin: PropTypes.func,
+  handleLogin: PropTypes.string,
 };
 
 export default ContributionMetaBar;
