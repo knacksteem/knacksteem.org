@@ -5,8 +5,8 @@ const initialState = {
   currentCategory: '',
   searchString: '',
   data: [],
-  approvedArticles: [],
-  categories: []
+  categories: [],
+  type: ''
 };
 
 const articles = (state = initialState, action) => {

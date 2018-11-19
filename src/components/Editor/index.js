@@ -52,7 +52,21 @@ class Editor extends Component {
 
   }
 
-
+  static hotkeys = {
+    h1: 'ctrl+shift+1',
+    h2: 'ctrl+shift+2',
+    h3: 'ctrl+shift+3',
+    h4: 'ctrl+shift+4',
+    h5: 'ctrl+shift+5',
+    h6: 'ctrl+shift+6',
+    bold: 'ctrl+b',
+    italic: 'ctrl+i',
+    quote: 'ctrl+q',
+    link: 'ctrl+k',
+    image: 'ctrl+m',
+    code: 'ctrl+n',
+    unorderlist: 'ctrl+shift+l'
+  };
 
   //will be called whenever the content of the editor changes
   onChange = (value) => {
@@ -170,9 +184,44 @@ class Editor extends Component {
   // Editor methods
   //
 
-  
+  handlePastedImage = (e) => {
+    if (e.clipboardData && e.clipboardData.items) {
+      const items = e.clipboardData.items;
+      Array.from(items).forEach((item) => {
+        if (item.kind === 'file') {
+          e.preventDefault();
 
- 
+          this.setState({
+            imageUploading: true,
+          });
+
+          const blob = item.getAsFile();
+          this.props.onImageInserted(blob, this.insertImage, () =>
+            this.setState({
+              imageUploading: false,
+            }),
+          );
+        }
+      });
+    }
+  };
+
+  handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      this.setState({
+        imageUploading: true,
+      });
+      this.props.onImageInserted(e.target.files[0], this.insertImage, () =>
+        this.setState({
+          imageUploading: false,
+        }),
+      );
+      // Input reacts on value change, so if user selects the same file nothing will happen.
+      // We have to reset its value, so if same image is selected it will emit onChange event.
+      e.target.value = '';
+    }
+  };
+
   handleDrop = (files) => {
     if (files.length === 0) {
       this.setState({
