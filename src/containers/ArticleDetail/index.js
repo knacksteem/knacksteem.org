@@ -10,6 +10,7 @@ import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {apiGet} from '../../services/api';
 import Comments from '../../components/Comments';
 import Editor from '../../components/Editor';
+import SimilarPosts from '../../components/SimilarPosts';
 import './index.css';
 const {Content} = Layout;
 
@@ -23,10 +24,18 @@ class ArticleDetail extends Component {
       isEditMode: false,
       isReplyMode: false
     };
-  }
+  };
   componentDidMount() {
     this.getArticle();
-  }
+  };
+
+  componentDidUpdate (prevProps) {
+    // This had to be made because of Update Blocking -> https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/guides/blocked-updates.md
+    // None of the solutions were solving this issue. Not sure if this is the correct way or if it is a low-quality workaround
+    if (prevProps.match.url !== this.props.match.url)
+      this.getArticle()
+  };
+
   getArticle = async () => {
     const {match, dispatch} = this.props;
     try {
@@ -35,9 +44,11 @@ class ArticleDetail extends Component {
       });
       let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`, {username: Cookies.get('username') || undefined});
       //no article found, go back to main route
+      let similarPosts;
       if (response && response.data && response.data.results) {
+        similarPosts = await apiGet(`/posts`, {category: response.data.results.category, search: `${response.data.results.title} ${response.data.results.description}  ${response.data.results.permlink}`});
         this.setState({
-          data: response.data.results,
+          data: {...response.data.results, similarPosts: (similarPosts.data.results.filter(similarPost => similarPost.permlink !== match.params.permlink)) },
           isLoading: false
         });
       } else {
@@ -104,6 +115,7 @@ class ArticleDetail extends Component {
               </div>
             </div>
             <Divider/>
+            {data.similarPosts && <SimilarPosts data={data.similarPosts}/>}
             {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
             <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Row>
@@ -115,7 +127,8 @@ class ArticleDetail extends Component {
 
 ArticleDetail.propTypes = {
   dispatch: PropTypes.func,
-  match: PropTypes.object
+  match: PropTypes.object,
+  location: PropTypes.object
 };
 
 export default withRouter(connect()(ArticleDetail));

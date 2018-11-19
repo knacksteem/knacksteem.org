@@ -430,6 +430,7 @@ class Profile extends Component {
                       <ArticleListItem
                         key={data.permlink}
                         data={data}
+                        user={user}
                         onUpvoteSuccess={this.loadArticlesUser}
                       />
                     )
