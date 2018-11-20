@@ -31,7 +31,7 @@ export default class VotingSlider extends Component {
   }
   async componentDidMount() {
     if(store.getState().stats.rewardFundObject.reward_balance === undefined)
-      Promise.all([store.dispatch(getRewardFund()),
+      await Promise.all([store.dispatch(getRewardFund()),
         store.dispatch(getCurrentMedianHistoryPrice()),
         store.dispatch(getDynamicGlobalProperties())]).then(res => {
         return res;
