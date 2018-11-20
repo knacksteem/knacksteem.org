@@ -60,6 +60,16 @@ export default class VotingSlider extends Component {
 
   }
   handleChange = async (e) => {
+    if(store.getState().stats.rewardFundObject.reward_balance === undefined)
+      await Promise.all([store.dispatch(getRewardFund()),
+        store.dispatch(getCurrentMedianHistoryPrice()),
+        store.dispatch(getDynamicGlobalProperties())]).then(res => {
+        return res;
+      });
+
+    if(store.getState().user.userObjectSteemit.account === undefined) {
+      await delay(5000);
+    }
     const value = Number(e);
     store.dispatch(votePowerChange(value * 100));
     const state = store.getState();
