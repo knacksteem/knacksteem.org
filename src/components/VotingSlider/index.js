@@ -41,7 +41,7 @@ export default class VotingSlider extends Component {
       await delay(5000);
     }
     const state = store.getState();
-    const voteValue = calculateVoteValue({
+    const voteValue = await calculateVoteValue({
       votingPower: state.user.userObjectSteemit.account.voting_power * (this.state.votePower / 10000),
       lastVoteTime: state.user.userObjectSteemit.account.last_vote_time,
       rewardBalance: state.stats.rewardFundObject.reward_balance,
@@ -54,7 +54,7 @@ export default class VotingSlider extends Component {
       totalVestingShares: state.stats.dynamicGlobalPropertiesObject.total_vesting_shares
     });
 
-    this.setState({
+    await this.setState({
       voteWorth: voteValue
     });
 
@@ -66,14 +66,13 @@ export default class VotingSlider extends Component {
         store.dispatch(getDynamicGlobalProperties())]).then(res => {
         return res;
       });
-
     if(store.getState().user.userObjectSteemit.account === undefined) {
       await delay(5000);
     }
     const value = Number(e);
     store.dispatch(votePowerChange(value * 100));
     const state = store.getState();
-    const voteValue = calculateVoteValue({
+    const voteValue = await calculateVoteValue({
       votingPower: state.user.userObjectSteemit.account.voting_power * (value * 100 / 10000),
       lastVoteTime: state.user.userObjectSteemit.account.last_vote_time,
       rewardBalance: state.stats.rewardFundObject.reward_balance,
@@ -85,7 +84,7 @@ export default class VotingSlider extends Component {
       totalVestingFundSteem: state.stats.dynamicGlobalPropertiesObject.total_vesting_fund_steem,
       totalVestingShares: state.stats.dynamicGlobalPropertiesObject.total_vesting_shares
     });
-    this.setState({
+    await this.setState({
       votePower: value,
       voteWorth: voteValue
     });
