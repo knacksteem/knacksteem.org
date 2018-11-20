@@ -30,7 +30,6 @@ const getVoteWorth = async props => {
   const globalData = stats.dynamicGlobalPropertiesObject;
   const rewardFund = stats.rewardFundObject;
   const price = stats.currentMedianHistoryPriceObject;
-  console.log(price);
   const steemPower = steem.formatter.vestToSteem(
     vestingShares,
     parseFloat(globalData.total_vesting_shares),
