@@ -30,12 +30,13 @@ export default class VotingSlider extends Component {
 
   }
   async componentDidMount() {
-    Promise.all([store.dispatch(getRewardFund()),
-      store.dispatch(getCurrentMedianHistoryPrice()),
-      store.dispatch(getDynamicGlobalProperties())]).then(res => {
-      return res;
-    });
-
+    if(store.getState().dynamicGlobalPropertiesObject === undefined) {
+      Promise.all([store.dispatch(getRewardFund()),
+        store.dispatch(getCurrentMedianHistoryPrice()),
+        store.dispatch(getDynamicGlobalProperties())]).then(res => {
+        return res;
+      });
+    }
     if(store.getState().user.userObjectSteemit.account === undefined) {
       await delay(5000);
     }
