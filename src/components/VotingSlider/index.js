@@ -30,13 +30,13 @@ export default class VotingSlider extends Component {
 
   }
   async componentDidMount() {
-    if(store.getState().dynamicGlobalPropertiesObject === undefined) {
+    if(store.getState().stats.rewardFundObject.reward_balance === undefined)
       Promise.all([store.dispatch(getRewardFund()),
         store.dispatch(getCurrentMedianHistoryPrice()),
         store.dispatch(getDynamicGlobalProperties())]).then(res => {
         return res;
       });
-    }
+
     if(store.getState().user.userObjectSteemit.account === undefined) {
       await delay(5000);
     }
@@ -48,8 +48,8 @@ export default class VotingSlider extends Component {
       recentClaims: state.stats.rewardFundObject.recent_claims,
       currentMedianHistoryPrice: state.stats.currentMedianHistoryPriceObject,
       vestingShares: state.user.userObjectSteemit.account.vesting_shares,
-      receivedVestingShares: state.user.remoteUserObject.received_vesting_shares,
-      delegatedVestingShares: state.user.remoteUserObject.delegated_vesting_shares,
+      receivedVestingShares: state.user.userObjectSteemit.account.received_vesting_shares,
+      delegatedVestingShares: state.user.userObjectSteemit.account.delegated_vesting_shares,
       totalVestingFundSteem: state.stats.dynamicGlobalPropertiesObject.total_vesting_fund_steem,
       totalVestingShares: state.stats.dynamicGlobalPropertiesObject.total_vesting_shares
     });
@@ -70,8 +70,8 @@ export default class VotingSlider extends Component {
       recentClaims: state.stats.rewardFundObject.recent_claims,
       currentMedianHistoryPrice: state.stats.currentMedianHistoryPriceObject,
       vestingShares: state.user.userObjectSteemit.account.vesting_shares,
-      receivedVestingShares: state.user.remoteUserObject.received_vesting_shares,
-      delegatedVestingShares: state.user.remoteUserObject.delegated_vesting_shares,
+      receivedVestingShares: state.user.userObjectSteemit.account.received_vesting_shares,
+      delegatedVestingShares: state.user.userObjectSteemit.account.delegated_vesting_shares,
       totalVestingFundSteem: state.stats.dynamicGlobalPropertiesObject.total_vesting_fund_steem,
       totalVestingShares: state.stats.dynamicGlobalPropertiesObject.total_vesting_shares
     });
