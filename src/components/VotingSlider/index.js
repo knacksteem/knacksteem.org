@@ -3,14 +3,7 @@ import './index.css';
 import store from '../../store';
 import {votePowerChange} from '../../actions/votingSlider';
 import { Slider, Icon } from 'antd';
-import { calculateVoteValue } from '../../services/functions';
-import delay from './delay';
-import {
-  getRewardFund,
-  getCurrentMedianHistoryPrice,
-  getDynamicGlobalProperties,
-} from '../../actions/stats';
-
+import getVoteWorth from './getVoteWorth';
 const marks = {
   0: '0%',
   25: '25%',
@@ -21,73 +14,35 @@ const marks = {
 export default class VotingSlider extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       disabled: false,
       votePower: store.getState().votingSlider.value,
-      voteWorth: 0
+      voteWorth: 0,
+      maxVoteWorth: 0
     };
-
   }
   async componentDidMount() {
-    if(store.getState().stats.rewardFundObject.reward_balance === undefined)
-      await Promise.all([store.dispatch(getRewardFund()),
-        store.dispatch(getCurrentMedianHistoryPrice()),
-        store.dispatch(getDynamicGlobalProperties())]).then(res => {
-        return res;
-      });
-
-    if(store.getState().user.userObjectSteemit.account === undefined) {
-      await delay(5000);
-    }
-    const state = store.getState();
-    const voteValue = await calculateVoteValue({
-      votingPower: state.user.userObjectSteemit.account.voting_power * (this.state.votePower / 10000),
-      lastVoteTime: state.user.userObjectSteemit.account.last_vote_time,
-      rewardBalance: state.stats.rewardFundObject.reward_balance,
-      recentClaims: state.stats.rewardFundObject.recent_claims,
-      currentMedianHistoryPrice: state.stats.currentMedianHistoryPriceObject,
-      vestingShares: state.user.userObjectSteemit.account.vesting_shares,
-      receivedVestingShares: state.user.userObjectSteemit.account.received_vesting_shares,
-      delegatedVestingShares: state.user.userObjectSteemit.account.delegated_vesting_shares,
-      totalVestingFundSteem: state.stats.dynamicGlobalPropertiesObject.total_vesting_fund_steem,
-      totalVestingShares: state.stats.dynamicGlobalPropertiesObject.total_vesting_shares
-    });
-
     await this.setState({
-      voteWorth: voteValue
+      maxVoteWorth: await getVoteWorth({
+        isMaxVote: true
+      }),
+      voteWorth: await getVoteWorth({
+        isMaxVote: false
+      }),
     });
-
   }
   handleChange = async (e) => {
-    if(store.getState().stats.rewardFundObject.reward_balance === undefined)
-      await Promise.all([store.dispatch(getRewardFund()),
-        store.dispatch(getCurrentMedianHistoryPrice()),
-        store.dispatch(getDynamicGlobalProperties())]).then(res => {
-        return res;
-      });
-    if(store.getState().user.userObjectSteemit.account === undefined) {
-      await delay(5000);
-    }
     const value = Number(e);
     store.dispatch(votePowerChange(value * 100));
-    const state = store.getState();
-    const voteValue = await calculateVoteValue({
-      votingPower: state.user.userObjectSteemit.account.voting_power * (value * 100 / 10000),
-      lastVoteTime: state.user.userObjectSteemit.account.last_vote_time,
-      rewardBalance: state.stats.rewardFundObject.reward_balance,
-      recentClaims: state.stats.rewardFundObject.recent_claims,
-      currentMedianHistoryPrice: state.stats.currentMedianHistoryPriceObject,
-      vestingShares: state.user.userObjectSteemit.account.vesting_shares,
-      receivedVestingShares: state.user.userObjectSteemit.account.received_vesting_shares,
-      delegatedVestingShares: state.user.userObjectSteemit.account.delegated_vesting_shares,
-      totalVestingFundSteem: state.stats.dynamicGlobalPropertiesObject.total_vesting_fund_steem,
-      totalVestingShares: state.stats.dynamicGlobalPropertiesObject.total_vesting_shares
-    });
     await this.setState({
-      votePower: value,
-      voteWorth: voteValue
+      votePower: value * 100,
+      voteWorth: await getVoteWorth({
+        isMaxVote: false
+      })
     });
+  }
+  handleTip = () => {
+    return `${this.state.votePower / 100}% $${this.state.voteWorth}`;
   }
   render() {
     return (
@@ -97,11 +52,9 @@ export default class VotingSlider extends Component {
             <button className="voting-button"><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
             <button className="voting-button"><Icon type="close-circle" /> Cancel</button>
           </span>
-          <span>Vote worth: ${this.state.voteWorth}</span>
+          <span>{this.state.voteWorth === 0 ? <div className="loader"/> : `$${this.state.maxVoteWorth}`}</span>
         </div>
-
-        <Slider onChange={this.handleChange} marks={marks} defaultValue={100} />
-
+        <Slider disabled={this.state.maxVoteWorth === 0 ? true : false} onChange={this.handleChange} max={100} min={0} marks={marks} defaultValue={100} value={this.state.votePower / 100} tipFormatter={this.handleTip}/>
       </div>
     );
   }
