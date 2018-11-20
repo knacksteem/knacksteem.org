@@ -91,7 +91,7 @@ export default class VotingSlider extends Component {
           <span>Vote worth: ${this.state.voteWorth}</span>
         </div>
 
-        <Slider onAfterChange={this.handleChange} marks={marks} defaultValue={100} />
+        <Slider onChange={this.handleChange} marks={marks} defaultValue={100} />
 
       </div>
     );
