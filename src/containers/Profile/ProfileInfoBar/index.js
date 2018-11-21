@@ -1,25 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Dropdown, Icon, Layout, Menu } from 'antd';
+import { Button, Dropdown, Icon, Row, Col, Layout, Menu } from 'antd';
 import './ProfileInfoBar.css';
 
 const styles = {
   barIcon: {
-    fontSize: '16px',
-    marginRight: '10px',
+    fontSize: '12px',
     color: '#999',
-    display: 'inline-block',
-    width: '20px'
+    marginRight: '5px'
+
   },
   modButton: {
     borderWidth: '2px',
     fontWeight: 'bold',
     width: 'inherit',
+    fontSize: '12px',
     marginBottom: '10px'
   },
   banButton: {
     borderWidth: '2px',
     fontWeight: 'bold',
+    fontSize: '12px',
     width: 'inherit',
     background: 'transparent'
   }
@@ -47,7 +48,6 @@ const styles = {
  * @return {Object}
  */
 const ProfileInfoBar = ({
-  style,
   isSupervisor,
   isModerator,
   signupDate,
@@ -62,65 +62,69 @@ const ProfileInfoBar = ({
   user
 }) => {
   return (
-    <div style={{...style}} className="profile-info-bar">
-      <Layout.Sider width={250} style={{ background: '#fff', width: '100%' }}>
-        <div className="profile-info-bar-container">
-          {(about !== undefined && about.length > 0) &&   
-            <h4 className="profile-info-bar-title">{about}</h4>
-          }
-
-          <Menu style={{height: '100%', borderRight: 0, marginTop: '20px'}}>
-            {(location !== undefined && location.length > 0) &&
-            <Menu.Item key="location">
-              <i style={styles.barIcon} className="fas fa-map-marker-alt"/>
-              <span className="profile-info-bar-label">{location}</span>
-            </Menu.Item>
+    <div className="profile-info-bar" style={{width: '220px'}}>
+      <Layout  style={{ background: '#fff' }}>
+        <Row type="flex" style={{ flexDirection: 'column', padding: '5px'}} className="profile-info-bar-container">
+          <Col style={{paddingLeft: '12px',paddingTop: '10px', textAlign: 'left'}}>
+            {(about !== undefined && about.length > 0) &&   
+              <h4 className="profile-info-bar-title">{about}</h4>
             }
+          </Col>
+          <Col>
+            <Menu style={{height: '100%', borderRight: 0}}>
+              {(location !== undefined && location.length > 0) &&
+                <Menu.Item key="location">
+                  <i style={styles.barIcon} className="fas fa-map-marker-alt"/>
+                  <span className="profile-info-bar-label">{location}</span>
+                </Menu.Item>
+              }
 
-            {(website !== undefined && website.length > 0) &&
-            <Menu.Item key="url" disabled={false}>
-              <i style={styles.barIcon} className="fas fa-globe-asia"/>
-              <span className="profile-info-bar-label">{website}</span>
-            </Menu.Item>
-            }
+              {(website !== undefined && website.length > 0) &&
+                <Menu.Item key="url" disabled={false}>
+                  <i style={styles.barIcon} className="fas fa-globe-asia"/>
+                  <span className="profile-info-bar-label">{website}</span>
+                </Menu.Item>
+              }
 
-            <Menu.Item key="time" disabled={false}>
-              <i style={styles.barIcon} className="far fa-clock"/>
-              <span className="profile-info-bar-label">Joined {signupDate}</span>
-            </Menu.Item>
+              <Menu.Item key="time" disabled={false}>
+                <i style={styles.barIcon} className="far fa-clock"/>
+                <span className="profile-info-bar-label">Joined {signupDate}</span>
+              </Menu.Item>
 
-            {(votingPower !== undefined) &&
-            <Menu.Item key="power" disabled={false}>
-              <i style={styles.barIcon} className="fas fa-bolt"/>
-              <span className="profile-info-bar-label">Voting power: {votingPower}%</span>
-            </Menu.Item>
-            }
+              {(votingPower !== undefined) &&
+                <Menu.Item key="power" disabled={false}>
+                  <i style={styles.barIcon} className="fas fa-bolt"/>
+                  <span className="profile-info-bar-label">Voting power: {votingPower}%</span>
+                </Menu.Item>
+              }
 
-            {(voteValue !== undefined) &&
-            <Menu.Item key="value" disabled={false}>
-              <i style={styles.barIcon} className="fas fa-dollar-sign"/>
-              <span className="profile-info-bar-label">Vote value: ${voteValue}</span>
-            </Menu.Item>
-            }
+              {(voteValue !== undefined) &&
+                <Menu.Item key="value" disabled={false}>
+                  <i style={styles.barIcon} className="fas fa-dollar-sign"/>
+                  <span className="profile-info-bar-label">Vote value: ${voteValue}</span>
+                </Menu.Item>
+              }
 
-          </Menu>
-        </div>
-      </Layout.Sider>
+            </Menu>
+          </Col>
+          
+        </Row>
+      </Layout>
 
       {(Object.keys(user).length) > 0 &&
-      <Layout.Sider width={250} style={{ background: 'transparent', boxShadow: 'none' }}>
+      <Layout  style={{ background: 'transparent', boxShadow: 'none' }}>
         <div style={{ width: '100%', marginTop: '20px' }}>
           { isSupervisor &&
           <Dropdown
             overlay={
-              <Menu onClick={({ item }) => onModChoiceSelect(item.props.choice, item.props.action)}>
+              <Menu  onClick={({ item }) => onModChoiceSelect(item.props.choice, item.props.action)}>
                 <Menu.Item
                   choice={'moderator'}
                   action={user.roles.indexOf('moderator') === -1 ? 'add' : 'remove'}
                   key="1"
                 >
                   <Icon type="solution" />
-                  {user.roles.indexOf('moderator') === -1 ? `Make ${name} a ` : `Remove ${name} as a `}
+                  {user.roles.indexOf('moderator') === -1 ? 'Make  a ' : ' as a '}
                   <b>Moderator</b>
                 </Menu.Item>
                 <Menu.Item
@@ -129,7 +133,7 @@ const ProfileInfoBar = ({
                   action={user.roles.indexOf('supervisor') === -1 ? 'add' : 'remove'}
                 >
                   <Icon type="user" />
-                  {user.roles.indexOf('supervisor') === -1 ? `Make ${name} a ` : `Remove ${name} as a `}
+                  {user.roles.indexOf('supervisor') === -1 ? 'Make  ' : ' as a '}
                   <b>Supervisor</b>
                 </Menu.Item>
               </Menu>          
@@ -159,7 +163,7 @@ const ProfileInfoBar = ({
           </Button>
           }
         </div>
-      </Layout.Sider>
+      </Layout>
       }
     </div>
   );

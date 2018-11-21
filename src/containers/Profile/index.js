@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
-import { Layout, Spin } from 'antd';
+import { Layout, Spin, Row, Col } from 'antd';
 import fecha from 'fecha';
+import './index.css';
 
 // Profile core components.
 import ProfileCategoriesBar from './ProfileCategoriesBar';
@@ -45,8 +46,7 @@ const styles = {
   articlesList: {
     display: 'flex',
     flexDirection: 'column',
-    width: '80%',
-    margin: '0 15px'
+    width: '50%',
   }
 };
 
@@ -355,7 +355,7 @@ class Profile extends Component {
     }
 
     return (
-      <div>
+      <div style={{marginTop: '75px'}}>
         <section style={{minHeight: 1080}}>
           {hasLoadedRemoteUserObject
             && 
@@ -383,7 +383,7 @@ class Profile extends Component {
               name={displayName}
               reputation={reputation}
             />
-            <Layout>
+            <Layout >
               <ProfileMetaBar
                 followersCount={remoteUserFollowObject.follower_count}
                 followingCount={remoteUserFollowObject.following_count}
@@ -392,40 +392,40 @@ class Profile extends Component {
                 filterBy={this.state.filterBy}
               />
             </Layout>
-            
-            <Layout id="content-layout">
-              <ProfileInfoBar
-                name={displayName}
-                about={about}
-                location={location}
-                website={website}
-                votingPower={votingPower}
-                voteValue={voteValue}
-                signupDate={signupDate}
-                user={knacksteemUserObject}
-                banReason={this.state.banReason}
-                banDuration={this.state.banDuration}
-                onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
-                onBanButtonClick={() => this.handleBanStatusToggle()}
-                isModerator={
-                  Object.keys(userObject).length > 0 ? 
-                    userObject.roles.includes('moderator') :
-                    false
-                }
-                isSupervisor={
-                  Object.keys(userObject).length > 0 ? 
-                    userObject.roles.includes('supervisor') :
-                    false
-                }
-              />
-              {articlesList.length > 0 &&
-              <div
-                className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item"
-                style={styles.articlesList}
-              >
-                {articlesList.map((data) => {
-                  return (
-                    data.author === match.params.username
+            <Row type="flex" justify="center" style={{marginTop: '30px'}}>
+              <Row className="profile-bar">
+                <Col>
+                  <ProfileInfoBar
+                    name={displayName}
+                    about={about}
+                    location={location}
+                    website={website}
+                    votingPower={votingPower}
+                    voteValue={voteValue}
+                    signupDate={signupDate}
+                    user={knacksteemUserObject}
+                    banReason={this.state.banReason}
+                    banDuration={this.state.banDuration}
+                    onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
+                    onBanButtonClick={() => this.handleBanStatusToggle()}
+                    isModerator={
+                      Object.keys(userObject).length > 0 ? 
+                        userObject.roles.includes('moderator') :
+                        false
+                    }
+                    isSupervisor={
+                      Object.keys(userObject).length > 0 ? 
+                        userObject.roles.includes('supervisor') :
+                        false
+                    }
+                  />
+                </Col>
+              </Row>
+              {articlesList.length &&
+                <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+                  {articlesList.map((data) => {
+                    return (
+                      data.author === match.params.username
                     && (
                       <ArticleListItem
                         key={data.permlink}
@@ -433,33 +433,32 @@ class Profile extends Component {
                         onUpvoteSuccess={this.loadArticlesUser}
                       />
                     )
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </Row>
               }
+              
               {!articlesList.length && (
-                <div style={{
-                  margin: 'auto 20px',
-                  padding: '30px',
-                  background: '#fff',
-                  width: '80%'
-                }}>
-               
-                  {articles.isBusy ? 
-                    <Layout><Spin/></Layout> :
-                    <p>No articles found.</p>
-                  }                  
-                </div>
+                <Row style={{width: '50%', margin: '30px'}}>
+                  <div style={{padding: '30px', background: '#fff',}}>
+                    {articles.isBusy ? 
+                      <Layout><Spin/></Layout> :
+                      <p style={{textAlign: 'center'}}>No articles found.</p>
+                    }                  
+                  </div>
+                </Row>
               )}
-
-              <ProfileCategoriesBar
-                activeCategory={activeCategory}
-                categories={articles.categories}
-                username={match.params.username}
-              />
-
-              {articles.isBusy && <Layout><Spin/></Layout>}
-            </Layout>
+              
+              <Row className="category-bar">
+                <Col>
+                  <ProfileCategoriesBar
+                    activeCategory={activeCategory}
+                    categories={articles.categories}
+                    username={match.params.username}
+                  />
+                </Col>
+              </Row>
+            </Row>
           </div>}
           {!hasLoadedRemoteUserObject && <Spin/>}
         </section>
