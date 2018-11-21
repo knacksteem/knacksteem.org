@@ -371,7 +371,7 @@ class  NewContribution extends React.Component {
     return (
       <Row type="flex" justify="center" className="editor-container">
         <Col>
-          <ProfileInfoBar
+          {/* <ProfileInfoBar
             name={displayName}
             about={about}
             location={location}
@@ -393,7 +393,7 @@ class  NewContribution extends React.Component {
               Object.keys(userObject).length > 0 ? 
                 userObject.roles.includes('supervisor') :
                 false
-            }/>
+            }/> */}
         </Col>
         <Col>
           <Editor isComment={false} 
@@ -405,11 +405,11 @@ class  NewContribution extends React.Component {
                   />
         </Col>
         <Col>
-          <ProfileCategoriesBar
+          {/* <ProfileCategoriesBar
           activeCategory={activeCategory}
           categories={articles.categories}
           username={match.params.username}
-          />
+          /> */}
         </Col>
       </Row>
     );

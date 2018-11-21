@@ -3,9 +3,12 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import RichTextEditor from 'react-rte';
+import { FormattedMessage } from 'react-intl';
+import { HotKeys } from 'react-hotkeys';
+import Dropzone from 'react-dropzone';
 import {Input, AutoComplete, Tag, Icon, Button,Row, message, Col } from 'antd';
 import {postArticle, editArticle} from '../../actions/articles';
+import EditorToolbar from './EditorToolBar';
 import './index.css';
 
 /**
@@ -17,7 +20,7 @@ class Editor extends Component {
     const {articleData, isComment} = props;
     this.state = {
       title: (articleData && !isComment) ? articleData.title : '',
-      value: articleData ? RichTextEditor.createValueFromString(articleData.description, 'markdown') : RichTextEditor.createEmptyValue(),
+      value: '',
       tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
       inputTagsVisible: false,
       inputTagsValue: '',
@@ -177,12 +180,35 @@ class Editor extends Component {
             </a>
           </Col>
         </Row>
-        <RichTextEditor
-          value={value}
-          onChange={this.onChange}
-          autoFocus={true}
-          className="editor-rte"  
-        />
+        <EditorToolbar onSelect={this.insertCode} />
+        <div className="Editor__dropzone-base">
+              <Dropzone
+                disableClick
+                style={{}}
+                accept="image/*"
+                onDrop={this.handleDrop}
+                onDragEnter={this.handleDragEnter}
+                onDragLeave={this.handleDragLeave}
+              >
+                {this.state.dropzoneActive && (
+                  <div className="Editor__dropzone">
+                    <div>
+                      <i className="iconfont icon-picture" />
+                      <FormattedMessage id="drop_image" defaultMessage="Drop your images here" />
+                    </div>
+                  </div>
+                )}
+                <HotKeys keyMap={Editor.hotkeys} handlers={this.handlers}>
+                  <Input
+                    autosize={{ minRows: 6, maxRows: 12 }}
+                    onChange={this.onUpdate}
+                    //ref={ref => this.setInput(ref)}
+                    type="textarea"
+                    placeholder='Write your story...'
+                  />
+                </HotKeys>
+              </Dropzone>
+            </div>
         <h3>Tags</h3>
         {!isComment &&
           <div className="editor-tags">
@@ -193,7 +219,7 @@ class Editor extends Component {
             })}
             {inputTagsVisible && (tags.length >= 2) && (
               <Input
-                ref={this.refInputTags}
+                //ref={this.refInputTags}
                 type="text"
                 size="small"
                 style={{width: 200}}
