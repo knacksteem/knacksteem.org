@@ -25,7 +25,7 @@ const EditorToolbar = ({ onSelect }) => {
   );
 
   return (
-    <Row  type="flex" align="middle" className="EditorToolbar">
+    <Row  type="flex" align="middle" justify="center" style={{ marginLeft: '10px', borderBottom: '1px solid #eee', paddingBottom: '10px'}} justify="left" className="EditorToolbar">
       <Col>
         <Dropdown overlay={menu}>
           <Button className="EditorToolbar__button">
@@ -35,43 +35,43 @@ const EditorToolbar = ({ onSelect }) => {
       </Col>
       
       <Col style={{display: 'flex', alignItems: 'center'}}>
-      <Tooltip title={'Ctrl+b'}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('b')}>
-          <i className="fas fa-bold" />
-        </Button>
-      </Tooltip>
-     
-      <Tooltip title={'Ctrl+i'}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('i')}>
-          <i className="fas fa-italic" />
-        </Button>
-      </Tooltip>
-      <Tooltip title={'Ctrl+q'}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('q')}>
-          <i className="fas fa-angle-left" />
-        </Button>
-      </Tooltip>
-      <Tooltip title={'Ctrl+k'}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('link')}>
-          <i className="fas fa-link" />
-        </Button>
-      </Tooltip>
+        <Tooltip title={'Ctrl+b'}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('b')}>
+            <i className="fas fa-bold" />
+          </Button>
+        </Tooltip>
+      
+        <Tooltip title={'Ctrl+i'}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('i')}>
+            <i className="fas fa-italic" />
+          </Button>
+        </Tooltip>
+        <Tooltip title={'Ctrl+q'}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('q')}>
+            <i className="fas fa-angle-left" />
+          </Button>
+        </Tooltip>
+        <Tooltip title={'Ctrl+k'}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('link')}>
+            <i className="fas fa-link" />
+          </Button>
+        </Tooltip>
 
-      <Tooltip title={'Ctrl+m'}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('image')}>
-          <i className="fas fa-image" />
-        </Button>
-      </Tooltip>
-      <Tooltip title={'Ctrl+n'}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('code')}>
-          <i className="fas fa-code" />
-        </Button>
-      </Tooltip>
-      <Tooltip title={'Ctrl+shift+l'}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('unorderlist')}>
-          <i className="fas fa-list-ul" />
-        </Button>
-      </Tooltip>
+        <Tooltip title={'Ctrl+m'}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('image')}>
+            <i className="fas fa-image" />
+          </Button>
+        </Tooltip>
+        <Tooltip title={'Ctrl+n'}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('code')}>
+            <i className="fas fa-code" />
+          </Button>
+        </Tooltip>
+        <Tooltip title={'Ctrl+shift+l'}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('unorderlist')}>
+            <i className="fas fa-list-ul" />
+          </Button>
+        </Tooltip>
       </Col>
     </Row>
   );

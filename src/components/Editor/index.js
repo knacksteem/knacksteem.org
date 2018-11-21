@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import { FormattedMessage } from 'react-intl';
 import { HotKeys } from 'react-hotkeys';
 import Dropzone from 'react-dropzone';
-import {Input, AutoComplete, Tag, Icon, Button,Row, message, Col } from 'antd';
+import {Input, AutoComplete, Tag, Icon, Button,Row, message, Col, Form } from 'antd';
 import {postArticle, editArticle} from '../../actions/articles';
 import EditorToolbar from './EditorToolBar';
 import './index.css';
@@ -19,8 +19,14 @@ class Editor extends Component {
     super(props);
     const {articleData, isComment} = props;
     this.state = {
-      title: (articleData && !isComment) ? articleData.title : '',
+      contentHtml: '',
+      noContent: false,
+      imageUploading: false,
+      dropzoneActive: false,
       value: '',
+      loading: false,
+      loaded: false,
+      title: (articleData && !isComment) ? articleData.title : '',
       tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
       inputTagsVisible: false,
       inputTagsValue: '',
@@ -34,6 +40,138 @@ class Editor extends Component {
       value,
       previewMarkdown: value.toString('markdown')
     });
+  };
+
+  componentDidMount() {
+    if (this.input) {
+      this.input.addEventListener('input', throttle(e => this.renderMarkdown(e.target.value), 500));
+      this.input.addEventListener('paste', this.handlePastedImage);
+    }
+
+    this.setValues(this.props);
+
+    // eslint-disable-next-line react/no-find-dom-node
+    const select = ReactDOM.findDOMNode(this.select);
+    if (select) {
+      const selectInput = select.querySelector('input,textarea,div[contentEditable]');
+      if (selectInput) {
+        selectInput.setAttribute('autocorrect', 'off');
+        selectInput.setAttribute('autocapitalize', 'none');
+      }
+    }
+
+  }
+
+//
+  // Editor methods
+  //
+
+  handlePastedImage = (e) => {
+    if (e.clipboardData && e.clipboardData.items) {
+      const items = e.clipboardData.items;
+      Array.from(items).forEach((item) => {
+        if (item.kind === 'file') {
+          e.preventDefault();
+
+          this.setState({
+            imageUploading: true,
+          });
+
+          const blob = item.getAsFile();
+          this.props.onImageInserted(blob, this.insertImage, () =>
+            this.setState({
+              imageUploading: false,
+            }),
+          );
+        }
+      });
+    }
+  };
+
+  handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      this.setState({
+        imageUploading: true,
+      });
+      this.props.onImageInserted(e.target.files[0], this.insertImage, () =>
+        this.setState({
+          imageUploading: false,
+        }),
+      );
+      // Input reacts on value change, so if user selects the same file nothing will happen.
+      // We have to reset its value, so if same image is selected it will emit onChange event.
+      e.target.value = '';
+    }
+  };
+
+  handleDrop = (files) => {
+    if (files.length === 0) {
+      this.setState({
+        dropzoneActive: false,
+      });
+      return;
+    }
+
+    this.setState({
+      dropzoneActive: false,
+      imageUploading: true,
+    });
+    let callbacksCount = 0;
+    Array.from(files).forEach((item) => {
+      this.props.onImageInserted(
+        item,
+        (image, imageName) => {
+          callbacksCount += 1;
+          this.insertImage(image, imageName);
+          if (callbacksCount === files.length) {
+            this.setState({
+              imageUploading: false,
+            });
+          }
+        },
+        () => {
+          this.setState({
+            imageUploading: false,
+          });
+        },
+      );
+    });
+  };
+
+  handleDragEnter = () => this.setState({ dropzoneActive: true });
+
+  handleDragLeave = () => this.setState({ dropzoneActive: false });
+
+  insertAtCursor = (before, after, deltaStart = 0, deltaEnd = 0) => {
+    if (!this.input) return;
+
+    const startPos = this.input.selectionStart;
+    const endPos = this.input.selectionEnd;
+    this.input.value =
+      this.input.value.substring(0, startPos) +
+      before +
+      this.input.value.substring(startPos, endPos) +
+      after +
+      this.input.value.substring(endPos, this.input.value.length);
+
+    this.input.selectionStart = startPos + deltaStart;
+    this.input.selectionEnd = endPos + deltaEnd;
+  };
+
+  insertImage = (image, imageName = 'image') => {
+    if (!this.input) return;
+
+    const startPos = this.input.selectionStart;
+    const endPos = this.input.selectionEnd;
+    const imageText = `![${imageName}](${image})\n`;
+    this.input.value = `${this.input.value.substring(
+      0,
+      startPos,
+    )}${imageText}${this.input.value.substring(endPos, this.input.value.length)}`;
+    this.resizeTextarea();
+    this.renderMarkdown(this.input.value);
+    this.setInputCursorPosition(startPos + imageText.length);
+    this.onUpdate();
   };
   //callback for removing a tag
   handleCloseTag = (removedTag) => {
@@ -93,28 +231,28 @@ class Editor extends Component {
       inputTagsValue: ''
     });
   };
-  //post article on blockchain and in backend db
-  onPostClick = async () => {
-    const {dispatch, isComment, isEdit, articleData, onDone, parentPermlink, parentAuthor} = this.props;
-    const {title, value, tags} = this.state;
+  // //post article on blockchain and in backend db
+  // onPostClick = async () => {
+  //   const {dispatch, isComment, isEdit, articleData, onDone, parentPermlink, parentAuthor} = this.props;
+  //   const {title, value, tags} = this.state;
 
-    if (this.checkFieldErrors()) {
-      return;
-    }
+  //   if (this.checkFieldErrors()) {
+  //     return;
+  //   }
 
-    try {
-      if (isEdit) {
-        await dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment, parentPermlink, parentAuthor));
-      } else {
-        await dispatch(postArticle(title, value.toString('markdown'), tags, isComment, parentPermlink, parentAuthor));
-      }
-      if (onDone) {
-        onDone();
-      }
-    } catch(err) {
-      //already handled in redux actions
-    }
-  };
+  //   try {
+  //     if (isEdit) {
+  //       await dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment, parentPermlink, parentAuthor));
+  //     } else {
+  //       await dispatch(postArticle(title, value.toString('markdown'), tags, isComment, parentPermlink, parentAuthor));
+  //     }
+  //     if (onDone) {
+  //       onDone();
+  //     }
+  //   } catch(err) {
+  //     //already handled in redux actions
+  //   }
+  // };
 
   //toggle Editor display
   handleEditorToggle() {
@@ -134,7 +272,6 @@ class Editor extends Component {
       message.error('title is missing');
       error = true;
     }
-    //check if there is something in the rich text editor
     if (!value.getEditorState().getCurrentContent().hasText()) {
       message.error('content is missing');
       error = true;
@@ -157,8 +294,8 @@ class Editor extends Component {
     const {isBusy, categories} = this.props.articles;
     const {isMarkdownEditorActive} = this.state;
     return (
-
-      <div style={{marginTop: '100px'}} className={`editor ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
+<Form className="Editor" layout="vertical" onSubmit={this.handleSubmit}>
+      <div  className={`editor ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
         <h3>Title</h3>
         {!isComment && <Input style={{
           backgroundColor: '#eee', 
@@ -180,35 +317,59 @@ class Editor extends Component {
             </a>
           </Col>
         </Row>
-        <EditorToolbar onSelect={this.insertCode} />
-        <div className="Editor__dropzone-base">
-              <Dropzone
-                disableClick
-                style={{}}
-                accept="image/*"
-                onDrop={this.handleDrop}
-                onDragEnter={this.handleDragEnter}
-                onDragLeave={this.handleDragLeave}
-              >
-                {this.state.dropzoneActive && (
-                  <div className="Editor__dropzone">
-                    <div>
-                      <i className="iconfont icon-picture" />
-                      <FormattedMessage id="drop_image" defaultMessage="Drop your images here" />
+        <Row style={{border: '1px solid #eee', padding: '10px', background: '#fff', minHeight: '500px'}}>
+          <EditorToolbar onSelect={this.insertCode} style={{margin: 'auto'}}/>
+          <Row className="Editor__dropzone-base" style={{width: 'inherit', height: '400px'}}>
+                <Dropzone
+                  disableClick
+                  style={{}}
+                  accept="image/*"
+                  onDrop={this.handleDrop}
+                  onDragEnter={this.handleDragEnter}
+                  onDragLeave={this.handleDragLeave}
+                >
+                  {this.state.dropzoneActive && (
+                    <div className="Editor__dropzone">
+                      <div>
+                        <i className="iconfont icon-picture" />
+                        <FormattedMessage id="drop_image" defaultMessage="Drop your images here" />
+                      </div>
                     </div>
-                  </div>
-                )}
-                <HotKeys keyMap={Editor.hotkeys} handlers={this.handlers}>
-                  <Input
-                    autosize={{ minRows: 6, maxRows: 12 }}
-                    onChange={this.onUpdate}
-                    //ref={ref => this.setInput(ref)}
-                    type="textarea"
-                    placeholder='Write your story...'
-                  />
-                </HotKeys>
-              </Dropzone>
-            </div>
+                  )}
+                  <HotKeys keyMap={Editor.hotkeys} handlers={this.handlers}>
+                    <Input
+                      className="editor_input"
+                      style={{border: 'none', marginTop: '10px', boxShadow: 'none'}}
+                      autosize={{ minRows: 6, maxRows: 12 }}
+                      onChange={this.onUpdate}
+                      //ref={ref => this.setInput(ref)}
+                      type="textarea"
+                      placeholder='Write your story...'
+                    />
+                  </HotKeys>
+                </Dropzone>
+            </Row>
+            
+        </Row>
+        <Row className="Editor__imagebox">
+              <input type="file" id="inputfile" onChange={this.handleImageChange} />
+              <label htmlFor="inputfile">
+                {this.state.imageUploading ? (
+                    <Icon type="loading" />
+                  ) : (
+                    <i className="iconfont icon-picture" />
+                  )}
+                {this.state.imageUploading ? (
+                    <FormattedMessage id="image_uploading" defaultMessage="Uploading your image..." />
+                  ) : (
+                    <FormattedMessage
+                      id="select_or_past_image"
+                      defaultMessage="Select image or paste it from the clipboard."
+                    />
+                  )}
+              </label>
+        </Row>
+        
         <h3>Tags</h3>
         {!isComment &&
           <div className="editor-tags">
@@ -229,11 +390,6 @@ class Editor extends Component {
                 onPressEnter={this.handleInputConfirm}
               />
             )}
-            <Row type="flex" justify="end">
-              <Col>
-                <p style={{fontSize: '10px'}}>Insert images by draging & dropping, pasting from the clipboard, or by <a >selecting them</a> </p>
-              </Col>
-            </Row>
             
             {inputTagsVisible && (tags.length === 1) && (
               <AutoComplete
@@ -263,6 +419,7 @@ class Editor extends Component {
         <Row type="flex" className="preview">
         </Row> 
       </div>
+      </Form>
     );
   }
 }
@@ -288,4 +445,4 @@ const mapStateToProps = state => ({
   articles: state.articles
 });
 
-export default withRouter(connect(mapStateToProps)(Editor));
+export default connect(mapStateToProps)(Form.create()(Editor));
