@@ -310,10 +310,8 @@ class  NewContribution extends React.Component {
   render() {
     let 
       about,
-      coverImage,
       displayName,
       name,
-      reputation,
       location,
       signupDate,
       website,
@@ -353,9 +351,7 @@ class  NewContribution extends React.Component {
       displayName = name && name !== '' ? name : uppercaseFirst(Cookies.get('username'));
       location = remoteUserObjectMeta.location;
       website = remoteUserObjectMeta.website;
-      coverImage = remoteUserObjectMeta.cover_image;
       about = remoteUserObjectMeta.about;
-      reputation = repLog10(parseFloat(remoteUserObject.reputation));
       votingPower = calculateVotePower(remoteUserObject.voting_power, remoteUserObject.last_vote_time).votePower;
 
       voteValue=calculateVoteValue({
