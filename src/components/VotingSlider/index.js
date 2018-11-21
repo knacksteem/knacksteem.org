@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import './index.css';
 import store from '../../store';
 import {votePowerChange} from '../../actions/votingSlider';
-import { Slider, Icon } from 'antd';
+import { Slider, Icon, Button } from 'antd';
 import getVoteWorth from './getVoteWorth';
+
 const marks = {
   0: '0%',
   25: '25%',
@@ -47,14 +48,22 @@ export default class VotingSlider extends Component {
   render() {
     return (
       <div className="voting-container">
-        <div className="voting-buttons-container">
+        <div className="voting-header-container">
           <span>
-            <button className="voting-button"><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
-            <button className="voting-button"><Icon type="close-circle" /> Cancel</button>
+            <button className="voting-button-header"><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
+            <button className="voting-button-header"><Icon type="close-circle" /> Cancel</button>
           </span>
           <span>{this.state.voteWorth === 0 ? <div className="loader"/> : `$${this.state.maxVoteWorth}`}</span>
         </div>
         <Slider disabled={this.state.maxVoteWorth === 0 ? true : false} onChange={this.handleChange} max={100} min={0} marks={marks} defaultValue={100} value={this.state.votePower / 100} tipFormatter={this.handleTip}/>
+        <div className="voting-buttons-container">
+          {Object.keys(marks).map(key => {
+            return <Button className="voting-button" disabled={this.state.maxVoteWorth === 0 ? true : false} key={key} onClick={() => this.handleChange(key)}>{key}%</Button>;
+          })}
+        </div>
+        <div className="voting-worth-information">
+          Your vote will be worth: ${this.state.voteWorth}.
+        </div>
       </div>
     );
   }
