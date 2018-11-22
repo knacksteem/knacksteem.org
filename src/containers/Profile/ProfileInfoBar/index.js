@@ -26,6 +26,77 @@ const styles = {
   }
 };
 
+const ModerationControls = ({
+  name,
+  user,
+  isMasterSupervisor,
+  onModChoiceSelect,
+  onBanButtonClick
+}) => {
+  return (
+    <Layout  style={{ background: 'transparent', boxShadow: 'none' }}>
+      <div style={{ width: '100%', marginTop: '20px' }}>
+        { isMasterSupervisor &&
+          <div>
+            <Dropdown
+              overlay={
+                <Menu  onClick={({ item }) => onModChoiceSelect(item.props.choice, item.props.action)}>
+                  <Menu.Item
+                    choice={'moderator'}
+                    action={user.roles.indexOf('moderator') === -1 ? 'add' : 'remove'}
+                    key="1"
+                  >
+                    <Icon type="solution" />
+                    {user.roles.indexOf('moderator') === -1 ? ' a ' : ' as a '}
+                    <b>Moderator</b>
+                  </Menu.Item>
+                  <Menu.Item
+                    choice={'supervisor'}
+                    key="2"
+                    action={user.roles.indexOf('supervisor') === -1 ? 'add' : 'remove'}
+                  >
+                    <Icon type="user" />
+                    {user.roles.indexOf('supervisor') === -1 ? 'Make  ' : ' as a '}
+                    <b>Supervisor</b>
+                  </Menu.Item>
+                </Menu>          
+              }
+              trigger={['click']}
+            >
+              <Button
+                type="primary"
+                size="large"
+                style={styles.modButton}
+              >
+                {user.roles.indexOf('moderator') > -1 ? 'Strip Mod' : 'Make Mod'}
+                / {user.roles.indexOf('supervisor') > -1 ? 'Remove Sup' : 'Make Sup'}
+                <Icon type="down" />
+              </Button>
+            </Dropdown>
+            <Button
+              onClick={e => onBanButtonClick(e)}
+              size="large"
+              type="primary"
+              ghost
+              style={styles.banButton}
+            >
+              {user.isBanned ? 'Unban': 'Ban'} {name}
+            </Button>
+          </div>
+        }
+      </div>
+    </Layout>
+  );
+};
+
+ModerationControls.propTypes = {
+  user: PropTypes.object,
+  isMasterSupervisor: PropTypes.bool,
+  name: PropTypes.string,
+  onModChoiceSelect: PropTypes.func,
+  onBanButtonClick: PropTypes.func,
+};
+
 /**
  * Displays information for a user's profile.
  * 
@@ -48,8 +119,6 @@ const styles = {
  * @return {Object}
  */
 const ProfileInfoBar = ({
-  isSupervisor,
-  isModerator,
   signupDate,
   about,
   location,
@@ -57,6 +126,7 @@ const ProfileInfoBar = ({
   votingPower,
   voteValue,
   website,
+  isMasterSupervisor,
   onModChoiceSelect,
   onBanButtonClick,
   user
@@ -110,60 +180,15 @@ const ProfileInfoBar = ({
           
         </Row>
       </Layout>
-
-      {(Object.keys(user).length) > 0 &&
-      <Layout  style={{ background: 'transparent', boxShadow: 'none' }}>
-        <div style={{ width: '100%', marginTop: '20px' }}>
-          { isSupervisor &&
-          <Dropdown
-            overlay={
-              <Menu  onClick={({ item }) => onModChoiceSelect(item.props.choice, item.props.action)}>
-                <Menu.Item
-                  choice={'moderator'}
-                  action={user.roles.indexOf('moderator') === -1 ? 'add' : 'remove'}
-                  key="1"
-                >
-                  <Icon type="solution" />
-                  {user.roles.indexOf('moderator') === -1 ? 'Make  a ' : ' as a '}
-                  <b>Moderator</b>
-                </Menu.Item>
-                <Menu.Item
-                  choice={'supervisor'}
-                  key="2"
-                  action={user.roles.indexOf('supervisor') === -1 ? 'add' : 'remove'}
-                >
-                  <Icon type="user" />
-                  {user.roles.indexOf('supervisor') === -1 ? 'Make  ' : ' as a '}
-                  <b>Supervisor</b>
-                </Menu.Item>
-              </Menu>          
-            }
-            trigger={['click']}
-          >
-            <Button
-              type="primary"
-              size="large"
-              style={styles.modButton}
-            >
-              {user.roles.indexOf('moderator') > -1 ? 'Strip Mod' : 'Make Mod'}
-              / {user.roles.indexOf('supervisor') > -1 ? 'Remove Sup' : 'Make Sup'}
-              <Icon type="down" />
-            </Button>
-          </Dropdown>
-          }
-          { (isSupervisor || isModerator) &&
-          <Button
-            onClick={e => onBanButtonClick(e)}
-            size="large"
-            type="primary"
-            ghost
-            style={styles.banButton}
-          >
-            {user.isBanned ? 'Unban': 'Ban'} {name}
-          </Button>
-          }
-        </div>
-      </Layout>
+      
+      {Object.keys(user) &&
+      <ModerationControls
+        isMasterSupervisor={isMasterSupervisor}
+        user={user}
+        onModChoiceSelect={onModChoiceSelect}
+        onBanButtonClick={onBanButtonClick}
+        name={name}
+      />
       }
     </div>
   );
@@ -172,8 +197,7 @@ const ProfileInfoBar = ({
 ProfileInfoBar.propTypes = {
   style: PropTypes.object,
   user: PropTypes.object,
-  isSupervisor: PropTypes.bool,
-  isModerator: PropTypes.bool,
+  isMasterSupervisor: PropTypes.bool,
   signupDate: PropTypes.string,
   about: PropTypes.string,
   name: PropTypes.string,

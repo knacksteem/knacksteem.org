@@ -109,7 +109,7 @@ const ProfileMetaBar = ({
 
               >
                 <Button
-                  size="size"
+                  size="default"
                   style={{
                     borderWidth: '2px',
                     fontWeight: 'bold',

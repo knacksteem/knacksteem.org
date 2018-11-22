@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
-import { Layout, Spin, Row, Col } from 'antd';
+import { Button, Layout, Spin, Row, Col } from 'antd';
 import fecha from 'fecha';
 import './index.css';
 
@@ -50,6 +50,8 @@ const styles = {
   }
 };
 
+const MASTER_SUPERVISOR = 'knowledges'
+
 class Profile extends Component {
   static propTypes = {
     location: PropTypes.object,
@@ -65,8 +67,18 @@ class Profile extends Component {
     isBanModalOpen: false,
     banReason: '',
     banDuration: 1000,
-    filterBy: ''
+    filterBy: '',
+    skipArticles: 0
   };
+
+  handleMoreArticlesLoading(category) {
+    let skipArticles = this.state.skipArticles + 2;
+    this.setState({
+      skipArticles
+    });
+    
+    this.loadArticlesUser(category, skipArticles);
+  }
 
   /**
    * Toggles the ban modal visibility on and off.
@@ -202,17 +214,17 @@ class Profile extends Component {
    * 
    * @return {void}
    */
-  loadArticlesUser(category) {
+  loadArticlesUser(category, skip, limit = 25) {
     const {dispatch, match} = this.props;
-    const skip = 0;
     const search = undefined;
 
     dispatch(
       getArticlesByUsername(
         match.params.username,
-        skip,
+        skip || undefined,
         search,
-        category
+        category,
+        limit
       )
     );
   }
@@ -271,6 +283,143 @@ class Profile extends Component {
     dispatch(getRemoteUserFollowData(match.params.username));
   }
 
+  renderProfile ({
+    about,
+    activeCategory,
+    articles,
+    articlesList,
+    coverImage,
+    displayName,
+    hasLoadedRemoteUserObject,
+    loadArticles,
+    match,
+    location,
+    knacksteemUserObject,
+    signupDate,
+    reputation,
+    userObject,
+    remoteUserFollowObject,
+    voteValue,
+    votingPower,
+    website
+  }) {
+    return (
+      <div style={{marginTop: '75px'}}>
+        <section style={{minHeight: 1080}}>
+          {hasLoadedRemoteUserObject
+            && 
+          <div>
+            <BanModal
+              name={displayName}
+              isVisible={this.state.isBanModalOpen}
+              isBanSubmitDisabled={this.state.banReason.length <= 10}
+              banReason={this.state.banReason}
+              onCloseBanModal={() => this.handleBanModalStatusToggle()}
+              onSubmitBanModal={() => this.handleBanStatusToggle()}
+              onBanReasonInputChange={(e) => this.setState({
+                banReason: e.target.value
+              })}
+              onBanDurationInputChange={(value) => this.setState({
+                banDuration: value
+              })}
+            />
+            <ProfileHero
+              style={{
+                marginTop: '-31px'
+              }}
+              coverImage={coverImage}
+              username={match.params.username}
+              name={displayName}
+              reputation={reputation}
+            />
+            <Layout >
+              <ProfileMetaBar
+                followersCount={remoteUserFollowObject.follower_count}
+                followingCount={remoteUserFollowObject.following_count}
+                username={match.params.username}
+                onArticlesFilterSelect={filterBy => this.handleArticlesFilterSelect(filterBy)}
+                filterBy={this.state.filterBy}
+              />
+            </Layout>
+            <Row type="flex" justify="center" style={{marginTop: '30px'}}>
+              <Row className="profile-bar">
+                <Col>
+                  <ProfileInfoBar
+                    name={displayName}
+                    about={about}
+                    location={location}
+                    website={website}
+                    votingPower={votingPower}
+                    voteValue={voteValue}
+                    signupDate={signupDate}
+                    user={knacksteemUserObject}
+                    banReason={this.state.banReason}
+                    banDuration={this.state.banDuration}
+                    onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
+                    onBanButtonClick={() => this.handleBanStatusToggle()}
+                    isMasterSupervisor={
+                      Object.keys(userObject).length > 0 && 
+                        userObject.name === MASTER_SUPERVISOR
+                    }
+                  />
+                </Col>
+              </Row>
+              {articlesList.length &&
+                <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+                  <div>
+                    {articlesList.map((data) => {
+                      return (
+                        data.author === match.params.username
+                      && (
+                        <ArticleListItem
+                          key={data.permlink}
+                          data={data}
+                          onUpvoteSuccess={loadArticles}
+                        />
+                      )
+                      );
+                    })}
+                  </div>
+                  <div style={{ margin: '0 auto' }}>
+                    <Button
+                      size={'default'}
+                      onClick={() => this.handleMoreArticlesLoading(activeCategory)}
+                      style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
+                      Load more
+                    </Button>
+                  </div>
+                </Row>
+              }
+              
+              {!articlesList.length && (
+                <Row style={{width: '50%', margin: '30px'}}>
+                  <div style={{padding: '30px', background: '#fff',}}>
+                    {articles.isBusy ? 
+                      <Layout><Spin/></Layout> :
+                      <p style={{textAlign: 'center'}}>No articles found.</p>
+                    }                  
+                  </div>
+                </Row>
+              )}
+              
+              <Row className="category-bar">
+                <Col>
+                  <ProfileCategoriesBar
+                    activeCategory={activeCategory}
+                    categories={articles.categories}
+                    username={match.params.username}
+                    onShowAllCategories={() => loadArticles()}
+                  />
+                </Col>
+              </Row>
+            </Row>
+          </div>}
+          {!hasLoadedRemoteUserObject && <Spin/>}
+        </section>
+      </div>
+    );
+  }
+
   componentDidMount() {
     const { location, history } = this.props;
 
@@ -285,7 +434,7 @@ class Profile extends Component {
     history.listen(newLocation => {
       let newCategory = queryString.parse(newLocation.search).category;
 
-      this.loadArticlesUser(newCategory);
+      this.loadArticlesUser(newCategory, 0);
     });
   }
 
@@ -354,116 +503,26 @@ class Profile extends Component {
       });
     }
 
-    return (
-      <div style={{marginTop: '75px'}}>
-        <section style={{minHeight: 1080}}>
-          {hasLoadedRemoteUserObject
-            && 
-          <div>
-            <BanModal
-              name={displayName}
-              isVisible={this.state.isBanModalOpen}
-              isBanSubmitDisabled={this.state.banReason.length <= 10}
-              banReason={this.state.banReason}
-              onCloseBanModal={() => this.handleBanModalStatusToggle()}
-              onSubmitBanModal={() => this.handleBanStatusToggle()}
-              onBanReasonInputChange={(e) => this.setState({
-                banReason: e.target.value
-              })}
-              onBanDurationInputChange={(value) => this.setState({
-                banDuration: value
-              })}
-            />
-            <ProfileHero
-              style={{
-                marginTop: '-31px'
-              }}
-              coverImage={coverImage}
-              username={match.params.username}
-              name={displayName}
-              reputation={reputation}
-            />
-            <Layout >
-              <ProfileMetaBar
-                followersCount={remoteUserFollowObject.follower_count}
-                followingCount={remoteUserFollowObject.following_count}
-                username={match.params.username}
-                onArticlesFilterSelect={filterBy => this.handleArticlesFilterSelect(filterBy)}
-                filterBy={this.state.filterBy}
-              />
-            </Layout>
-            <Row type="flex" justify="center" style={{marginTop: '30px'}}>
-              <Row className="profile-bar">
-                <Col>
-                  <ProfileInfoBar
-                    name={displayName}
-                    about={about}
-                    location={location}
-                    website={website}
-                    votingPower={votingPower}
-                    voteValue={voteValue}
-                    signupDate={signupDate}
-                    user={knacksteemUserObject}
-                    banReason={this.state.banReason}
-                    banDuration={this.state.banDuration}
-                    onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
-                    onBanButtonClick={() => this.handleBanStatusToggle()}
-                    isModerator={
-                      Object.keys(userObject).length > 0 ? 
-                        userObject.roles.includes('moderator') :
-                        false
-                    }
-                    isSupervisor={
-                      Object.keys(userObject).length > 0 ? 
-                        userObject.roles.includes('supervisor') :
-                        false
-                    }
-                  />
-                </Col>
-              </Row>
-              {articlesList.length &&
-                <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-                  {articlesList.map((data) => {
-                    return (
-                      data.author === match.params.username
-                    && (
-                      <ArticleListItem
-                        key={data.permlink}
-                        data={data}
-                        onUpvoteSuccess={this.loadArticlesUser}
-                      />
-                    )
-                    );
-                  })}
-                </Row>
-              }
-              
-              {!articlesList.length && (
-                <Row style={{width: '50%', margin: '30px'}}>
-                  <div style={{padding: '30px', background: '#fff',}}>
-                    {articles.isBusy ? 
-                      <Layout><Spin/></Layout> :
-                      <p style={{textAlign: 'center'}}>No articles found.</p>
-                    }                  
-                  </div>
-                </Row>
-              )}
-              
-              <Row className="category-bar">
-                <Col>
-                  <ProfileCategoriesBar
-                    activeCategory={activeCategory}
-                    categories={articles.categories}
-                    username={match.params.username}
-                  />
-                </Col>
-              </Row>
-            </Row>
-          </div>}
-          {!hasLoadedRemoteUserObject && <Spin/>}
-        </section>
-      </div>
-    );
+    return this.renderProfile({
+      about,
+      activeCategory,
+      articles,
+      articlesList,
+      coverImage,
+      displayName,
+      hasLoadedRemoteUserObject,
+      match,
+      location,
+      loadArticles: () => this.loadArticlesUser(),
+      knacksteemUserObject,
+      signupDate,
+      reputation,
+      userObject,
+      remoteUserFollowObject,
+      voteValue,
+      votingPower,
+      website  
+    });
   }
 }
 
