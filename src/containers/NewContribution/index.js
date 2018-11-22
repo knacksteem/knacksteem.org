@@ -307,6 +307,82 @@ class  NewContribution extends React.Component {
 
   };
 
+  getNewPostData = (form) => {
+    const data = {
+      body: form.body,
+      title: form.title,
+    };
+
+    data.parentAuthor = '';
+    data.author = this.props.user.name || '';
+
+    const tags = ['knackSteem'];
+
+    const users = [];
+    const userRegex = /@([a-zA-Z.0-9-]+)/g;
+    const links = [];
+    const linkRegex = /\[.+?]\((.*?)\)/g;
+    const images = [];
+    const imageRegex = /!\[.+?]\((.*?)\)/g;
+    let matches;
+
+    const postBody = data.body;
+
+    // eslint-disable-next-line
+    while ((matches = userRegex.exec(postBody))) {
+      if (users.indexOf(matches[1]) === -1) {
+        users.push(matches[1]);
+      }
+    }
+
+    // eslint-disable-next-line
+    while ((matches = linkRegex.exec(postBody))) {
+      if (links.indexOf(matches[1]) === -1 && matches[1].search(/https?:\/\//) === 0) {
+        links.push(matches[1]);
+      }
+    }
+
+    // eslint-disable-next-line
+    while ((matches = imageRegex.exec(postBody))) {
+      if (images.indexOf(matches[1]) === -1 && matches[1].search(/https?:\/\//) === 0) {
+        images.push(matches[1]);
+      }
+    }
+
+    if (data.title && !this.permlink) {
+      data.permlink = kebabCase(data.title);
+    } else {
+      data.permlink = this.permlink;
+    }
+
+    if (this.state.isUpdating) data.isUpdating = this.state.isUpdating;
+
+    const metaData = {
+      community: 'knackSteem',
+    };
+
+    if (tags.length) {
+      metaData.tags = tags;
+    }
+    if (users.length) {
+      metaData.users = users;
+    }
+    if (links.length) {
+      metaData.links = links;
+    }
+    if (images.length) {
+      metaData.image = images;
+    }
+
+    data.parentPermlink = 'knacksteem' 
+
+    if (this.originalBody) {
+      data.originalBody = this.originalBody;
+    }
+
+    return data;
+  };
+
   render() {
     let 
       about,

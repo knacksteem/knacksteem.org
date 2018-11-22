@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {withRouter} from 'react-router-dom';
+import ReactDOM from 'react-dom';
+import { throttle } from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
@@ -18,6 +19,7 @@ class Editor extends Component {
   constructor(props) {
     super(props);
     const {articleData, isComment} = props;
+
     this.state = {
       contentHtml: '',
       noContent: false,
@@ -33,14 +35,16 @@ class Editor extends Component {
       previewMarkdown: '',
       isMarkdownEditorActive: false
     };
+  
+    this.renderItems = this.renderItems.bind(this);
   }
-  //will be called whenever the content of the editor changes
-  onChange = (value) => {
-    this.setState({
-      value,
-      previewMarkdown: value.toString('markdown')
-    });
-  };
+
+  
+  renderItems(items) {
+    return items;
+  }
+
+  
 
   componentDidMount() {
     if (this.input) {
@@ -62,9 +66,23 @@ class Editor extends Component {
 
   }
 
+  setInput = (input) => {
+     this.input = ReactDOM.findDOMNode(input);
+  };
+
+  renderMarkdown = (value) => {
+    this.setState({
+      contentHtml: value,
+    });
+  };
+
+  resizeTextarea = () => {
+    if (this.originalInput) this.originalInput.resizeTextarea();
+  };
+
 //
-  // Editor methods
-  //
+// Editor methods
+//
 
   handlePastedImage = (e) => {
     if (e.clipboardData && e.clipboardData.items) {
@@ -158,6 +176,11 @@ class Editor extends Component {
     this.input.selectionEnd = endPos + deltaEnd;
   };
 
+  onUpdate = (e) => { 
+      const values =  this.getValues(e);
+      this.props.onUpdate(values);
+  };
+
   insertImage = (image, imageName = 'image') => {
     if (!this.input) return;
 
@@ -231,6 +254,38 @@ class Editor extends Component {
       inputTagsValue: ''
     });
   };
+
+  setValues = (post) => {
+    this.props.form.setFieldsValue({
+      title: post.title,
+    });
+    if (this.input && post.body !== '') {
+      this.input.value = post.body;
+      this.renderMarkdown(this.input.value);
+      this.resizeTextarea();
+    }
+  };
+
+  getValues = (e) => {
+    // NOTE: antd API is inconsistent and returns event or just value depending of input type.
+    // this code extracts value from event based of event type
+    // (array or just value for Select, proxy event for inputs and checkboxes)
+
+    const values = {
+      ...this.props.form.getFieldsValue(['title']),
+      body: this.input.value,
+    };
+
+    this.setState({
+      previewMarkdown: this.input.value.toString('markdown')
+    });
+
+
+    if (!e) return values;
+
+    return values;
+  };
+
   // //post article on blockchain and in backend db
   // onPostClick = async () => {
   //   const {dispatch, isComment, isEdit, articleData, onDone, parentPermlink, parentAuthor} = this.props;
@@ -332,7 +387,7 @@ class Editor extends Component {
                     <div className="Editor__dropzone">
                       <div>
                         <i className="iconfont icon-picture" />
-                        <FormattedMessage id="drop_image" defaultMessage="Drop your images here" />
+                        <p> Drop your images here...</p>
                       </div>
                     </div>
                   )}
@@ -342,7 +397,7 @@ class Editor extends Component {
                       style={{border: 'none', marginTop: '10px', boxShadow: 'none'}}
                       autosize={{ minRows: 6, maxRows: 12 }}
                       onChange={this.onUpdate}
-                      //ref={ref => this.setInput(ref)}
+                      ref={ref => this.setInput(ref)}
                       type="textarea"
                       placeholder='Write your story...'
                     />
@@ -360,12 +415,9 @@ class Editor extends Component {
                     <i className="iconfont icon-picture" />
                   )}
                 {this.state.imageUploading ? (
-                    <FormattedMessage id="image_uploading" defaultMessage="Uploading your image..." />
+                    <p>Upload your image...</p>
                   ) : (
-                    <FormattedMessage
-                      id="select_or_past_image"
-                      defaultMessage="Select image or paste it from the clipboard."
-                    />
+                    <p>Select image or paste it from the clipboard.</p>
                   )}
               </label>
         </Row>
@@ -380,7 +432,7 @@ class Editor extends Component {
             })}
             {inputTagsVisible && (tags.length >= 2) && (
               <Input
-                //ref={this.refInputTags}
+                ref={this.refInputTags}
                 type="text"
                 size="small"
                 style={{width: 200}}
