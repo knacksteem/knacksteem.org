@@ -68,11 +68,12 @@ class Profile extends Component {
     banReason: '',
     banDuration: 1000,
     filterBy: '',
-    skipArticles: 0
+    skipArticles: 0,
+    limit: 1
   };
 
   handleMoreArticlesLoading(category) {
-    let skipArticles = this.state.skipArticles + 2;
+    let skipArticles = this.state.skipArticles + this.state.limit;
     this.setState({
       skipArticles
     });
@@ -214,7 +215,7 @@ class Profile extends Component {
    * 
    * @return {void}
    */
-  loadArticlesUser(category, skip, limit = 25) {
+  loadArticlesUser(category, skip, limit = 1) {
     const {dispatch, match} = this.props;
     const search = undefined;
 
@@ -380,6 +381,12 @@ class Profile extends Component {
                       );
                     })}
                   </div>
+                  {(articles.isBusy && (
+                    <div style={{ marginBottom: '30px' }}>
+                      <Layout><Spin/></Layout>
+                    </div>
+                  ))}
+
                   <div style={{ margin: '0 auto' }}>
                     <Button
                       size={'default'}
