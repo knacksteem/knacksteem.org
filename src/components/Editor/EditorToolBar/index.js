@@ -68,7 +68,7 @@ const EditorToolbar = ({ onSelect }) => {
           </Button>
         </Tooltip>
         <Tooltip title={'Ctrl+shift+l'}>
-          <Button className="EditorToolbar__button" onClick={() => onSelect('unorderlist')}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('unorderedlist')}>
             <i className="fas fa-list-ul" />
           </Button>
         </Tooltip>

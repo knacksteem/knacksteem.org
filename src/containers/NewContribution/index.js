@@ -2,39 +2,10 @@ import React from 'react';
 import { Row, Col} from 'antd';
 import Editor from '../../components/Editor';
 import debounce from 'lodash/debounce';
-import kebabCase from 'lodash/kebabCase';
-import queryString from 'query-string';
-import fecha from 'fecha';
-import ProfileCategoriesBar from '../Profile/ProfileCategoriesBar';
-import ProfileInfoBar from '../Profile/ProfileInfoBar';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
-import {withRouter} from "react-router-dom"
-import BanModal from '../../components/BanModal';
-import {
-  getArticlesByUsername,
-  getArticlesModeration
-} from '../../actions/articles';
-
-import {
-  getKnacksteemUserData,
-  updateKnacksteemUser,
-  getRemoteUserData,
-  getRemoteUserFollowData
-} from '../../actions/user';
-import {
-  getRewardFund,
-  getCurrentMedianHistoryPrice,
-  getDynamicGlobalProperties,
-  moderateUser
-} from '../../actions/stats';
-import {
-  calculateVotePower,
-  calculateVoteValue,
-  containsEmptyMap,
-  uppercaseFirst,
-  repLog10
-} from '../../services/functions';
+import {withRouter} from "react-router-dom";
+import {postArticle, editArticle} from '../../actions/articles';
 
 
 
@@ -47,240 +18,17 @@ class  NewContribution extends React.Component {
     super(props)
 
     this.state = {
-      initialTitle: '',
-      initialBody: '',
       isUpdating: false,
       parsedPostData: null,
       banned: false,
-      isBanModalOpen: false,
-      banReason: '',
-      banDuration: 1000,
-      filterBy: ''
+      isEdit: false,
+      isComment: false
     };
 
 
   }
   
-  /**
-   * Toggles the ban modal visibility on and off.
-   * 
-   * @method handleBanModalStatusToggle
-   * 
-   * @return {void}
-   */
-  handleBanModalStatusToggle() {
-    this.setState(({ isBanModalOpen }) => {
-      return {
-        isBanModalOpen: !isBanModalOpen
-      };
-    });
-  }
-
-  /**
-   * Toggles the ban status of a user.
-   * 
-   * @method handleBanStatusToggle
-   * 
-   * @return {void}
-   */
-  handleBanStatusToggle() {
-    const {dispatch, match, user} = this.props;
-    const { banDuration, banReason } = this.state;
-    const {knacksteemUserObject} = user;
-
-    const intention = knacksteemUserObject.isBanned ? 'unban' : 'ban';
-
-    if (intention === 'ban' && banReason.length <= 10) {
-      this.setState({
-        isBanModalOpen: true
-      });
-      return false;
-    }
-
-    let updatedKnacksteemUserObject = {
-      ...knacksteemUserObject,
-      isBanned: !knacksteemUserObject.isBanned
-    };
-
-    dispatch(moderateUser(
-      match.params.username,
-      intention,
-      banReason,
-      banDuration || 1000000
-    ));
-
-    dispatch(updateKnacksteemUser(updatedKnacksteemUserObject));
-
-    if (intention === 'ban') {
-      this.setState({
-        banReason: '',
-        isBanModalOpen: false
-      });
-    }
-  }
-
-  /**
-   * Sets articles filter criteria.
-   * 
-   * @method handleArticlesFilterSelect
-   * @param {String} filterBy - Criteria to filter articles by. Example: 'accepted' or 'pending'. 
-   * 
-   * @return {void}
-   */
-  handleArticlesFilterSelect(filterBy) {
-    const {dispatch, match} = this.props;
-    let moderationEndpoints = {
-      'accepted': '/moderation/approved',
-      'pending': '/moderation/pending',
-      'declined': '/moderation/not-approved',
-    };
-
-    this.setState({
-      filterBy
-    });
-
-    if (filterBy !== '') {
-      dispatch(
-        getArticlesModeration(
-          moderationEndpoints[filterBy],
-          0,
-          '',
-          match.params.username
-        )
-      );
-    } else {
-      let { category } = queryString.parse(this.props.location.search);
-
-      this.loadArticlesUser(category);  
-    }
-
-  }
-
-  /**
-   * Sets or removes moderation roles. Sets user as moderator or supervisor.
-   * 
-   * @method handleModChoiceSelect
-   * @param {String} choice - Moderator choice selected. Example: 'moderator' or 'supervisor'. 
-   * @param {String} action - Action to carry out. Example: 'remove' or 'add'.
-   * 
-   * @return {void}
-   */
-  handleModChoiceSelect(choice, action) {
-    const {dispatch, match, user} = this.props;
-    const {knacksteemUserObject} = user;
-    let updatedRoles;
-
-    const intention = choice === 'moderator' ? `${action}Moderator` : `${action}Supervisor`;
-    
-    if (action === 'remove') {
-      updatedRoles = knacksteemUserObject.roles.filter(role => role !== choice);
-    } else {
-      updatedRoles = [...knacksteemUserObject.roles, choice];
-    }
-
-    let updatedKnacksteemUserObject = {
-      ...knacksteemUserObject,
-      roles: updatedRoles
-    };
-
-    dispatch(updateKnacksteemUser(updatedKnacksteemUserObject));
-    dispatch(moderateUser(match.params.username, intention));
-  }
-
-  /**
-   * Load articles created by a specified user from the Knacksteem backend.
-   * 
-   * @method loadArticlesUser
-   * @param {String} category - Category of user articles to load.
-   * 
-   * @return {void}
-   */
-  loadArticlesUser(category) {
-    const {dispatch, match} = this.props;
-    const skip = 0;
-    const search = undefined;
-
-    dispatch(
-      getArticlesByUsername(
-        match.params.username,
-        skip,
-        search,
-        category
-      )
-    );
-  }
-
-  /**
-   * Load STEEM reward funds from the STEEM api.
-   * 
-   * @method loadSteemRewardFunds
-   * 
-   * @return {void}
-   */
-  loadSteemRewardFunds() {
-    const {dispatch} = this.props;
-
-    dispatch(getRewardFund());
-  }
-
-  /**
-   * Loads the current median history price for STEEM from the STEEM api.
-   * 
-   * @method loadCurrentMedianHistoryPrice
-   * 
-   * @return {void}
-   */
-  loadCurrentMedianHistoryPrice() {
-    const {dispatch} = this.props;
-
-    dispatch(getCurrentMedianHistoryPrice());
-  }
-
-  /**
-   * Loads dynamic global properties for STEEM from the STEEM api.
-   * 
-   * @method loadDynamicGlobalProperties
-   * 
-   * @return {void}
-   */
-  loadDynamicGlobalProperties() {
-    const {dispatch} = this.props;
-
-    dispatch(getDynamicGlobalProperties());
-  }
-
-  /**
-   * Loads user data from the Knacksteem backend for the profile being viewed.
-   * 
-   * @method loadRemoteUserData
-   * 
-   * @return {void}
-   */
-  loadRemoteUserData() {
-    const {dispatch, match} = this.props;
-
-    dispatch(getKnacksteemUserData(Cookies.get('username')));
-    dispatch(getRemoteUserData(Cookies.get('username')));
-    dispatch(getRemoteUserFollowData(Cookies.get('username')));
-  }
-
-  componentDidMount() {
-    const { location, history } = this.props;
-
-    let { category } = queryString.parse(location.search);
-
-    this.loadArticlesUser(category);
-    this.loadSteemRewardFunds();
-    this.loadCurrentMedianHistoryPrice();
-    this.loadDynamicGlobalProperties();
-    this.loadRemoteUserData();
-
-    history.listen(newLocation => {
-      let newCategory = queryString.parse(newLocation.search).category;
-
-      this.loadArticlesUser(newCategory);
-    });
-  }
+ 
 
 
 
@@ -311,141 +59,47 @@ class  NewContribution extends React.Component {
     const data = {
       body: form.body,
       title: form.title,
+      tags: form.tags
     };
 
-    data.parentAuthor = '';
-    data.author = this.props.user.name || '';
+    let {tags} = data;
 
-    const tags = ['knackSteem'];
-
-    const users = [];
-    const userRegex = /@([a-zA-Z.0-9-]+)/g;
-    const links = [];
-    const linkRegex = /\[.+?]\((.*?)\)/g;
-    const images = [];
-    const imageRegex = /!\[.+?]\((.*?)\)/g;
-    let matches;
-
-    const postBody = data.body;
-
-    // eslint-disable-next-line
-    while ((matches = userRegex.exec(postBody))) {
-      if (users.indexOf(matches[1]) === -1) {
-        users.push(matches[1]);
-      }
-    }
-
-    // eslint-disable-next-line
-    while ((matches = linkRegex.exec(postBody))) {
-      if (links.indexOf(matches[1]) === -1 && matches[1].search(/https?:\/\//) === 0) {
-        links.push(matches[1]);
-      }
-    }
-
-    // eslint-disable-next-line
-    while ((matches = imageRegex.exec(postBody))) {
-      if (images.indexOf(matches[1]) === -1 && matches[1].search(/https?:\/\//) === 0) {
-        images.push(matches[1]);
-      }
-    }
-
-    if (data.title && !this.permlink) {
-      data.permlink = kebabCase(data.title);
-    } else {
-      data.permlink = this.permlink;
-    }
+    data.parentAuthor =  '';
 
     if (this.state.isUpdating) data.isUpdating = this.state.isUpdating;
-
-    const metaData = {
-      community: 'knackSteem',
-    };
-
-    if (tags.length) {
-      metaData.tags = tags;
-    }
-    if (users.length) {
-      metaData.users = users;
-    }
-    if (links.length) {
-      metaData.links = links;
-    }
-    if (images.length) {
-      metaData.image = images;
-    }
-
-    data.parentPermlink = 'knacksteem' 
-
-    if (this.originalBody) {
-      data.originalBody = this.originalBody;
-    }
+    data.parentPermlink = '';
 
     return data;
   };
 
+  onSubmit = (form) => {
+    const data = this.getNewPostData(form);
+   
+
+    this.setState({parsedPostData: data});
+    this.proceedSubmit();
+  };
+
+  proceedSubmit = () => {
+    const {isComment, isEdit, parsedPostData} = this.state;
+    const {dispatch, articleData} = this.props;
+    console.log("hello")
+
+    // if (isEdit){
+    //   dispatch(editArticle(parsedPostData.title, parsedPostData.body, parsedPostData.tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
+    // }else {
+    //   dispatch(postArticle(parsedPostData.title, parsedPostData.body, parsedPostData.tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
+    // }
+  }
+
+
+
+
+
   render() {
-    let 
-      about,
-      displayName,
-      name,
-      location,
-      signupDate,
-      website,
-      votingPower,
-      voteValue,
-      remoteUserObjectMeta;
-
-    const {articles, user, stats, match} = this.props;
-    const { userObject, remoteUserObject, knacksteemUserObject, remoteUserFollowObject } = user;
-    const { rewardFundObject, dynamicGlobalPropertiesObject, currentMedianHistoryPriceObject } = stats;
-    const hasLoadedRemoteUserObject = !containsEmptyMap([
-      // knacksteemUserObject,
-      remoteUserObject,
-      rewardFundObject,
-      dynamicGlobalPropertiesObject,
-      currentMedianHistoryPriceObject
-    ]);
-
-    const activeCategory = queryString.parse(this.props.location.search).category;
-
-    const articlesList = typeof activeCategory !== 'undefined' ?
-      articles.data.filter(article => article.category === activeCategory) : 
-      articles.data;
-
-    // If we've loaded all core objects...
-    if (hasLoadedRemoteUserObject) {
-      signupDate = fecha.format(
-        fecha.parse(
-          remoteUserObject.created.split('T')[0],
-          'YYYY-MM-DD'
-        ),
-        'D MMMM YYYY'
-      );
-  
-      remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
-      name = remoteUserObjectMeta.name;
-      displayName = name && name !== '' ? name : uppercaseFirst(Cookies.get('username'));
-      location = remoteUserObjectMeta.location;
-      website = remoteUserObjectMeta.website;
-      about = remoteUserObjectMeta.about;
-      votingPower = calculateVotePower(remoteUserObject.voting_power, remoteUserObject.last_vote_time).votePower;
-
-      voteValue=calculateVoteValue({
-        votingPower: remoteUserObject.voting_power,
-        lastVoteTime: remoteUserObject.last_vote_time,
-        rewardBalance: rewardFundObject.reward_balance,
-        recentClaims: rewardFundObject.recent_claims,
-        currentMedianHistoryPrice: currentMedianHistoryPriceObject,
-        vestingShares: remoteUserObject.vesting_shares,
-        receivedVestingShares: remoteUserObject.received_vesting_shares,
-        delegatedVestingShares: remoteUserObject.delegated_vesting_shares,
-        totalVestingFundSteem: dynamicGlobalPropertiesObject.total_vesting_fund_steem,
-        totalVestingShares: dynamicGlobalPropertiesObject.total_vesting_shares
-      });
-    }
 
     return (
-      <Row type="flex" justify="center" className="editor-container">
+      <Row type="flex" justify="center" style={{marginTop: '100px'}} className="editor-container">
         <Col>
           {/* <ProfileInfoBar
             name={displayName}
@@ -475,7 +129,7 @@ class  NewContribution extends React.Component {
           <Editor isComment={false} 
                   isEdit={false}
                   ref={this.setForm}
-                  onSubmit={this.onSubmit}
+                  onSubmit={(e)=>{e.preventDefault(); this.onSubmit}}
                   onUpdate={this.onUpdate}
                   onImageInserted={this.handleImageInserted}
                   />
@@ -494,9 +148,7 @@ class  NewContribution extends React.Component {
 };
 
 const mapStateToProps = state => ({
-  articles: state.articles,
-  user: state.user,
-  stats: state.stats
+  articles: state.articles
 });
 
 export default withRouter(connect(mapStateToProps)(NewContribution));

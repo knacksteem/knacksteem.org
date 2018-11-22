@@ -4,11 +4,9 @@ import { throttle } from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import { FormattedMessage } from 'react-intl';
 import { HotKeys } from 'react-hotkeys';
 import Dropzone from 'react-dropzone';
 import {Input, AutoComplete, Tag, Icon, Button,Row, message, Col, Form } from 'antd';
-import {postArticle, editArticle} from '../../actions/articles';
 import EditorToolbar from './EditorToolBar';
 import './index.css';
 
@@ -20,6 +18,7 @@ class Editor extends Component {
     super(props);
     const {articleData, isComment} = props;
 
+    console.log(props);
     this.state = {
       contentHtml: '',
       noContent: false,
@@ -28,7 +27,6 @@ class Editor extends Component {
       value: '',
       loading: false,
       loaded: false,
-      title: (articleData && !isComment) ? articleData.title : '',
       tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
       inputTagsVisible: false,
       inputTagsValue: '',
@@ -39,7 +37,22 @@ class Editor extends Component {
     this.renderItems = this.renderItems.bind(this);
   }
 
-  
+  static hotkeys = {
+    h1: 'ctrl+shift+1',
+    h2: 'ctrl+shift+2',
+    h3: 'ctrl+shift+3',
+    h4: 'ctrl+shift+4',
+    h5: 'ctrl+shift+5',
+    h6: 'ctrl+shift+6',
+    bold: 'ctrl+b',
+    italic: 'ctrl+i',
+    quote: 'ctrl+q',
+    link: 'ctrl+k',
+    image: 'ctrl+m',
+    code: 'ctrl+n',
+    unorderedlist: 'ctrl+shift+i'
+  };
+
   renderItems(items) {
     return items;
   }
@@ -52,7 +65,7 @@ class Editor extends Component {
       this.input.addEventListener('paste', this.handlePastedImage);
     }
 
-    this.setValues(this.props);
+    // this.setValues(this.props);
 
     // eslint-disable-next-line react/no-find-dom-node
     const select = ReactDOM.findDOMNode(this.select);
@@ -76,9 +89,117 @@ class Editor extends Component {
     });
   };
 
+  insertCode = (type) => {
+    if (!this.input) return;
+    this.input.focus();
+
+    switch (type) {
+      case 'h1':
+        this.insertAtCursor('# ', '', 2, 2);
+        break;
+      case 'h2':
+        this.insertAtCursor('## ', '', 3, 3);
+        break;
+      case 'h3':
+        this.insertAtCursor('### ', '', 4, 4);
+        break;
+      case 'h4':
+        this.insertAtCursor('#### ', '', 5, 5);
+        break;
+      case 'h5':
+        this.insertAtCursor('##### ', '', 6, 6);
+        break;
+      case 'h6':
+        this.insertAtCursor('###### ', '', 7, 7);
+        break;
+      case 'b':
+        this.insertAtCursor('**', '**', 2, 2);
+        break;
+      case 'i':
+        this.insertAtCursor('*', '*', 1, 1);
+        break;
+      case 'q':
+        this.insertAtCursor('> ', '', 2, 2);
+        break;
+      case 'link':
+        this.insertAtCursor('[', '](url)', 1, 1);
+        break;
+      case 'image':
+        this.insertAtCursor('![', '](url)', 2, 2);
+        break;
+      case 'code':
+        this.insertAtCursor('``` language\n', '\n```', 4, 12);
+        break;
+      case 'unorderedlist':
+        this.insertAtCursor('- ', '', 2, 2);
+        break;
+      default:
+        break;
+    }
+
+    this.resizeTextarea();
+    this.renderMarkdown(this.input.value);
+    this.onUpdate();
+  };
+
+  handlers = {
+    h1: () => this.insertCode('h1'),
+    h2: () => this.insertCode('h2'),
+    h3: () => this.insertCode('h3'),
+    h4: () => this.insertCode('h4'),
+    h5: () => this.insertCode('h5'),
+    h6: () => this.insertCode('h6'),
+    bold: () => this.insertCode('b'),
+    italic: () => this.insertCode('i'),
+    quote: () => this.insertCode('q'),
+    link: (e) => {
+      e.preventDefault();
+      this.insertCode('link');
+    },
+    image: () => this.insertCode('image'),
+    code: () => this.insertCode('code'),
+    unorderedlist: () => this.insertCode('unorderedlist')
+  };
+
   resizeTextarea = () => {
     if (this.originalInput) this.originalInput.resizeTextarea();
   };
+
+  handleSubmit = (e) => {
+    // NOTE: Wrapping textarea in getFormDecorator makes it impossible
+    // to control its selection what is needed for markdown formatting.
+    // This code adds requirement for body input to not be empty.
+    e.preventDefault();
+    this.onUpdate(e);
+    return;
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      
+      if (!err && this.input.value !== '') {
+
+        this.props.onSubmit({
+          ...values,
+          body: this.input.value,
+        });
+      } else if (this.input.value === '') {
+        const errors = {
+          ...err,
+          body: {
+            errors: [
+              {
+                field: 'body',
+                message: "Content can't be empty",
+              },
+            ],
+          },
+        };
+        this.setState({ noContent: true });
+        this.props.onError(errors);
+      } else {
+        this.props.onError(err);
+      }
+    });
+  };
+
 
 //
 // Editor methods
@@ -177,7 +298,7 @@ class Editor extends Component {
   };
 
   onUpdate = (e) => { 
-      const values =  this.getValues(e);
+      const values =  this.getValues(e, this.state.tags);
       this.props.onUpdate(values);
   };
 
@@ -266,16 +387,19 @@ class Editor extends Component {
     }
   };
 
-  getValues = (e) => {
+
+  getValues = (e, tags) => {
     // NOTE: antd API is inconsistent and returns event or just value depending of input type.
     // this code extracts value from event based of event type
     // (array or just value for Select, proxy event for inputs and checkboxes)
 
     const values = {
-      ...this.props.form.getFieldsValue(['title']),
+      title: this.props.form.getFieldsValue(['title']).title,
       body: this.input.value,
+      tags
     };
 
+    // values.title = e.target.value;
     this.setState({
       previewMarkdown: this.input.value.toString('markdown')
     });
@@ -286,28 +410,7 @@ class Editor extends Component {
     return values;
   };
 
-  // //post article on blockchain and in backend db
-  // onPostClick = async () => {
-  //   const {dispatch, isComment, isEdit, articleData, onDone, parentPermlink, parentAuthor} = this.props;
-  //   const {title, value, tags} = this.state;
-
-  //   if (this.checkFieldErrors()) {
-  //     return;
-  //   }
-
-  //   try {
-  //     if (isEdit) {
-  //       await dispatch(editArticle(title, value.toString('markdown'), tags, articleData, isComment, parentPermlink, parentAuthor));
-  //     } else {
-  //       await dispatch(postArticle(title, value.toString('markdown'), tags, isComment, parentPermlink, parentAuthor));
-  //     }
-  //     if (onDone) {
-  //       onDone();
-  //     }
-  //   } catch(err) {
-  //     //already handled in redux actions
-  //   }
-  // };
+ 
 
   //toggle Editor display
   handleEditorToggle() {
@@ -344,23 +447,26 @@ class Editor extends Component {
   //reference to autocomplete input for second tag (category)
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
-    const {title, value, tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
-    const {isComment, isEdit, onCancel} = this.props;
+    const { tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
+    const {form, isComment, isEdit, onCancel} = this.props;
     const {isBusy, categories} = this.props.articles;
     const {isMarkdownEditorActive} = this.state;
     return (
-<Form className="Editor" layout="vertical" onSubmit={this.handleSubmit}>
+    <Form className="Editor" layout="vertical" onSubmit={this.handleSubmit}>
       <div  className={`editor ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
-        <h3>Title</h3>
-        {!isComment && <Input style={{
-          backgroundColor: '#eee', 
-          fontWeight: 'bolder', 
-          border: '2px solid #e8e8e8'
-        }}
-        placeholder="Title"
-        onChange={this.handleInputTitleChange}
-        value={title}
-        />}
+        <Form.Item>
+          <h3>Title</h3>
+          {!isComment && form.getFieldDecorator('title')(<Input
+                ref={(title) => {
+                  this.title = title;
+                }}
+                onChange={this.onUpdate}
+                className="Editor__title"
+                placeholder='Add title'
+            />)
+          }
+        </Form.Item>
+        
         
         <Row type="flex" justify="space-between">
           <Col>
@@ -373,6 +479,7 @@ class Editor extends Component {
           </Col>
         </Row>
         <Row style={{border: '1px solid #eee', padding: '10px', background: '#fff', minHeight: '500px'}}>
+          <Form.Item>
           <EditorToolbar onSelect={this.insertCode} style={{margin: 'auto'}}/>
           <Row className="Editor__dropzone-base" style={{width: 'inherit', height: '400px'}}>
                 <Dropzone
@@ -392,19 +499,18 @@ class Editor extends Component {
                     </div>
                   )}
                   <HotKeys keyMap={Editor.hotkeys} handlers={this.handlers}>
-                    <Input
+                  <Input.TextArea
                       className="editor_input"
-                      style={{border: 'none', marginTop: '10px', boxShadow: 'none'}}
-                      autosize={{ minRows: 6, maxRows: 12 }}
+                      style={{ border: 'none', height: '450px', marginTop: '10px', boxShadow: 'none'}}
+                      autosize={{ minRows: 20, maxRows: 20 }}
                       onChange={this.onUpdate}
                       ref={ref => this.setInput(ref)}
-                      type="textarea"
                       placeholder='Write your story...'
                     />
                   </HotKeys>
                 </Dropzone>
             </Row>
-            
+          </Form.Item>
         </Row>
         <Row className="Editor__imagebox">
               <input type="file" id="inputfile" onChange={this.handleImageChange} />
@@ -421,7 +527,7 @@ class Editor extends Component {
                   )}
               </label>
         </Row>
-        
+        <Form.Item>
         <h3>Tags</h3>
         {!isComment &&
           <div className="editor-tags">
@@ -463,13 +569,31 @@ class Editor extends Component {
             )}
           </div>
         }
-        <Row style={{width: '100%'}} >
-          <Button style={{width: 'inherit', backgroundColor: '#22429d'}} type="primary" onClick={this.onPostClick} loading={isBusy}>{isEdit ? 'Update' : 'Post'}</Button>
-          {onCancel && <Button type="secondary" onClick={onCancel} className="button-cancel">Cancel</Button>}
-        </Row>
-        <ReactMarkdown className={'preview'}  source={previewMarkdown} />
-        <Row type="flex" className="preview">
-        </Row> 
+        </Form.Item>
+       
+       <Form.Item>
+          <Row type="flex" justify="end" >
+            <Col>
+              <Button style={{marginRight: '5px'}}>
+                Preview
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                style={{
+                  backgroundColor: '#22429d'
+                }}
+                htmlType="submit"
+                type={'primary'}
+                loading={isBusy}>
+                  {isEdit ? 'Update' : 'Post'}
+              </Button>
+            </Col>
+          </Row>
+          </Form.Item>
+          <Row type="flex" className="preview">
+            
+          </Row> 
       </div>
       </Form>
     );
