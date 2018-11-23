@@ -448,14 +448,11 @@ class Profile extends Component {
 
   render () {
     let 
-      about,
       coverImage,
       displayName,
       name,
       reputation,
-      location,
       signupDate,
-      website,
       votingPower,
       voteValue,
       remoteUserObjectMeta;
@@ -486,51 +483,53 @@ class Profile extends Component {
         ),
         'D MMMM YYYY'
       );
-  
-      remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
-      name = remoteUserObjectMeta.name;
-      displayName = name && name !== '' ? name : uppercaseFirst(match.params.username);
-      location = remoteUserObjectMeta.location;
-      website = remoteUserObjectMeta.website;
-      coverImage = remoteUserObjectMeta.cover_image;
-      about = remoteUserObjectMeta.about;
-      reputation = repLog10(parseFloat(remoteUserObject.reputation));
-      votingPower = calculateVotePower(remoteUserObject.voting_power, remoteUserObject.last_vote_time).votePower;
 
-      voteValue=calculateVoteValue({
-        votingPower: remoteUserObject.voting_power,
-        lastVoteTime: remoteUserObject.last_vote_time,
-        rewardBalance: rewardFundObject.reward_balance,
-        recentClaims: rewardFundObject.recent_claims,
-        currentMedianHistoryPrice: currentMedianHistoryPriceObject,
-        vestingShares: remoteUserObject.vesting_shares,
-        receivedVestingShares: remoteUserObject.received_vesting_shares,
-        delegatedVestingShares: remoteUserObject.delegated_vesting_shares,
-        totalVestingFundSteem: dynamicGlobalPropertiesObject.total_vesting_fund_steem,
-        totalVestingShares: dynamicGlobalPropertiesObject.total_vesting_shares
+      if (typeof remoteUserObject === 'object'
+      && remoteUserObject.json_metadata !== '') {
+        remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
+        name = remoteUserObjectMeta.name;
+        displayName = name && name !== '' ? name : uppercaseFirst(match.params.username);
+        coverImage = remoteUserObjectMeta.cover_image;
+        reputation = repLog10(parseFloat(remoteUserObject.reputation));
+        votingPower = calculateVotePower(remoteUserObject.voting_power, remoteUserObject.last_vote_time).votePower;
+
+        voteValue=calculateVoteValue({
+          votingPower: remoteUserObject.voting_power,
+          lastVoteTime: remoteUserObject.last_vote_time,
+          rewardBalance: rewardFundObject.reward_balance,
+          recentClaims: rewardFundObject.recent_claims,
+          currentMedianHistoryPrice: currentMedianHistoryPriceObject,
+          vestingShares: remoteUserObject.vesting_shares,
+          receivedVestingShares: remoteUserObject.received_vesting_shares,
+          delegatedVestingShares: remoteUserObject.delegated_vesting_shares,
+          totalVestingFundSteem: dynamicGlobalPropertiesObject.total_vesting_fund_steem,
+          totalVestingShares: dynamicGlobalPropertiesObject.total_vesting_shares
+        });
+      }
+
+      return this.renderProfile({
+        about: remoteUserObjectMeta && remoteUserObjectMeta.about,
+        activeCategory,
+        articles,
+        articlesList,
+        coverImage,
+        displayName,
+        hasLoadedRemoteUserObject,
+        match,
+        location: remoteUserObject.location,
+        loadArticles: () => this.loadArticlesUser(),
+        knacksteemUserObject,
+        signupDate,
+        reputation,
+        userObject,
+        remoteUserFollowObject,
+        voteValue,
+        votingPower,
+        website: remoteUserObject.website
       });
+    } else {
+      return (<div>User does not have any posts</div>)
     }
-
-    return this.renderProfile({
-      about,
-      activeCategory,
-      articles,
-      articlesList,
-      coverImage,
-      displayName,
-      hasLoadedRemoteUserObject,
-      match,
-      location,
-      loadArticles: () => this.loadArticlesUser(),
-      knacksteemUserObject,
-      signupDate,
-      reputation,
-      userObject,
-      remoteUserFollowObject,
-      voteValue,
-      votingPower,
-      website  
-    });
   }
 }
 
