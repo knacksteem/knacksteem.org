@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import { HotKeys } from 'react-hotkeys';
 import Dropzone from 'react-dropzone';
-import {Input, AutoComplete, Tag, Icon, Button,Row, message, Col, Form } from 'antd';
+import {Input, AutoComplete, Tag, Icon, Button,Row, Alert, message, Col, Form } from 'antd';
 import EditorToolbar from './EditorToolBar';
 import './index.css';
 
@@ -18,7 +18,6 @@ class Editor extends Component {
     super(props);
     const {articleData, isComment} = props;
 
-    console.log(props);
     this.state = {
       contentHtml: '',
       noContent: false,
@@ -31,7 +30,8 @@ class Editor extends Component {
       inputTagsVisible: false,
       inputTagsValue: '',
       previewMarkdown: '',
-      isMarkdownEditorActive: false
+      isMarkdownEditorActive: false,
+      previewState: false
     };
   
     this.renderItems = this.renderItems.bind(this);
@@ -166,12 +166,12 @@ class Editor extends Component {
   };
 
   handleSubmit = (e) => {
-    // NOTE: Wrapping textarea in getFormDecorator makes it impossible
-    // to control its selection what is needed for markdown formatting.
-    // This code adds requirement for body input to not be empty.
+    
     e.preventDefault();
     this.onUpdate(e);
-    return;
+    if (this.checkTagErrors()) {
+      return;
+    }
     this.props.form.validateFieldsAndScroll((err, values) => {
       
       if (!err && this.input.value !== '') {
@@ -192,10 +192,12 @@ class Editor extends Component {
             ],
           },
         };
+
         this.setState({ noContent: true });
-        this.props.onError(errors);
+        this.props.form.getFieldError(errors)
+        this.checkTagErrors();
       } else {
-        this.props.onError(err);
+        
       }
     });
   };
@@ -344,10 +346,7 @@ class Editor extends Component {
     }
     this.setState({inputTagsValue: e.target ? e.target.value : e});
   };
-  //callback for changing the value of the title input
-  handleInputTitleChange = (e) => {
-    this.setState({title: e.target.value});
-  };
+  
   //callback for confirming a new tag, will get called on enter, mouse click (autocomplete input) and on blur
   handleInputConfirm = (value) => {
     const {inputTagsValue, tags} = this.state;
@@ -418,22 +417,20 @@ class Editor extends Component {
       isMarkdownEditorActive: !this.state.isMarkdownEditorActive
     });
   }
+
+  handlePreview () {
+    this.setState({
+      previewState: !this.state.previewState
+    });
+  } 
+
   //check for correct input before posting/editing
-  checkFieldErrors = () => {
-    const {title, value, tags} = this.state;
+  checkTagErrors = () => {
+    const { tags} = this.state;
     const {isComment} = this.props;
     const {categories} = this.props.articles;
     let error = false;
-
-    //check if title is existing
-    if (!isComment && !title.length) {
-      message.error('title is missing');
-      error = true;
-    }
-    if (!value.getEditorState().getCurrentContent().hasText()) {
-      message.error('content is missing');
-      error = true;
-    }
+   
     //check if the second tag is one of the predefined categories
     if (!isComment && categories.map(elem => elem.key).indexOf(tags[1]) === -1) {
       message.error('second tag must be one of the predefined categories');
@@ -447,7 +444,7 @@ class Editor extends Component {
   //reference to autocomplete input for second tag (category)
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
   render() {
-    const { tags, inputTagsVisible, inputTagsValue, previewMarkdown} = this.state;
+    const { tags, inputTagsVisible, inputTagsValue, previewMarkdown, previewState} = this.state;
     const {form, isComment, isEdit, onCancel} = this.props;
     const {isBusy, categories} = this.props.articles;
     const {isMarkdownEditorActive} = this.state;
@@ -456,7 +453,11 @@ class Editor extends Component {
       <div  className={`editor ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
         <Form.Item>
           <h3>Title</h3>
-          {!isComment && form.getFieldDecorator('title')(<Input
+          {!isComment && form.getFieldDecorator('title', {
+            
+            rules: [{ required: true, message: 'Title cant be Empty!' }],
+
+            })(<Input
                 ref={(title) => {
                   this.title = title;
                 }}
@@ -479,7 +480,8 @@ class Editor extends Component {
           </Col>
         </Row>
         <Row style={{border: '1px solid #eee', padding: '10px', background: '#fff', minHeight: '500px'}}>
-          <Form.Item>
+          <Form.Item validateStatus={this.state.noContent ? 'error' : ''}
+            help={this.state.noContent && <Alert message="Content can't be empty" type="error" showIcon />}>
           <EditorToolbar onSelect={this.insertCode} style={{margin: 'auto'}}/>
           <Row className="Editor__dropzone-base" style={{width: 'inherit', height: '400px'}}>
                 <Dropzone
@@ -574,8 +576,8 @@ class Editor extends Component {
        <Form.Item>
           <Row type="flex" justify="end" >
             <Col>
-              <Button style={{marginRight: '5px'}}>
-                Preview
+              <Button onClick={()=>this.handlePreview()} style={{marginRight: '5px'}}>
+                <p>{previewState ? 'Close Preview' : 'Preview'}</p>
               </Button>
             </Col>
             <Col>
@@ -588,11 +590,15 @@ class Editor extends Component {
                 loading={isBusy}>
                   {isEdit ? 'Update' : 'Post'}
               </Button>
+
             </Col>
+            
           </Row>
           </Form.Item>
-          <Row type="flex" className="preview">
-            
+          <div style={{maxWidth: '500px', width: '500px', wordWrap: 'break-word', border: `${previewState ? '1px solid #22429d' : 'none'}`, padding: '3px'}}>
+            <ReactMarkdown className={`'preview' ${previewState ? 'preview-active' : 'preview-inactive'}`} source={previewMarkdown}/>
+          </div>
+          <Row  style={{maxWidth: '500px'}} className='preview'> 
           </Row> 
       </div>
       </Form>

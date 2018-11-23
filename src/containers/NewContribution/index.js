@@ -51,8 +51,6 @@ class  NewContribution extends React.Component {
       .catch(() => {
         errorCallback();
       });
-
-
   };
 
   getNewPostData = (form) => {
@@ -62,39 +60,33 @@ class  NewContribution extends React.Component {
       tags: form.tags
     };
 
-    let {tags} = data;
 
     data.parentAuthor =  '';
 
     if (this.state.isUpdating) data.isUpdating = this.state.isUpdating;
     data.parentPermlink = '';
-
     return data;
   };
 
-  onSubmit = (form) => {
+  onSubmit = () => {
+    const form = this.state.parsedPostData;
     const data = this.getNewPostData(form);
-   
+
 
     this.setState({parsedPostData: data});
-    this.proceedSubmit();
+    this.proceedSubmit(data.tags);
   };
 
-  proceedSubmit = () => {
+  proceedSubmit = (tags) => {
     const {isComment, isEdit, parsedPostData} = this.state;
     const {dispatch, articleData} = this.props;
-    console.log("hello")
 
-    // if (isEdit){
-    //   dispatch(editArticle(parsedPostData.title, parsedPostData.body, parsedPostData.tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
-    // }else {
-    //   dispatch(postArticle(parsedPostData.title, parsedPostData.body, parsedPostData.tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
-    // }
+    if (isEdit){
+      dispatch(editArticle(parsedPostData.title, parsedPostData.body, tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
+    }else {
+      dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
+    }
   }
-
-
-
-
 
   render() {
 
@@ -129,7 +121,7 @@ class  NewContribution extends React.Component {
           <Editor isComment={false} 
                   isEdit={false}
                   ref={this.setForm}
-                  onSubmit={(e)=>{e.preventDefault(); this.onSubmit}}
+                  onSubmit={(e)=>{ this.onSubmit()}}
                   onUpdate={this.onUpdate}
                   onImageInserted={this.handleImageInserted}
                   />

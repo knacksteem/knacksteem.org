@@ -229,6 +229,7 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
 
         await SteemConnect.broadcast(operations);
 
+
         //successfully posted to blockchain, now posting to backend with permalink and category
         await apiPost('/posts/create', {
           author: store.user.username,

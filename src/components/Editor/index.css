@@ -11,10 +11,26 @@
 .preview {
   overflow: hidden;
   overflow-wrap: break-word;
-  word-wrap: break-word; 
-  font-size: 120%;
+  word-wrap: break-word;
+  white-space: wrap; 
+  font-size: 112%;
   line-height: 150%;
   padding: 6px;
+  max-width: 400px;
 }
 
+.preview > p {
+  width:inherit;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: wrap; 
+}
 
+.preview-active {
+  display: block;
+}
+
+.preview-inactive {
+  display: none !important;
+}
