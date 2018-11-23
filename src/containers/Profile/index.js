@@ -69,7 +69,7 @@ class Profile extends Component {
     banDuration: 1000,
     filterBy: '',
     skipArticles: 0,
-    limit: 1
+    limit: 25
   };
 
   handleMoreArticlesLoading(category) {
@@ -215,7 +215,7 @@ class Profile extends Component {
    * 
    * @return {void}
    */
-  loadArticlesUser(category, skip, limit = 1) {
+  loadArticlesUser(category, skip, limit = this.state.limit) {
     const {dispatch, match} = this.props;
     const search = undefined;
 
@@ -359,8 +359,8 @@ class Profile extends Component {
                     onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
                     onBanButtonClick={() => this.handleBanStatusToggle()}
                     isMasterSupervisor={
-                      Object.keys(userObject).length > 0 && 
-                        userObject.name === MASTER_SUPERVISOR
+                      Object.keys(knacksteemUserObject).length > 0 && 
+                        knacksteemUserObject.username === MASTER_SUPERVISOR
                     }
                   />
                 </Col>
@@ -415,7 +415,7 @@ class Profile extends Component {
                     activeCategory={activeCategory}
                     categories={articles.categories}
                     username={match.params.username}
-                    onShowAllCategories={() => loadArticles()}
+                    onShowAllCategories={() => this.props.history.push(`/@${match.params.username}`)}
                   />
                 </Col>
               </Row>
