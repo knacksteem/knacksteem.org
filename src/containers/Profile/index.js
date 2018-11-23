@@ -50,7 +50,7 @@ const styles = {
   }
 };
 
-const MASTER_SUPERVISOR = 'knowledges'
+const MASTER_SUPERVISOR = 'knowledges';
 
 class Profile extends Component {
   static propTypes = {
@@ -359,8 +359,8 @@ class Profile extends Component {
                     onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
                     onBanButtonClick={() => this.handleBanStatusToggle()}
                     isMasterSupervisor={
-                      Object.keys(knacksteemUserObject).length > 0 && 
-                        knacksteemUserObject.username === MASTER_SUPERVISOR
+                      Object.keys(userObject).length > 0 && 
+                        userObject.username === MASTER_SUPERVISOR
                     }
                   />
                 </Col>

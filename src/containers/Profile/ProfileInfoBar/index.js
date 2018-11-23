@@ -187,7 +187,7 @@ const ProfileInfoBar = ({
         user={user}
         onModChoiceSelect={onModChoiceSelect}
         onBanButtonClick={onBanButtonClick}
-        name={name}
+        name={user.username}
       />
       }
     </div>

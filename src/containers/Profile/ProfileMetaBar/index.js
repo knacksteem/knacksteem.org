@@ -129,21 +129,15 @@ const ProfileMetaBar = ({
           </Menu.Item>
 
           <Menu.Item key="url" disabled={false}>
-            <a href={`https://steemit.com/@${username}/following`}>
-              <span className="profile-meta-bar-label">Following <strong>{ followingCount }</strong> </span>
-            </a>
+            <span className="profile-meta-bar-label">Following <strong>{ followingCount }</strong> </span>
           </Menu.Item>
 
           <Menu.Item key="time" disabled={false}>
-            <a href={`https://steemit.com/@${username}/transfers`}>
-              <span className="profile-meta-bar-label">Wallet</span>
-            </a>
+            <span className="profile-meta-bar-label">Wallet</span>
           </Menu.Item>
 
           <Menu.Item key="power" disabled={false}>
-            <a href={`https://steemit.com/@${username}/recent-replies`}>
-              <span className="profile-meta-bar-label">Activity</span>
-            </a>
+            <span className="profile-meta-bar-label" style={{ fontWeight: 'bold' }}>Activity</span>
           </Menu.Item>
           <Menu.Item key="edit" disabled={false}>
             <div>
