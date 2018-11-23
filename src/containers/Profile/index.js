@@ -359,8 +359,9 @@ class Profile extends Component {
                     onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
                     onBanButtonClick={() => this.handleBanStatusToggle()}
                     isMasterSupervisor={
-                      Object.keys(userObject).length > 0 && 
-                        userObject.username === MASTER_SUPERVISOR
+                      Object.keys(userObject).length > 0
+                      && userObject.username === MASTER_SUPERVISOR
+                      && match.params.username !== MASTER_SUPERVISOR
                     }
                   />
                 </Col>

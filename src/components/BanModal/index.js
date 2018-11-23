@@ -46,7 +46,7 @@ const BanModal = ({
           type="primary"
           onClick={() => onSubmitBanModal()}
         >
-          Ban Kay
+          Ban {name}
         </Button>,
       ]}
     >
