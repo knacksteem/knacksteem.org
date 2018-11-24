@@ -94,8 +94,8 @@ class ModButtons extends Component {
 
     return (
       <div className="mod-buttons">
-        {(user.username === 'knowledges' && item.roles.indexOf('supervisor') === -1) && <Button type="primary" size="small" onClick={this.onMakeSupervisorClick}>Make Supervisor</Button>}
-        {(user.username === 'knowledges' && item.roles.indexOf('supervisor') !== -1) && <Button type="primary" size="small" onClick={this.onRemoveSupervisorClick}>Remove Supervisor</Button>}
+        {(user.username === 'creatrixity' && item.roles.indexOf('supervisor') === -1) && <Button type="primary" size="small" onClick={this.onMakeSupervisorClick}>Make Supervisor</Button>}
+        {(user.username === 'creatrixity' && item.roles.indexOf('supervisor') !== -1) && <Button type="primary" size="small" onClick={this.onRemoveSupervisorClick}>Remove Supervisor</Button>}
         {(user.isSupervisor && item.roles.indexOf('moderator') === -1) && <Button type="primary" size="small" onClick={this.onMakeModClick}>Make Mod</Button>}
         {(user.isSupervisor && item.roles.indexOf('moderator') !== -1) && <Button type="primary" size="small" onClick={this.onRemoveModClick}>Remove Mod</Button>}
         {(user.isModerator && !item.isBanned) && <Button type="primary" size="small" onClick={this.onBanClick}>Ban</Button>}

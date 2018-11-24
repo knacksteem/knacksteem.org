@@ -36,7 +36,7 @@ const ModerationControls = ({
   return (
     <Layout  style={{ background: 'transparent', boxShadow: 'none' }}>
       <div style={{ width: '100%', marginTop: '20px' }}>
-        { isMasterSupervisor &&
+        { (isMasterSupervisor && Object.keys(user).length > 0) &&
           <div>
             <Dropdown
               overlay={
@@ -47,16 +47,16 @@ const ModerationControls = ({
                     key="1"
                   >
                     <Icon type="solution" />
-                    {user.roles.indexOf('moderator') === -1 ? ' a ' : ' as a '}
+                    {user && user.roles.indexOf('moderator') === -1 ? ' a ' : ' as a '}
                     <b>Moderator</b>
                   </Menu.Item>
                   <Menu.Item
                     choice={'supervisor'}
                     key="2"
-                    action={user.roles.indexOf('supervisor') === -1 ? 'add' : 'remove'}
+                    action={user && user.roles.indexOf('supervisor') === -1 ? 'add' : 'remove'}
                   >
                     <Icon type="user" />
-                    {user.roles.indexOf('supervisor') === -1 ? 'Make  ' : ' as a '}
+                    {user && user.roles.indexOf('supervisor') === -1 ? 'Make  ' : ' as a '}
                     <b>Supervisor</b>
                   </Menu.Item>
                 </Menu>          
@@ -68,8 +68,8 @@ const ModerationControls = ({
                 size="large"
                 style={styles.modButton}
               >
-                {user.roles.indexOf('moderator') > -1 ? 'Strip Mod' : 'Make Mod'}
-                / {user.roles.indexOf('supervisor') > -1 ? 'Remove Sup' : 'Make Sup'}
+                {user && user.roles.indexOf('moderator') > -1 ? 'Strip Mod' : 'Make Mod'}
+                / {user && user.roles.indexOf('supervisor') > -1 ? 'Remove Sup' : 'Make Sup'}
                 <Icon type="down" />
               </Button>
             </Dropdown>
@@ -80,7 +80,7 @@ const ModerationControls = ({
               ghost
               style={styles.banButton}
             >
-              {user.isBanned ? 'Unban': 'Ban'} {name}
+              {user && user.isBanned ? 'Unban': 'Ban'} {name}
             </Button>
           </div>
         }

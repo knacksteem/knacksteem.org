@@ -50,7 +50,7 @@ const styles = {
   }
 };
 
-const MASTER_SUPERVISOR = 'knowledges';
+const MASTER_SUPERVISOR = 'creatrixity';
 
 class Profile extends Component {
   static propTypes = {
