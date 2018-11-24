@@ -1,9 +1,7 @@
 import React from 'react';
 import { Row, Col} from 'antd';
 import Editor from '../../components/Editor';
-import debounce from 'lodash/debounce';
 import {connect} from 'react-redux';
-import Cookies from 'js-cookie';
 import {withRouter} from "react-router-dom";
 import {postArticle, editArticle} from '../../actions/articles';
 
@@ -24,18 +22,25 @@ class  NewContribution extends React.Component {
       isEdit: false,
       isComment: false
     };
-
-
   }
   
- 
-
-
-
-  onUpdate = debounce(form => {
+  
+  onUpdate = form => {
     const data = this.getNewPostData(form)
     this.setState({parsedPostData: data})
-  }, 400);
+  };
+
+  /**
+   * @method handleImageInserted
+   * 
+   * @param {String} blob 
+   * 
+   * @param {Function} callback - to resolve promise
+   * 
+   * @param {Function} errorCallback - to handle error
+   * 
+   * @return <promise>
+   */
 
 
   handleImageInserted = (blob, callback, errorCallback) => {
@@ -53,6 +58,14 @@ class  NewContribution extends React.Component {
       });
   };
 
+  /**
+   * @method getNewPostData
+   * 
+   * @param {Object} form - gotten from the form HOC 
+   * 
+   * @return {Object}
+   */
+
   getNewPostData = (form) => {
     const data = {
       body: form.body,
@@ -68,6 +81,13 @@ class  NewContribution extends React.Component {
     return data;
   };
 
+/**
+ * @method onsubmit
+ * 
+ * @param {void}
+ * 
+ * @return {void} 
+ */
   onSubmit = () => {
     const form = this.state.parsedPostData;
     const data = this.getNewPostData(form);
@@ -76,6 +96,14 @@ class  NewContribution extends React.Component {
     this.setState({parsedPostData: data});
     this.proceedSubmit(data.tags);
   };
+
+  /**
+   * @method proceedSubmit
+   * 
+   * @param {Array} -Tags entered by the user on the editor
+   * 
+   * @return <void>
+   */
 
   proceedSubmit = (tags) => {
     const {isComment, isEdit, parsedPostData} = this.state;
@@ -91,33 +119,11 @@ class  NewContribution extends React.Component {
   render() {
 
     return (
-      <Row type="flex" justify="center" style={{marginTop: '100px'}} className="editor-container">
-        <Col>
-          {/* <ProfileInfoBar
-            name={displayName}
-            about={about}
-            location={location}
-            website={website}
-            votingPower={votingPower}
-            voteValue={voteValue}
-            signupDate={signupDate}
-            user={knacksteemUserObject}
-            banReason={this.state.banReason}
-            banDuration={this.state.banDuration}
-            onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
-            onBanButtonClick={() => this.handleBanStatusToggle()}
-            isModerator={
-              Object.keys(userObject).length > 0 ? 
-                userObject.roles.includes('moderator') :
-                false
-            }
-            isSupervisor={
-              Object.keys(userObject).length > 0 ? 
-                userObject.roles.includes('supervisor') :
-                false
-            }/> */}
+      <Row type="flex" justify="center" style={{marginTop: '100px', width: '100%'}} >
+        <Col className="profile-container" >
+        
         </Col>
-        <Col>
+        <Col className="editor-container" style={{margin: 'auto'}}>
           <Editor isComment={false} 
                   isEdit={false}
                   ref={this.setForm}
@@ -126,12 +132,8 @@ class  NewContribution extends React.Component {
                   onImageInserted={this.handleImageInserted}
                   />
         </Col>
-        <Col>
-          {/* <ProfileCategoriesBar
-          activeCategory={activeCategory}
-          categories={articles.categories}
-          username={match.params.username}
-          /> */}
+        <Col className="how-to-post-container" >
+          
         </Col>
       </Row>
     );
@@ -140,7 +142,8 @@ class  NewContribution extends React.Component {
 };
 
 const mapStateToProps = state => ({
-  articles: state.articles
+  articles: state.articles,
+  user: state.user
 });
 
 export default withRouter(connect(mapStateToProps)(NewContribution));
