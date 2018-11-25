@@ -2,11 +2,9 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Popconfirm, Spin} from 'antd';
-// import {prettyDate} from '../../services/functions';
 import {upvoteElement, deleteElement} from '../../actions/articles';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
-import { comment } from 'postcss';
 
 const styles = {
   barIcon: {
@@ -69,7 +67,7 @@ class ArticleMetaBottom extends Component {
   };
   render() {
     const {isDeleting, isUpvoted} = this.state;
-    const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
+    const {data, isComment, isArticleDetail, onEditClick, onReplyClick} = this.props;
 
     const isAuthor = (Cookies.get('username') === data.author);
     const commentCount = isComment ? data.replies.length : data.commentsCount;

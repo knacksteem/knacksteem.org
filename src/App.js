@@ -28,7 +28,6 @@ import Search from './containers/Search';
 import ContributionMetaBar from './containers/ContributionMetaBar';
 import './index.css';
 const App = (props) => {
-console.log(props);
   return (
     <Layout id="page-layout">
       <KnackHeader/>
