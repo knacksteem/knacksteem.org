@@ -8,10 +8,8 @@ import ArticleListItem from '../../components/ArticleListItem';
 import AnnouncementMetaBar from '../Home/AnnouncementMetaBar';
 import ContributionMetaBar from '../ContributionMetaBar';
 import { getArticlesModeration} from '../../actions/articles';
-import {getRemoteUserData} from '../../actions/user';
 import Cookies from 'js-cookie';
-import SteemConnect from '../../services/SteemConnect';
-import { repLog10 } from '../../services/functions';
+
 const Option = Select.Option;
 
 const styles = {

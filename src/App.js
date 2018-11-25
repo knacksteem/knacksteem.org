@@ -25,14 +25,16 @@ import './assets/styles/ant-overrides.css';
 import Sponsors from './containers/Sponsors';
 import Moderators from './containers/Moderators';
 import Search from './containers/Search';
-import ContributionMetaBar from './containers/ContributionMetaBar'
-const App = () => {
+import ContributionMetaBar from './containers/ContributionMetaBar';
+
+const App = (props) => {
+console.log(props);
   return (
     <Layout id="page-layout">
       <KnackHeader/>
       <Route exact path="/@:username" component={Profile} />
       <Layout id="content-layout" style={{marginTop: '100px', paddingLeft: '130px', display: 'flex', justifyContent: 'center', flexDirection: 'row'}}>
-        <Col>
+        <Col style={{display: `${props.app.isSidebarVisible ? 'block' : 'none'}`}}>
           <ContributionMetaBar /> 
         </Col>
         <Route exact path="/" component={Home} />
@@ -62,6 +64,8 @@ const App = () => {
 
 const mapStateToProps = state => ({
   articles: state.articles,
+  app: state.app
 });
 
 export default withRouter(connect(mapStateToProps)(App));
+
