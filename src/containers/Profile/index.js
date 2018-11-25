@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
-import { Layout, Spin, Row, Col } from 'antd';
+import { Button, Layout, Spin, Row, Col } from 'antd';
 import fecha from 'fecha';
 import './index.css';
 
@@ -50,6 +50,8 @@ const styles = {
   }
 };
 
+const MASTER_SUPERVISOR = 'knowledges';
+
 class Profile extends Component {
   static propTypes = {
     location: PropTypes.object,
@@ -65,8 +67,19 @@ class Profile extends Component {
     isBanModalOpen: false,
     banReason: '',
     banDuration: 1000,
-    filterBy: ''
+    filterBy: '',
+    skipArticles: 0,
+    limit: 25
   };
+
+  handleMoreArticlesLoading(category) {
+    let skipArticles = this.state.skipArticles + this.state.limit;
+    this.setState({
+      skipArticles
+    });
+    
+    this.loadArticlesUser(category, skipArticles);
+  }
 
   /**
    * Toggles the ban modal visibility on and off.
@@ -202,17 +215,17 @@ class Profile extends Component {
    * 
    * @return {void}
    */
-  loadArticlesUser(category) {
+  loadArticlesUser(category, skip, limit = this.state.limit) {
     const {dispatch, match} = this.props;
-    const skip = 0;
     const search = undefined;
 
     dispatch(
       getArticlesByUsername(
         match.params.username,
-        skip,
+        skip || undefined,
         search,
-        category
+        category,
+        limit
       )
     );
   }
@@ -271,89 +284,26 @@ class Profile extends Component {
     dispatch(getRemoteUserFollowData(match.params.username));
   }
 
-  componentDidMount() {
-    const { location, history } = this.props;
-
-    let { category } = queryString.parse(location.search);
-
-    this.loadArticlesUser(category);
-    this.loadSteemRewardFunds();
-    this.loadCurrentMedianHistoryPrice();
-    this.loadDynamicGlobalProperties();
-    this.loadRemoteUserData();
-
-    history.listen(newLocation => {
-      let newCategory = queryString.parse(newLocation.search).category;
-
-      this.loadArticlesUser(newCategory);
-    });
-  }
-
-  render () {
-    let 
-      about,
-      coverImage,
-      displayName,
-      name,
-      reputation,
-      location,
-      signupDate,
-      website,
-      votingPower,
-      voteValue,
-      remoteUserObjectMeta;
-
-    const {articles, user, stats, match} = this.props;
-    const { userObject, remoteUserObject, knacksteemUserObject, remoteUserFollowObject } = user;
-    const { rewardFundObject, dynamicGlobalPropertiesObject, currentMedianHistoryPriceObject } = stats;
-    const hasLoadedRemoteUserObject = !containsEmptyMap([
-      // knacksteemUserObject,
-      remoteUserObject,
-      rewardFundObject,
-      dynamicGlobalPropertiesObject,
-      currentMedianHistoryPriceObject
-    ]);
-
-    const activeCategory = queryString.parse(this.props.location.search).category;
-
-    const articlesList = typeof activeCategory !== 'undefined' ?
-      articles.data.filter(article => article.category === activeCategory) : 
-      articles.data;
-
-    // If we've loaded all core objects...
-    if (hasLoadedRemoteUserObject) {
-      signupDate = fecha.format(
-        fecha.parse(
-          remoteUserObject.created.split('T')[0],
-          'YYYY-MM-DD'
-        ),
-        'D MMMM YYYY'
-      );
-  
-      remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
-      name = remoteUserObjectMeta.name;
-      displayName = name && name !== '' ? name : uppercaseFirst(match.params.username);
-      location = remoteUserObjectMeta.location;
-      website = remoteUserObjectMeta.website;
-      coverImage = remoteUserObjectMeta.cover_image;
-      about = remoteUserObjectMeta.about;
-      reputation = repLog10(parseFloat(remoteUserObject.reputation));
-      votingPower = calculateVotePower(remoteUserObject.voting_power, remoteUserObject.last_vote_time).votePower;
-
-      voteValue=calculateVoteValue({
-        votingPower: remoteUserObject.voting_power,
-        lastVoteTime: remoteUserObject.last_vote_time,
-        rewardBalance: rewardFundObject.reward_balance,
-        recentClaims: rewardFundObject.recent_claims,
-        currentMedianHistoryPrice: currentMedianHistoryPriceObject,
-        vestingShares: remoteUserObject.vesting_shares,
-        receivedVestingShares: remoteUserObject.received_vesting_shares,
-        delegatedVestingShares: remoteUserObject.delegated_vesting_shares,
-        totalVestingFundSteem: dynamicGlobalPropertiesObject.total_vesting_fund_steem,
-        totalVestingShares: dynamicGlobalPropertiesObject.total_vesting_shares
-      });
-    }
-
+  renderProfile ({
+    about,
+    activeCategory,
+    articles,
+    articlesList,
+    coverImage,
+    displayName,
+    hasLoadedRemoteUserObject,
+    loadArticles,
+    match,
+    location,
+    knacksteemUserObject,
+    signupDate,
+    reputation,
+    userObject,
+    remoteUserFollowObject,
+    voteValue,
+    votingPower,
+    website
+  }) {
     return (
       <div style={{marginTop: '75px'}}>
         <section style={{minHeight: 1080}}>
@@ -409,32 +359,50 @@ class Profile extends Component {
                     onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
                     onBanButtonClick={() => this.handleBanStatusToggle()}
                     isModerator={
-                      Object.keys(userObject).length > 0 ? 
-                        userObject.roles.includes('moderator') :
-                        false
+                      Object.keys(userObject).length > 0 && userObject.roles.indexOf('moderator') > -1
                     }
                     isSupervisor={
-                      Object.keys(userObject).length > 0 ? 
-                        userObject.roles.includes('supervisor') :
-                        false
+                      Object.keys(userObject).length > 0
+                      && userObject.roles.indexOf('supervisor') > -1
+                    }
+                    isMasterSupervisor={
+                      Object.keys(userObject).length > 0
+                      && userObject.username === MASTER_SUPERVISOR
+                      && match.params.username !== MASTER_SUPERVISOR
                     }
                   />
                 </Col>
               </Row>
               {articlesList.length &&
                 <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-                  {articlesList.map((data) => {
-                    return (
-                      data.author === match.params.username
-                    && (
-                      <ArticleListItem
-                        key={data.permlink}
-                        data={data}
-                        onUpvoteSuccess={this.loadArticlesUser}
-                      />
-                    )
-                    );
-                  })}
+                  <div>
+                    {articlesList.map((data) => {
+                      return (
+                        data.author === match.params.username
+                      && (
+                        <ArticleListItem
+                          key={data.permlink}
+                          data={data}
+                          onUpvoteSuccess={loadArticles}
+                        />
+                      )
+                      );
+                    })}
+                  </div>
+                  {(articles.isBusy && (
+                    <div style={{ marginBottom: '30px' }}>
+                      <Layout><Spin/></Layout>
+                    </div>
+                  ))}
+
+                  <div style={{ margin: '0 auto' }}>
+                    <Button
+                      size={'default'}
+                      onClick={() => this.handleMoreArticlesLoading(activeCategory)}
+                      style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
+                      Load more
+                    </Button>
+                  </div>
                 </Row>
               }
               
@@ -455,6 +423,7 @@ class Profile extends Component {
                     activeCategory={activeCategory}
                     categories={articles.categories}
                     username={match.params.username}
+                    onShowAllCategories={() => this.props.history.push(`/@${match.params.username}`)}
                   />
                 </Col>
               </Row>
@@ -464,6 +433,110 @@ class Profile extends Component {
         </section>
       </div>
     );
+  }
+
+  componentDidMount() {
+    const { location, history } = this.props;
+
+    let { category } = queryString.parse(location.search);
+
+    this.loadArticlesUser(category);
+    this.loadSteemRewardFunds();
+    this.loadCurrentMedianHistoryPrice();
+    this.loadDynamicGlobalProperties();
+    this.loadRemoteUserData();
+
+    history.listen(newLocation => {
+      let newCategory = queryString.parse(newLocation.search).category;
+
+      this.loadArticlesUser(newCategory, 0);
+    });
+  }
+
+  render () {
+    let 
+      coverImage,
+      displayName,
+      name,
+      reputation,
+      signupDate,
+      votingPower,
+      voteValue,
+      remoteUserObjectMeta;
+
+    const {articles, user, stats, match} = this.props;
+    const { userObject, remoteUserObject, knacksteemUserObject, remoteUserFollowObject } = user;
+    const { rewardFundObject, dynamicGlobalPropertiesObject, currentMedianHistoryPriceObject } = stats;
+    const hasLoadedRemoteUserObject = !containsEmptyMap([
+      // knacksteemUserObject,
+      remoteUserObject,
+      rewardFundObject,
+      dynamicGlobalPropertiesObject,
+      currentMedianHistoryPriceObject
+    ]);
+
+    const activeCategory = queryString.parse(this.props.location.search).category;
+
+    const articlesList = typeof activeCategory !== 'undefined' ?
+      articles.data.filter(article => article.category === activeCategory) : 
+      articles.data;
+
+    // If we've loaded all core objects...
+    if (hasLoadedRemoteUserObject) {
+      signupDate = fecha.format(
+        fecha.parse(
+          remoteUserObject.created.split('T')[0],
+          'YYYY-MM-DD'
+        ),
+        'D MMMM YYYY'
+      );
+
+      if (typeof remoteUserObject === 'object'
+      && remoteUserObject.json_metadata !== '') {
+        remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
+        name = remoteUserObjectMeta.name;
+        displayName = name && name !== '' ? name : uppercaseFirst(match.params.username);
+        coverImage = remoteUserObjectMeta.cover_image;
+        reputation = repLog10(parseFloat(remoteUserObject.reputation));
+        votingPower = calculateVotePower(remoteUserObject.voting_power, remoteUserObject.last_vote_time).votePower;
+
+        voteValue=calculateVoteValue({
+          votingPower: remoteUserObject.voting_power,
+          lastVoteTime: remoteUserObject.last_vote_time,
+          rewardBalance: rewardFundObject.reward_balance,
+          recentClaims: rewardFundObject.recent_claims,
+          currentMedianHistoryPrice: currentMedianHistoryPriceObject,
+          vestingShares: remoteUserObject.vesting_shares,
+          receivedVestingShares: remoteUserObject.received_vesting_shares,
+          delegatedVestingShares: remoteUserObject.delegated_vesting_shares,
+          totalVestingFundSteem: dynamicGlobalPropertiesObject.total_vesting_fund_steem,
+          totalVestingShares: dynamicGlobalPropertiesObject.total_vesting_shares
+        });
+      }
+
+      return this.renderProfile({
+        about: remoteUserObjectMeta && remoteUserObjectMeta.about,
+        activeCategory,
+        articles,
+        articlesList,
+        coverImage,
+        displayName,
+        hasLoadedRemoteUserObject,
+        match,
+        location: remoteUserObject.location,
+        loadArticles: () => this.loadArticlesUser(),
+        knacksteemUserObject,
+        signupDate,
+        reputation,
+        userObject,
+        remoteUserFollowObject,
+        voteValue,
+        votingPower,
+        website: remoteUserObject.website
+      });
+    } else {
+      return (<div>User does not have any posts</div>)
+    }
   }
 }
 

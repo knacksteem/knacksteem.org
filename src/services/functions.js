@@ -1,6 +1,6 @@
 //generate unique permalink for articles
 export const getUniquePermalink = (title) => {
-  const permlink = title.replace(/[^\w\s]/gi, '').replace(/\s\s+/g, '-').replace(/\s/g, '-').toLowerCase();
+  let permlink = title.replace(/[^\w\s]/gi, '').replace(/\s\s+/g, '-').replace(/\s/g, '-').toLowerCase();
   return `${permlink}-id-${Math.random().toString(36).substr(2, 16)}`;
 };
 
@@ -104,7 +104,7 @@ export const repLog10 = rep2 => {
  * 
  * @return {Double}
  */
-function vestToSteem (
+export function vestToSteem (
   vestingShares,
   totalVestingShares,
   totalVestingFundSteem) {
@@ -152,7 +152,7 @@ function calculateTotalVests (
  */
 export const calculateVotePower = (votingPower, lastVoteTime) => {
   let secondsAgo = (new Date() - new Date(lastVoteTime + 'Z')) / 1000;
-  let vp = votingPower + (10000 * secondsAgo / 432000);
+  let vp = (secondsAgo * 10000 / 86400 / 5) + votingPower;
   let votePower = Math.min(vp / 100, 100).toFixed(2);
 
   return {
@@ -189,12 +189,23 @@ export const calculateVoteValue = ({
   totalVestingFundSteem,
   totalVestingShares
 }) => {
-  let {vp} = calculateVotePower(votingPower, lastVoteTime);
+
+  const steem = require('steem');
+
+  let vote = 0;
+  let sp = 0;
+  let vp = 0;
+
   let vests = calculateTotalVests(vestingShares, delegatedVestingShares, receivedVestingShares);
+  vp = calculateVotePower(votingPower, lastVoteTime).vp;
 
-  let sp = vestToSteem(vests, parseFloat(totalVestingShares), parseFloat(totalVestingFundSteem));
+  sp = steem.formatter.vestToSteem(
+    vests,
+    parseFloat(totalVestingShares),
+    parseFloat(totalVestingFundSteem)
+  );
 
-  let m = parseInt(100 * vp * (100 * 100) / 10000, 10);
+  let m = parseInt((100 * vp * (100 * 100)) / 10000, 10);
   m = parseInt((m + 49) / 50, 10);
 
   let i = (parseFloat(rewardBalance.replace(' STEEM', '')) / parseFloat(recentClaims));
@@ -207,9 +218,13 @@ export const calculateVoteValue = ({
   let a = totalVestingFundSteem.replace(' STEEM', '') /
   totalVestingShares.replace(' VESTS', '');
 
-  let vote = parseInt((sp / a) * m * 100, 10) * i * o;
+  let r = (sp / a);
 
-  return (vote / 100).toFixed(2);
+  vote = parseInt(r * m * 100, 10) * i * o;
+
+  vote = (vote / 100);
+
+  return vote.toFixed(2);
 };
 
 /**

@@ -101,9 +101,11 @@ class KnackHeader extends React.Component {
               <Col className="ml" >
                 <div >
                   <Dropdown overlay={menu}>
-                    <a className="ant-dropdown-link" >
-                      <Avatar size="small" src={`https://steemitimages.com/u/${user.username}/avatar`}  icon="user" />
-                    </a>
+                    <span className="ant-dropdown-link" >
+                      <a title="Visit profile" href={`/@${user.username}`}>
+                        <Avatar size="small" src={`https://steemitimages.com/u/${user.username}/avatar`}  icon="user" />
+                      </a>
+                    </span>
                   </Dropdown>
                 </div>
               </Col>
