@@ -119,7 +119,7 @@ class  NewContribution extends React.Component {
   render() {
 
     return (
-      <Row type="flex" justify="center" style={{marginTop: '100px', width: '100%'}} >
+      <Row type="flex" justify="center" style={{ width: '100%'}} >
         <Col className="profile-container" >
         
         </Col>

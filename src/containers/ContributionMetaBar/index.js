@@ -83,8 +83,6 @@ class ContributionMetaBar extends React.Component {
     const { remoteUserObject} = user;
     const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
     const isUserLoggedIn = (user.username !== '');
-
-    console.log(user);
     
 
     if (hasLoadedRemoteUserObject) {
@@ -189,10 +187,8 @@ class ContributionMetaBar extends React.Component {
               <Menu.Item key="faq" disabled={false}>
                 <Link to="/faq">
                   <i style={styles.barIcon} className="fas fa-file"/>
-                  <span className="contribution-info-bar-label">TOS</span>
+                  <span className="contribution-info-bar-label">Faq</span>
                 </Link>
-                <i style={styles.barIcon} className="fas fa-question-circle"/>
-                <span className="contribution-info-bar-label">FAQ</span>
               </Menu.Item>
               <Menu.Item key="tos" disabled={false}>
                 <Link to="/tos">

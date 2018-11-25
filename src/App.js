@@ -2,7 +2,7 @@ import React from 'react';
 import {Route} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
-import {Layout,Col} from 'antd';
+import {Layout, Col} from 'antd';
 import KnackHeader from './components/Header';
 import Home from './containers/Home';
 import Guidelines from './containers/Guidelines';
@@ -31,8 +31,10 @@ const App = () => {
     <Layout id="page-layout">
       <KnackHeader/>
       <Route exact path="/@:username" component={Profile} />
-      <Layout id="content-layout">
-        <ContributionMetaBar/>
+      <Layout id="content-layout" style={{marginTop: '100px', paddingLeft: '130px', display: 'flex', justifyContent: 'center', flexDirection: 'row'}}>
+        <Col>
+          <ContributionMetaBar /> 
+        </Col>
         <Route exact path="/" component={Home} />
         <Route exact path="/guidelines" component={Guidelines} />
         <Route exact path="/faq" component={FAQs} />
