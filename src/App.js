@@ -26,7 +26,7 @@ import Sponsors from './containers/Sponsors';
 import Moderators from './containers/Moderators';
 import Search from './containers/Search';
 import ContributionMetaBar from './containers/ContributionMetaBar';
-
+import './index.css';
 const App = (props) => {
 console.log(props);
   return (
@@ -34,7 +34,7 @@ console.log(props);
       <KnackHeader/>
       <Route exact path="/@:username" component={Profile} />
       <Layout id="content-layout" style={{marginTop: '100px', paddingLeft: '130px', display: 'flex', justifyContent: 'center', flexDirection: 'row'}}>
-        <Col style={{display: `${props.app.isSidebarVisible ? 'block' : 'none'}`}}>
+        <Col className="sidebar" style={{display: `${props.app.isSidebarVisible ? 'block' : 'none'}`}}>
           <ContributionMetaBar /> 
         </Col>
         <Route exact path="/" component={Home} />

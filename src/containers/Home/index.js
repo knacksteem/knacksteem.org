@@ -3,14 +3,12 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Spin, Row, Col, Select } from 'antd';
+import { Spin, Row, Col, Select } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import AnnouncementMetaBar from '../Home/AnnouncementMetaBar';
-import ContributionMetaBar from '../ContributionMetaBar';
 import { getArticlesModeration} from '../../actions/articles';
 import Cookies from 'js-cookie';
 
-const Option = Select.Option;
 
 const styles = {
   articlesList: {display: 'flex', flexDirection: 'column', width: '70%'},

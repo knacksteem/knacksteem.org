@@ -3,6 +3,7 @@ import { Row, Col} from 'antd';
 import Editor from '../../components/Editor';
 import {connect} from 'react-redux';
 import {withRouter} from "react-router-dom";
+import PropTypes from 'prop-types';
 import {postArticle, editArticle} from '../../actions/articles';
 
 
@@ -107,12 +108,22 @@ class  NewContribution extends React.Component {
 
   proceedSubmit = (tags) => {
     const {isComment, isEdit, parsedPostData} = this.state;
-    const {dispatch, articleData} = this.props;
-
+    const {dispatch, articleData, onDone, user} = this.props;
+    
     if (isEdit){
       dispatch(editArticle(parsedPostData.title, parsedPostData.body, tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
     }else {
-      dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
+      if(user.userObject.isBanned === false) {
+        dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
+      } else {
+        return 
+        
+      }
+      
+    }
+
+    if (onDone) {
+      onDone();
     }
   }
 
@@ -140,6 +151,18 @@ class  NewContribution extends React.Component {
   }
 
 };
+
+NewContribution.propTypes = {
+  dispatch: PropTypes.func,
+  articles: PropTypes.object,
+  isComment: PropTypes.bool, //is comment or article (which is a comment too in the blockchain, to be specific)
+  isEdit: PropTypes.bool, //editor is for editing a post or for creating a new one
+  onDone: PropTypes.func, //will get called on post/update click
+  parentPermlink: PropTypes.string,
+  parentAuthor: PropTypes.string,
+  user: PropTypes.object
+};
+
 
 const mapStateToProps = state => ({
   articles: state.articles,
