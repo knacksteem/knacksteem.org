@@ -29,6 +29,8 @@ const styles = {
 const ModerationControls = ({
   name,
   user,
+  isModerator,
+  isSupervisor,
   isMasterSupervisor,
   onModChoiceSelect,
   onBanButtonClick
@@ -36,11 +38,13 @@ const ModerationControls = ({
   return (
     <Layout  style={{ background: 'transparent', boxShadow: 'none' }}>
       <div style={{ width: '100%', marginTop: '20px' }}>
-        { (isMasterSupervisor && Object.keys(user).length > 0) &&
+        { (Object.keys(user).length > 0) &&
           <div>
+            {(isMasterSupervisor || isSupervisor ) &&
             <Dropdown
               overlay={
                 <Menu  onClick={({ item }) => onModChoiceSelect(item.props.choice, item.props.action)}>
+                {(isMasterSupervisor || isSupervisor) &&
                   <Menu.Item
                     choice={'moderator'}
                     action={user.roles.indexOf('moderator') === -1 ? 'add' : 'remove'}
@@ -50,6 +54,8 @@ const ModerationControls = ({
                     {user && user.roles.indexOf('moderator') === -1 ? ' a ' : ' as a '}
                     <b>Moderator</b>
                   </Menu.Item>
+                }
+                { isMasterSupervisor && (
                   <Menu.Item
                     choice={'supervisor'}
                     key="2"
@@ -59,7 +65,8 @@ const ModerationControls = ({
                     {user && user.roles.indexOf('supervisor') === -1 ? 'Make  ' : ' as a '}
                     <b>Supervisor</b>
                   </Menu.Item>
-                </Menu>          
+                )}
+                </Menu>
               }
               trigger={['click']}
             >
@@ -73,6 +80,8 @@ const ModerationControls = ({
                 <Icon type="down" />
               </Button>
             </Dropdown>
+            }
+            {(isMasterSupervisor || isSupervisor || isModerator) &&
             <Button
               onClick={e => onBanButtonClick(e)}
               size="large"
@@ -82,6 +91,7 @@ const ModerationControls = ({
             >
               {user && user.isBanned ? 'Unban': 'Ban'} {name}
             </Button>
+            }
           </div>
         }
       </div>
@@ -91,6 +101,8 @@ const ModerationControls = ({
 
 ModerationControls.propTypes = {
   user: PropTypes.object,
+  isModerator: PropTypes.bool,
+  isSupervisor: PropTypes.bool,
   isMasterSupervisor: PropTypes.bool,
   name: PropTypes.string,
   onModChoiceSelect: PropTypes.func,
@@ -126,6 +138,8 @@ const ProfileInfoBar = ({
   votingPower,
   voteValue,
   website,
+  isModerator,
+  isSupervisor,
   isMasterSupervisor,
   onModChoiceSelect,
   onBanButtonClick,
@@ -180,9 +194,10 @@ const ProfileInfoBar = ({
           
         </Row>
       </Layout>
-      
       {Object.keys(user) &&
       <ModerationControls
+        isModerator={isModerator}
+        isSupervisor={isSupervisor}
         isMasterSupervisor={isMasterSupervisor}
         user={user}
         onModChoiceSelect={onModChoiceSelect}
@@ -197,6 +212,8 @@ const ProfileInfoBar = ({
 ProfileInfoBar.propTypes = {
   style: PropTypes.object,
   user: PropTypes.object,
+  isModerator: PropTypes.bool,
+  isSupervisor: PropTypes.bool,
   isMasterSupervisor: PropTypes.bool,
   signupDate: PropTypes.string,
   about: PropTypes.string,

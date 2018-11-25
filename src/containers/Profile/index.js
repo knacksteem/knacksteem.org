@@ -50,7 +50,7 @@ const styles = {
   }
 };
 
-const MASTER_SUPERVISOR = 'knowledges';
+const MASTER_SUPERVISOR = 'creatrixity';
 
 class Profile extends Component {
   static propTypes = {
@@ -358,6 +358,13 @@ class Profile extends Component {
                     banDuration={this.state.banDuration}
                     onModChoiceSelect={(choice, action) => this.handleModChoiceSelect(choice, action)}
                     onBanButtonClick={() => this.handleBanStatusToggle()}
+                    isModerator={
+                      Object.keys(userObject).length > 0 && userObject.roles.indexOf('moderator') > -1
+                    }
+                    isSupervisor={
+                      Object.keys(userObject).length > 0
+                      && userObject.roles.indexOf('supervisor') > -1
+                    }
                     isMasterSupervisor={
                       Object.keys(userObject).length > 0
                       && userObject.username === MASTER_SUPERVISOR
