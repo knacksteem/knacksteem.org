@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
 import {postArticle, editArticle} from '../../actions/articles';
+import {HowToPost} from '../../components/HowToPost/'
 
 
 
@@ -131,9 +132,6 @@ class  NewContribution extends React.Component {
 
     return (
       <Row type="flex" justify="center" style={{ width: '100%'}} >
-        <Col className="profile-container" >
-        
-        </Col>
         <Col className="editor-container" style={{margin: 'auto'}}>
           <Editor isComment={false} 
                   isEdit={false}
@@ -144,7 +142,7 @@ class  NewContribution extends React.Component {
                   />
         </Col>
         <Col className="how-to-post-container" >
-          
+          <HowToPost/>
         </Col>
       </Row>
     );
