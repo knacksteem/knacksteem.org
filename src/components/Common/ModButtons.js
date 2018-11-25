@@ -6,6 +6,8 @@ import {Button, Modal, Input, DatePicker} from 'antd';
 import {moderateUser} from '../../actions/stats';
 import './ModButtons.css';
 
+const MASTER_SUPERVISOR = 'knowledges';
+
 /**
  * buttons for moderation, only visible to moderators and supervisors
  */
@@ -94,8 +96,8 @@ class ModButtons extends Component {
 
     return (
       <div className="mod-buttons">
-        {(user.username === 'creatrixity' && item.roles.indexOf('supervisor') === -1) && <Button type="primary" size="small" onClick={this.onMakeSupervisorClick}>Make Supervisor</Button>}
-        {(user.username === 'creatrixity' && item.roles.indexOf('supervisor') !== -1) && <Button type="primary" size="small" onClick={this.onRemoveSupervisorClick}>Remove Supervisor</Button>}
+        {(user.username === MASTER_SUPERVISOR && item.roles.indexOf('supervisor') === -1) && <Button type="primary" size="small" onClick={this.onMakeSupervisorClick}>Make Supervisor</Button>}
+        {(user.username === MASTER_SUPERVISOR && item.roles.indexOf('supervisor') !== -1) && <Button type="primary" size="small" onClick={this.onRemoveSupervisorClick}>Remove Supervisor</Button>}
         {(user.isSupervisor && item.roles.indexOf('moderator') === -1) && <Button type="primary" size="small" onClick={this.onMakeModClick}>Make Mod</Button>}
         {(user.isSupervisor && item.roles.indexOf('moderator') !== -1) && <Button type="primary" size="small" onClick={this.onRemoveModClick}>Remove Mod</Button>}
         {(user.isModerator && !item.isBanned) && <Button type="primary" size="small" onClick={this.onBanClick}>Ban</Button>}
