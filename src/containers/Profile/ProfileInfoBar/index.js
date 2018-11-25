@@ -81,7 +81,7 @@ const ModerationControls = ({
               </Button>
             </Dropdown>
             }
-            {(isMasterSupervisor || isSupervisor || isModerator) &&
+            {(isMasterSupervisor || isSupervisor) &&
             <Button
               onClick={e => onBanButtonClick(e)}
               size="large"
