@@ -764,10 +764,6 @@ Editor.propTypes = {
   isComment: PropTypes.bool, //is comment or article (which is a comment too in the blockchain, to be specific)
   isEdit: PropTypes.bool, //editor is for editing a post or for creating a new one
   articleData: PropTypes.object, //data of existing article for editing
-  onCancel: PropTypes.func, //will get called on cancel click
-  onDone: PropTypes.func, //will get called on post/update click
-  parentPermlink: PropTypes.string,
-  parentAuthor: PropTypes.string
 };
 
 Editor.defaultProps = {
