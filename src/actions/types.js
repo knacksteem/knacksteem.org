@@ -31,3 +31,6 @@ export const USERLIST_GET_SEARCH = 'USERLIST_GET_SEARCH';
 //app 
 export const SIDEBAR_VISIBILITY_SET = 'SIDEBAR_VISIBILITY_SET';
 
+//voting slider
+
+export const VOTE_POWER_CHANGE = 'VOTE_POWER_CHANGE';

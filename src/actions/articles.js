@@ -67,7 +67,7 @@ export const getArticlesByCategory = (category, skip, search) => {
 /**
  * get articles by user from backend
  */
-export const getArticlesByUser = (skip, search) => {
+export const getArticlesByUser = (skip, search, limit=25) => {
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -83,7 +83,8 @@ export const getArticlesByUser = (skip, search) => {
         username: Cookies.get('username') || undefined,
         author: store.user.username,
         skip: skip || undefined, //skip elements for paging
-        search: search || undefined
+        search: search || undefined,
+        limit
       });
       dispatch({
         type: types.ARTICLES_GET,
@@ -99,7 +100,7 @@ export const getArticlesByUser = (skip, search) => {
   };
 };
 
-export const getArticlesByUsername = (username, skip, search, category = '') => {
+export const getArticlesByUsername = (username, skip, search, category = '', limit=25) => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -114,7 +115,8 @@ export const getArticlesByUsername = (username, skip, search, category = '') => 
         author: username,
         skip: skip || undefined, //skip elements for paging
         search: search || undefined,
-        category: category || undefined
+        category: category || undefined,
+        limit: limit || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,

@@ -5,6 +5,7 @@ import headerReducer from './header';
 import userReducer from './user';
 import statsReducer from './stats';
 import appReducer from './app';
+import votingSliderReducer from './votingSlider';
 
 export default combineReducers({
   routing: routerReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
   header: headerReducer,
   user: userReducer,
   stats: statsReducer,
-  app: appReducer
+  app: appReducer,
+  votingSlider: votingSliderReducer
 });
