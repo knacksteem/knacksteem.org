@@ -91,13 +91,13 @@ class ArticleMetaBottom extends Component {
     const upvoteIconColor = (data.isVoted || isUpvoted) ? '#999' : '#333';
 
     return (
-      <div className="article-meta">
+      <div className="article-meta" style={{justify: 'center'}}>
         <span
           className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
           onClick={this.onUpvoteClick}>
-          <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-arrow-up"/>
+          <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-thumbs-up"/>
           <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
-          <i style={{...styles.barIcon, marginLeft: '5px', color: '#eee'}} className="fas fa-arrow-down"/>
+          <i style={{...styles.barIcon, marginLeft: '5px', color: '#eee'}} className="fas fa-thumbs-down"/>
         </span>
         {/* <IconText type="wallet" text={`$${data.totalPayout}`} /> */}
         <span style={{ float: 'right' }}>

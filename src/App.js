@@ -2,7 +2,7 @@ import React from 'react';
 import {Route} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
-import {Layout, Col} from 'antd';
+import {Layout, Col, Row} from 'antd';
 import KnackHeader from './components/Header';
 import Home from './containers/Home';
 import Guidelines from './containers/Guidelines';
@@ -32,10 +32,12 @@ const App = (props) => {
     <Layout id="page-layout">
       <KnackHeader/>
       <Route exact path="/@:username" component={Profile} />
-      <Layout id="content-layout" style={{marginTop: '100px', paddingLeft: '130px', display: 'flex', justifyContent: 'center', flexDirection: 'row'}}>
-        <Col className="sidebar" style={{display: `${props.app.isSidebarVisible ? 'block' : 'none'}`}}>
-          <ContributionMetaBar /> 
-        </Col>
+      <Layout id="content-layout" style={{marginTop: '100px', display: 'flex', flexDirection: 'row'}}>
+        <Row type="flex" justify="center" className="sidebar" style={{width:'25%', display: `${props.app.isSidebarVisible ? 'flex' : 'none'}`}}>
+          <Col>
+            <ContributionMetaBar/> 
+          </Col>
+        </Row>
         <Route exact path="/" component={Home} />
         <Route exact path="/guidelines" component={Guidelines} />
         <Route exact path="/faq" component={FAQs} />

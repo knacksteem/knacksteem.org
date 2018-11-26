@@ -1,32 +1,16 @@
-<<<<<<< HEAD
 
-
-
-=======
-.home-container {
-    justify-content: center;
-    width: 100%;
-    margin-top: 100px
-}
-.contribution-container,
-.announcement-container{
-    margin-top: 0
-} 
-.home-inner-container {
-    justify-items: space-between !important;
-}
->>>>>>> 06abe2a5b4209fdbb71bdb73c8fb0833c9f5f496
 .select-container {
     display: flex;
     justify-content: center;
 }
 
 @media (max-width: 768px) {
-  .announcement-container,
-  .contribution-container {
+  .announcement-container {
       display: none !important;
+      width: 10px !important
   }
-  .item-feed {
+  .item-feed,
+  .home-container {
       width: 100% !important;
   }
 }
@@ -36,7 +20,9 @@
     .contribution-container {
         display: none !important;
     }
-    .item-feed {
+    .item-feed,
+    .home-container
+    {
         width: 100% !important;
     }
 
