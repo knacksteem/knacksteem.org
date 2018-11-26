@@ -9,7 +9,6 @@ import AnnouncementMetaBar from '../Home/AnnouncementMetaBar';
 import { getArticlesModeration} from '../../actions/articles';
 import Cookies from 'js-cookie';
 
-const Option = Select.Option;
 const styles = {
   articlesList: {display: 'flex', flexDirection: 'column', width: '70%'},
   barIcon: {

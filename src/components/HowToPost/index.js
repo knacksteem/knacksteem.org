@@ -13,7 +13,7 @@ export const HowToPost = () => {
             hoverable
             style={{ width: 200 }}
           >
-          <img style={{width: '100%'}} src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />
+          <img alt="Image" style={{width: '100%'}} src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />
             <Meta
                 title="Posting On KnackSteem"
                 description="www.knacksteem.org"
