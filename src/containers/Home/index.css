@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+
+
+
+=======
 .home-container {
     justify-content: center;
     width: 100%;
@@ -10,6 +15,7 @@
 .home-inner-container {
     justify-items: space-between !important;
 }
+>>>>>>> 06abe2a5b4209fdbb71bdb73c8fb0833c9f5f496
 .select-container {
     display: flex;
     justify-content: center;

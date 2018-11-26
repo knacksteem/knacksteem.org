@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Tooltip, Menu, Dropdown, Icon } from 'antd';  import * as ReactIcon from 'react-icons/lib/md';
-import './EditorToolbar.css';
+import { Button, Tooltip, Menu, Dropdown, Row, Col } from 'antd';  
+import './index.css';
 
 const tooltip = (description, shortcut) =>
   (<span>
@@ -12,7 +12,7 @@ const tooltip = (description, shortcut) =>
     </b>
   </span>);
 
-const EditorToolbar = ({ intl, onSelect }) => {
+const EditorToolbar = ({ onSelect }) => {
   const menu = (
     <Menu onClick={e => onSelect(e.key)}>
       <Menu.Item key="h1"><h1>Heading 1</h1></Menu.Item>
@@ -25,49 +25,61 @@ const EditorToolbar = ({ intl, onSelect }) => {
   );
 
   return (
-    <div className="EditorToolbar">
-      <Dropdown overlay={menu}>
-        <Button className="EditorToolbar__button">
-          <i className="iconfont icon-fontsize" /> <Icon type="down" />
-        </Button>
-      </Dropdown>
-      <Tooltip title={tooltip(intl.formatMessage({ id: 'bold', defaultMessage: 'Add bold' }), 'Ctrl+b')}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('b')}>
-          <i className="iconfont icon-bold" />
-        </Button>
-      </Tooltip>
-      <Tooltip title={tooltip(intl.formatMessage({ id: 'italic', defaultMessage: 'Add italic' }), 'Ctrl+i')}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('i')}>
-          <i className="iconfont icon-italic" />
-        </Button>
-      </Tooltip>
-      <Tooltip title={tooltip(intl.formatMessage({ id: 'quote', defaultMessage: 'Add quote' }), 'Ctrl+q')}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('q')}>
-          <i className="iconfont icon-q1" />
-        </Button>
-      </Tooltip>
-      <Tooltip title={tooltip(intl.formatMessage({ id: 'link', defaultMessage: 'Add link' }), 'Ctrl+k')}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('link')}>
-          <i className="iconfont icon-link" />
-        </Button>
-      </Tooltip>
-      <Tooltip title={tooltip(intl.formatMessage({ id: 'image', defaultMessage: 'Add image' }), 'Ctrl+m')}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('image')}>
-          <i className="iconfont icon-picture" />
-        </Button>
-      </Tooltip>
-      <Tooltip title={tooltip(intl.formatMessage({ id: 'code', defaultMessage: 'Insert Code' }), 'Ctrl+n')}>
-        <Button className="EditorToolbar__button" onClick={() => onSelect('code')}>
-          <i className="iconfont icon-code" />
-        </Button>
-      </Tooltip>
-    </div>
+    <Row  type="flex" align="middle" justify="center" style={{ marginLeft: '10px', borderBottom: '1px solid #eee', paddingBottom: '10px'}}  className="EditorToolbar">
+      <Col>
+        <Dropdown overlay={menu}>
+          <Button className="EditorToolbar__button">
+            <i className="fas fa-angle-down" /> 
+          </Button>
+        </Dropdown>
+      </Col>
+      
+      <Col style={{display: 'flex', alignItems: 'center'}}>
+        <Tooltip title={tooltip('Add Bold', 'Ctrl+b')}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('b')}>
+            <i className="fas fa-bold" />
+          </Button>
+        </Tooltip>
+      
+        <Tooltip title={tooltip('Add Italic','Ctrl+i')}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('i')}>
+            <i className="fas fa-italic" />
+          </Button>
+        </Tooltip>
+        <Tooltip title={tooltip('Add quote','Ctrl+q')}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('q')}>
+            <i className="fas fa-angle-left" />
+          </Button>
+        </Tooltip>
+        <Tooltip title={tooltip('Add link','Ctrl+k')}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('link')}>
+            <i className="fas fa-link" />
+          </Button>
+        </Tooltip>
+
+        <Tooltip title={tooltip('Add image','Ctrl+m')}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('image')}>
+            <i className="fas fa-image" />
+          </Button>
+        </Tooltip>
+        <Tooltip title={tooltip('Add code','Ctrl+n')}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('code')}>
+            <i className="fas fa-code" />
+          </Button>
+        </Tooltip>
+        <Tooltip title={tooltip('Add unordered list','Ctrl+shift+l')}>
+          <Button className="EditorToolbar__button" onClick={() => onSelect('unorderedlist')}>
+            <i className="fas fa-list-ul" />
+          </Button>
+        </Tooltip>
+      </Col>
+    </Row>
   );
 };
 
 EditorToolbar.propTypes = {
-  intl: PropTypes.shape().isRequired,
   onSelect: PropTypes.func,
 };
 
 export default EditorToolbar;
+ 

@@ -3,19 +3,14 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Spin, Row, Col, Select } from 'antd';
+import { Spin, Row, Col } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import AnnouncementMetaBar from '../Home/AnnouncementMetaBar';
-import ContributionMetaBar from '../Home/ContributionMetaBar';
 import { getArticlesModeration} from '../../actions/articles';
-import {getRemoteUserData} from '../../actions/user';
 import Cookies from 'js-cookie';
-import SteemConnect from '../../services/SteemConnect';
-import { repLog10 } from '../../services/functions';
-const Option = Select.Option;
 
 const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column', width: '50%'},
+  articlesList: {display: 'flex', flexDirection: 'column', width: '70%'},
   barIcon: {
     fontSize: '16px',
     color: '#999',
@@ -33,7 +28,6 @@ class Home extends Component {
     this.state = {
       searchString: ''
     };
-    this.getOathURL = this.getOathURL.bind(this);
   }
 
   // //scroll handler for lazy loading
@@ -51,17 +45,8 @@ class Home extends Component {
      }
    };
   //get User data
-   loadRemoteUserData() {
-     const {dispatch} = this.props;
-     dispatch(getRemoteUserData(Cookies.get('username')));
-   }
+   
 
-   /**
-    * @method st
-    */
-   getOathURL () {
-     return SteemConnect.getLoginURL();
-   }
 
    componentDidMount() {
      const username = Cookies.get('username');
@@ -69,11 +54,11 @@ class Home extends Component {
        this.loadArticles();
      } else {
        this.loadArticles();
-       this.loadRemoteUserData();
      }
      // //on scroll, load the next batch of articles
      window.addEventListener('scroll', this.onScroll);
    }
+
    componentWillUnmount() {
      //remove scroll event again when hitting another route
      window.removeEventListener('scroll', this.onScroll);
@@ -95,58 +80,13 @@ class Home extends Component {
   };
 
   render() {
-    let 
-      coverImage,
-      name,
-      reputation,
-      remoteUserObjectMeta,
-      username;
 
-    const {articles, user} = this.props;
-    const { remoteUserObject} = user;
-    const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
-
-    if (hasLoadedRemoteUserObject) {
-      remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
-      name = remoteUserObjectMeta.name;
-      coverImage = remoteUserObjectMeta.cover_image;
-      reputation = repLog10(parseFloat(remoteUserObject.reputation)); 
-      username = Cookies.get('username');
-    }  
+    const {articles} = this.props;
+ 
 
     return (
-      <Layout className="home-container" justify="center">
-        <Row type="flex" className="mobile-select" justify="center" style={{marginBottom: '20px', display: 'none'}}>
-          <Col className="select-container" style={{width: '70%'}}>
-            <Select
-              style={{margin: 'auto', width: '100%'}}
-              showSearch
-              size={'large'}
-              placeholder="Select from the list"
-              optionFilterProp="children"
-              filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-            >
-              <Option value="contribution"><i style={styles.barIcon} className="fas fa-bookmark"/>Contribution</Option>
-              <Option value="review"><i style={styles.barIcon} className="fas fa-bookmark"/>Review</Option>
-              <Option value="sponsor"><i style={styles.barIcon} className="fas fa-bookmark"/>Sponsor</Option>
-              <Option value="moderator"><i style={styles.barIcon} className="fas fa-bookmark"/>Moderator</Option>
-              <Option value="pending"><i style={styles.barIcon} className="fas fa-bookmark"/>Pending</Option>
-              <Option value="reserved"><i style={styles.barIcon} className="fas fa-bookmark"/>Reserved</Option>
-              <Option value="guidelines"><i style={styles.barIcon} className="fas fa-bookmark"/>Guidelines</Option>
-              <Option value="faq"><i style={styles.barIcon} className="fas fa-bookmark"/>FAQ</Option>
-              <Option value="tos"><i style={styles.barIcon} className="fas fa-bookmark"/>TOS</Option>
-              <Option value="announcement"><i style={styles.barIcon} className="fas fa-bookmark"/>Announcement</Option>
-              
-            </Select>
-          </Col>
-            
-        </Row>
-        <Row type="flex" className="home-inner-container" justify="center">
-          <Row type="flex" className="contribution-container">
-            <Col>
-              <ContributionMetaBar metaImage={coverImage} reputation={reputation} name={name}  handleLogin={this.getOathURL()} username={username}/>
-            </Col>
-          </Row>
+      <Row type="flex" className="home-container" justify="right">
+        <Row type="flex" className="home-inner-container" justify="right">
           <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articles.data.map((data) => {
               return (
@@ -161,7 +101,7 @@ class Home extends Component {
           </Row>
           {articles.isBusy && <Spin/>}
         </Row>
-      </Layout>
+      </Row>
     );
   }
 }

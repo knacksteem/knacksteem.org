@@ -21,6 +21,7 @@ import {
   getArticlesModeration
 } from '../../actions/articles';
 
+import {toggleSidebar} from '../../actions/app';
 import {
   getKnacksteemUserData,
   updateKnacksteemUser,
@@ -436,10 +437,12 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    const { location, history } = this.props;
+    const { location, history, dispatch } = this.props;
 
     let { category } = queryString.parse(location.search);
-
+    dispatch(toggleSidebar({
+      isSidebarVisible: false
+    }))    
     this.loadArticlesUser(category);
     this.loadSteemRewardFunds();
     this.loadCurrentMedianHistoryPrice();
@@ -451,6 +454,13 @@ class Profile extends Component {
 
       this.loadArticlesUser(newCategory, 0);
     });
+  }
+
+  componentDidUnmount() {
+    const { dispatch } = this.props;
+    dispatch(toggleSidebar({
+      isSidebarVisible: true
+    })) 
   }
 
   render () {

@@ -2,7 +2,7 @@ import React from 'react';
 import {Route} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
-import {Layout} from 'antd';
+import {Layout, Col} from 'antd';
 import KnackHeader from './components/Header';
 import Home from './containers/Home';
 import Guidelines from './containers/Guidelines';
@@ -25,12 +25,17 @@ import './assets/styles/ant-overrides.css';
 import Sponsors from './containers/Sponsors';
 import Moderators from './containers/Moderators';
 import Search from './containers/Search';
-const App = () => {
+import ContributionMetaBar from './containers/ContributionMetaBar';
+import './index.css';
+const App = (props) => {
   return (
     <Layout id="page-layout">
       <KnackHeader/>
       <Route exact path="/@:username" component={Profile} />
-      <Layout id="content-layout">
+      <Layout id="content-layout" style={{marginTop: '100px', paddingLeft: '130px', display: 'flex', justifyContent: 'center', flexDirection: 'row'}}>
+        <Col className="sidebar" style={{display: `${props.app.isSidebarVisible ? 'block' : 'none'}`}}>
+          <ContributionMetaBar /> 
+        </Col>
         <Route exact path="/" component={Home} />
         <Route exact path="/guidelines" component={Guidelines} />
         <Route exact path="/faq" component={FAQs} />
@@ -58,6 +63,8 @@ const App = () => {
 
 const mapStateToProps = state => ({
   articles: state.articles,
+  app: state.app
 });
 
 export default withRouter(connect(mapStateToProps)(App));
+

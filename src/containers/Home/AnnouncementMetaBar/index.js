@@ -3,7 +3,6 @@ import { Button, Layout, Card, Icon } from 'antd';
 import {Link} from 'react-router-dom';
 import './index.css';
 
-
 const AnnouncementMetaBar = () => {
 
   return (

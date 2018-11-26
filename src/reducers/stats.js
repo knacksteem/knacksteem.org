@@ -1,7 +1,6 @@
 import {
   USERLIST_REQUEST,
   USERLIST_GET,
-  USERLIST_GET_SEARCH,
   STEEM_REWARD_FUND_GET,
   CURRENT_MEDIAN_HISTORY_PRICE_GET,
   DYNAMIC_GLOBAL_PROPERTIES_GET
@@ -12,8 +11,7 @@ const initialState = {
   users: [],
   rewardFundObject: {},
   dynamicGlobalPropertiesObject: {},
-  currentMedianHistoryPriceObject: {},
-  type: ''
+  currentMedianHistoryPriceObject: {}
 };
 
 const stats = (state = initialState, action) => {
@@ -22,19 +20,12 @@ const stats = (state = initialState, action) => {
       return {
         ...state,
         isBusy: true,
-        users: action.skip ? state.users : [] //if lazyloading detected, keep data
+        users: action.skip ? state.users  : [] //if lazyloading detected, keep data
       };
     case USERLIST_GET:
       return {
         ...state,
         isBusy: false,
-        users: action.skip ? [...state.users, ...action.payload] : action.payload //if lazy loading, combine arrays
-      };
-    case USERLIST_GET_SEARCH:
-      return {
-        ...state,
-        isBusy: false,
-        type: 'user',
         users: action.skip ? [...state.users, ...action.payload] : action.payload //if lazy loading, combine arrays
       };
     case STEEM_REWARD_FUND_GET:

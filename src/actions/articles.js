@@ -173,6 +173,7 @@ export const getArticlesModeration = (route, skip, search, username) => {
 export const postArticle = (title, body, tags, isComment, parentPermlink, parentAuthor) => {
   let images = [];
   let matches;
+  let tagsToBeSubmitted = tags;
 
   // eslint-disable-next-line
   while ((matches = IMAGE_REGEX.exec(body))) {
@@ -231,13 +232,14 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
 
         await SteemConnect.broadcast(operations);
 
+
         //successfully posted to blockchain, now posting to backend with permalink and category
         await apiPost('/posts/create', {
           author: store.user.username,
           permlink: newPermLink,
           access_token: store.user.accessToken,
-          category: tags[1],
-          tags: tags
+          category: tagsToBeSubmitted[1],
+          tags: tagsToBeSubmitted
         });
       }
 

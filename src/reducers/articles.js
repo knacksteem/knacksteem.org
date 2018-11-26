@@ -1,4 +1,4 @@
-import {ARTICLES_REQUEST, ARTICLES_GET, ARTICLES_POSTING, ARTICLES_POSTED, CATEGORIES_GET, ARTICLES_GET_SEARCH} from '../actions/types';
+import {ARTICLES_REQUEST, ARTICLES_GET, ARTICLES_POSTING, ARTICLES_POSTED, CATEGORIES_GET} from '../actions/types';
 
 const initialState = {
   isBusy: false,
@@ -27,13 +27,6 @@ const articles = (state = initialState, action) => {
       return {
         ...state,
         isBusy: false,
-        data: action.skip ? [...state.data, ...action.payload] : action.payload //if lazy loading, combine arrays
-      };
-    case ARTICLES_GET_SEARCH:
-      return {
-        ...state,
-        isBusy: false,
-        type: 'post',
         data: action.skip ? [...state.data, ...action.payload] : action.payload //if lazy loading, combine arrays
       };
     case ARTICLES_POSTING:
