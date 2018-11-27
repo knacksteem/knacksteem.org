@@ -95,13 +95,6 @@ class ArticleDetail extends Component {
             {!isEditMode && <ReactMarkdown source={data.description} />}
             <div className="article-footer">
               <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
-              <div className="article-tags">
-                {data.tags.map((tag, index) => {
-                  return (
-                    <Tag key={tag} closable={false} color={(index > 0 ? 'blue' : 'magenta')}>{tag}</Tag>
-                  );
-                })}
-              </div>
             </div>
             <Divider/>
             {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
