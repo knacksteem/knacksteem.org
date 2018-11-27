@@ -4,11 +4,15 @@ import articlesReducer from './articles';
 import headerReducer from './header';
 import userReducer from './user';
 import statsReducer from './stats';
+import appReducer from './app';
+import votingSliderReducer from './votingSlider';
 
 export default combineReducers({
   routing: routerReducer,
   articles: articlesReducer,
   header: headerReducer,
   user: userReducer,
-  stats: statsReducer
+  stats: statsReducer,
+  app: appReducer,
+  votingSlider: votingSliderReducer
 });

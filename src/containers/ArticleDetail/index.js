@@ -66,9 +66,9 @@ class ArticleDetail extends Component {
 
   getSimilarPosts = async () => {
     let {match} = this.props;
-    let {data, limit} = this.state;
+    let {data} = this.state;
     let similarPosts = await apiGet(`/posts`, {category: data.category, search: `${data.title} ${data.description}  ${data.permlink}`, limit: this.state.limit});
-    if(similarPosts.data.results.length != this.state.limit){
+    if(similarPosts.data.results.length !== this.state.limit){
       this.setState({
         disableShowMore: true
       });
@@ -139,7 +139,7 @@ class ArticleDetail extends Component {
             </div>
           </Row>
           <Row type="flex" justify="right">
-            <Col offset={16}>
+            <Col>
               {data.similarPosts && <SimilarPosts data={data.similarPosts} showMore={this.showMore} disableShowMore={this.state.disableShowMore}/>}
             </Col>
           </Row>

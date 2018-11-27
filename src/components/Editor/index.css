@@ -1,0 +1,56 @@
+.markdown-editor-is-inactive .EditorToolbar__root___3_Aqz {
+  display: none;
+}
+
+.editor-tags {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.editor {
+  width: 100%;
+  margin: auto !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .editor {
+    width: 90%;
+    margin: auto !important;;
+  }
+
+  .preview {
+    max-width: 400px;
+    margin: auto;
+  }
+  
+} 
+
+.preview {
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: wrap; 
+  font-size: 112%;
+  line-height: 150%;
+  padding: 6px;
+  max-width: 400px;
+}
+
+.preview > p {
+  width:inherit;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: wrap; 
+}
+
+.preview-active {
+  display: block;
+}
+
+.preview-inactive {
+  display: none !important;
+}

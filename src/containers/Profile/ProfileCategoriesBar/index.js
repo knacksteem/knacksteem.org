@@ -18,7 +18,8 @@ const ProfileCategoriesBar = ({
   style,
   activeCategory,
   categories,
-  username
+  username,
+  onShowAllCategories
 }) => {
 
   return (
@@ -44,7 +45,7 @@ const ProfileCategoriesBar = ({
           </Menu>
 
           <div style={{ padding: '0 20px', width: '100%', marginTop: '15px' }}>
-            <Button size="large" style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
+            <Button onClick={() => onShowAllCategories()} size="large" style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
                 Show all
             </Button>
           </div>
@@ -60,7 +61,8 @@ ProfileCategoriesBar.propTypes = {
   style: PropTypes.object,
   categories: PropTypes.array,
   activeCategory: PropTypes.string,
-  username: PropTypes.string
+  username: PropTypes.string,
+  onShowAllCategories: PropTypes.func
 };
 
 export default ProfileCategoriesBar;

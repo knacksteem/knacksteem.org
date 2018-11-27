@@ -14,7 +14,7 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
   const onReserveClick = () => {
     // In case supervisor clicked on reserve for review in the Home page.
     // status undefined means it is not on approved or review page;
-    if(status == undefined)
+    if(status === undefined)
       dispatch(reserveArticle(data.permlink, 'approved'));
     else
       dispatch(reserveArticle(data.permlink, status));

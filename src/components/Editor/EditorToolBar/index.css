@@ -1,0 +1,9 @@
+@media (max-width: 768px) {
+    .fas {
+      font-size: 12px;
+    }
+    .EditorToolbar__button {
+        padding: 8px !important;
+    }
+    
+  }
