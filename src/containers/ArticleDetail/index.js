@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
-import {Layout, Divider, Spin, Tag, Row} from 'antd';
+import {Layout, Divider, Spin, Row} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';

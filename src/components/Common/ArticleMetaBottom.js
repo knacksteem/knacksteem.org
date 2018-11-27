@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Popconfirm, Spin, Row, Col, Tag} from 'antd';
+import {Popconfirm, Spin, Row, Col} from 'antd';
 import {upvoteElement, deleteElement} from '../../actions/articles';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
