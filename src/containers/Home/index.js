@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import './index.css';
 import { Spin, Row, Col } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import AnnouncementMetaBar from '../Home/AnnouncementMetaBar';
+import AnnouncementMetaBar from '../../components/AnnouncementMetaBar';
 import { getArticlesModeration} from '../../actions/articles';
 import Cookies from 'js-cookie';
 

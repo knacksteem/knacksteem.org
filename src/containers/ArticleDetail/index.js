@@ -84,7 +84,7 @@ class ArticleDetail extends Component {
     }
 
     return (
-      <Row id="article-body" style={{width: '70%', margin: 'auto', marginTop: '100px'}}>
+      <Row id="article-body" style={{width: '70%', margin: 'auto'}}>
         <Row type="flex" justify="center" id="article-detail">
           <Row className="article-detail">
             {!isEditMode && <h1>{data.title}</h1>}
