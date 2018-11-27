@@ -456,7 +456,7 @@ class Profile extends Component {
     });
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch(toggleSidebar({
       isSidebarVisible: true
