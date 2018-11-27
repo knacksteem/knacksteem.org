@@ -1,6 +1,7 @@
 @media (max-width: 768px) {
     .fas {
-      font-size: 12px;
+      font-size: 8px;
+      font-weight: 600;
     }
     .EditorToolbar__button {
         padding: 8px !important;

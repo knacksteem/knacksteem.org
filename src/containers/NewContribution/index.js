@@ -6,6 +6,7 @@ import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
 import {postArticle, editArticle} from '../../actions/articles';
 import {HowToPost} from '../../components/HowToPost/'
+import './index.css';
 
 
 
@@ -131,19 +132,23 @@ class  NewContribution extends React.Component {
   render() {
 
     return (
-      <Row type="flex" justify="center" style={{ width: '100%'}} >
-        <Col className="editor-container" style={{margin: 'auto'}}>
-          <Editor isComment={false} 
-                  isEdit={false}
-                  ref={this.setForm}
-                  onSubmit={(e)=>{ this.onSubmit()}}
-                  onUpdate={this.onUpdate}
-                  onImageInserted={this.handleImageInserted}
-                  />
-        </Col>
-        <Col className="how-to-post-container" >
-          <HowToPost/>
-        </Col>
+      <Row type="flex" style={{ width: '75%'}} >
+        <Row  style={{width: '67%'}} type="flex" className="editor-container" >
+          <Col style={{width: '100%'}}>
+            <Editor isComment={false} 
+                    isEdit={false}
+                    ref={this.setForm}
+                    onSubmit={(e)=>{ this.onSubmit()}}
+                    onUpdate={this.onUpdate}
+                    onImageInserted={this.handleImageInserted}
+            />
+          </Col> 
+        </Row>
+        <Row type="flex" justify="center" style={{width: '33%'}} className="how-to-post-container" >
+          <Col className="htp-inner-container">
+            <HowToPost/>
+          </Col>
+        </Row>
       </Row>
     );
   }

@@ -592,168 +592,176 @@ class Editor extends Component {
     const { isBusy, categories } = this.props.articles;
     const { isMarkdownEditorActive } = this.state;
     return (
-    <Form className="editor" layout="vertical" onSubmit={this.handleSubmit}>
-      <div  className={` ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
-        <Form.Item>
-          <h3>Title</h3>
-          {!isComment && form.getFieldDecorator('title', {
-            rules: [{ required: true, message: 'Title cant be Empty!' }],
-            })(<Input
-                ref={(title) => {
-                  this.title = title;
-                }}
-                onChange={this.onUpdate}
-                className="Editor__title"
-                placeholder='Add title'
-            />)
-          }
-        </Form.Item>
-        <Row type="flex" justify="space-between">
-          <Col>
-            <h3>Story</h3>
-          </Col>
-          <Col>
-            <a onClick={e=>this.handleEditorToggle(e)}>
-              <p>{ isMarkdownEditorActive ? 'visual' : 'markdown' }</p>
-            </a>
-          </Col>
-        </Row>
-        <Row style={{border: '1px solid #eee', padding: '10px', background: '#fff', minHeight: '500px'}}>
-          <Form.Item 
-          validateStatus={
-              this.state.noContent ? 'error' : ''
+    <Row type="flex" style={{width: '100%'}}>
+      <Form layout="vertical" onSubmit={this.handleSubmit} style={{width: '100%'}}>
+        <div  className={` ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
+          <Form.Item>
+            <h3>Title</h3>
+            {!isComment && form.getFieldDecorator('title', {
+              rules: [{ required: true, message: 'Title cant be Empty!' }],
+              })(<Input
+                  ref={(title) => {
+                    this.title = title;
+                  }}
+                  style={{fontWeight: '900'}}
+                  onChange={this.onUpdate}
+                  className="Editor__title"
+                  placeholder='Add title'
+              />)
             }
-            help={
-              this.state.noContent && <Alert message="Content can't be empty" type="error" showIcon />
-              }>
-          <EditorToolbar onSelect={this.insertCode} style={{margin: 'auto'}}/>
-          <Row className="Editor__dropzone-base" style={{width: 'inherit', height: '400px'}}>
-              <Dropzone
-                disableClick
-                style={{}}
-                accept="image/*"
-                onDrop={this.handleDrop}
-                onDragEnter={this.handleDragEnter}
-                onDragLeave={this.handleDragLeave}
-              >
-                {this.state.dropzoneActive && (
-                  <div className="Editor__dropzone">
-                    <div>
-                      <i className="iconfont icon-picture" />
-                      <p> Drop your images here...</p>
-                    </div>
-                  </div>
-                )}
-                <HotKeys keyMap={Editor.hotkeys} handlers={this.handlers}>
-                <Input.TextArea
-                    className="editor_input"
-                    style={{ border: 'none', height: '450px', marginTop: '10px', boxShadow: 'none'}}
-                    autosize={{ minRows: 20, maxRows: 20 }}
-                    onChange={this.onUpdate}
-                    ref={ref => this.setInput(ref)}
-                    placeholder='Write your story...'
-                  />
-                </HotKeys>
-              </Dropzone>
-            </Row>
           </Form.Item>
-        </Row>
-        <Row className="Editor__imagebox">
-          <input type="file" id="inputfile" onChange={this.handleImageChange} />
-          <label htmlFor="inputfile">
-            {this.state.imageUploading ? (
-                <Icon type="loading" />
-              ) : (
-                <i className="iconfont icon-picture" />
-              )}
-            {this.state.imageUploading ? (
-                <p>Upload your image...</p>
-              ) : (
-                <p>Select image or paste it from the clipboard.</p>
-              )}
-          </label>
-        </Row>
-        <Form.Item>
-        <h3>Tags</h3>
-        {!isComment &&
-          <div className="editor-tags">
-            {tags.map((tag, index) => {
-              return (
-                <Tag key={tag} closable={index > 1 || (index === 1 && !isEdit)} color={(index > 0 ? 'blue' : 'magenta')} afterClose={() => this.handleCloseTag(tag)}>{tag}</Tag>
-              );
-            })}
-            {inputTagsVisible && (tags.length >= 2) && (
-              <Input
-                ref={this.refInputTags}
-                type="text"
-                size="small"
-                style={{width: 200}}
-                value={inputTagsValue}
-                onChange={this.handleInputTagsChange}
-                onBlur={this.handleInputConfirm}
-                onPressEnter={this.handleInputConfirm}
-              />
-            )}
-            
-            {inputTagsVisible && (tags.length === 1) && (
-              <AutoComplete
-                ref={this.refInputTagsAutoComplete}
-                dataSource={categories.map(elem => elem.key)}
-                style={{width: 200}}
-                value={inputTagsValue}
-                filterOption={(inputValue, option) => option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
-                onChange={this.handleInputTagsChange}
-                onBlur={this.handleInputConfirm}
-                onSelect={this.handleInputConfirm}
-              />
-            )}
-            {!inputTagsVisible && (tags.length < 5) && (
-              <Tag 
-                onClick={this.showInputTags} 
-                style={{background: '#fff', borderStyle: 'dashed'}}
-              >
-                <Icon type="plus"/> Add Tag
-              </Tag>
-            )}
-          </div>
-        }
-        </Form.Item>
-       
-       <Form.Item>
-          <Row type="flex" justify="end" >
+          <Row type="flex" justify="space-between">
             <Col>
-              <Button onClick={()=>this.handlePreview()} style={{marginRight: '5px'}}>
-                <p>{previewState ? 'Close Preview' : 'Preview'}</p>
-              </Button>
+              <h3>Story</h3>
             </Col>
             <Col>
-              <Button
-                style={{
-                  backgroundColor: '#22429d'
-                }}
-                htmlType="submit"
-                type={'primary'}
-                loading={isBusy}>
-                  {isEdit ? 'Update' : 'Post'}
-              </Button>
-
+              <a onClick={e=>this.handleEditorToggle(e)}>
+                <p>{ isMarkdownEditorActive ? 'visual' : 'markdown' }</p>
+              </a>
             </Col>
-            
           </Row>
+          <Row style={{border: '1px solid #eee', padding: '10px', background: '#fff', minHeight: '500px'}}>
+            <Form.Item 
+            validateStatus={
+                this.state.noContent ? 'error' : ''
+              }
+              help={
+                this.state.noContent && <Alert message="Content can't be empty" type="error" showIcon />
+                }>
+            <EditorToolbar onSelect={this.insertCode} style={{margin: 'auto'}}/>
+            <Row className="Editor__dropzone-base" style={{width: 'inherit', height: '400px'}}>
+                <Dropzone
+                  disableClick
+                  style={{}}
+                  accept="image/*"
+                  onDrop={this.handleDrop}
+                  onDragEnter={this.handleDragEnter}
+                  onDragLeave={this.handleDragLeave}
+                >
+                  {this.state.dropzoneActive && (
+                    <div className="Editor__dropzone">
+                      <div>
+                        <i className="iconfont icon-picture" />
+                        <p> Drop your images here...</p>
+                      </div>
+                    </div>
+                  )}
+                  <HotKeys keyMap={Editor.hotkeys} handlers={this.handlers}>
+                  <Input.TextArea
+                      className="editor_input"
+                      style={{ border: 'none', height: '450px', marginTop: '10px', boxShadow: 'none'}}
+                      autosize={{ minRows: 20, maxRows: 20 }}
+                      onChange={this.onUpdate}
+                      ref={ref => this.setInput(ref)}
+                      placeholder='Write your story...'
+                    />
+                  </HotKeys>
+                </Dropzone>
+              </Row>
+            </Form.Item>
+          </Row>
+          <Row style={{marginTop: '20px'}} className="Editor__imagebox">
+            <input type="file" id="inputfile" onChange={this.handleImageChange} />
+            <label htmlFor="inputfile">
+              {this.state.imageUploading ? (
+                <div>
+                  <Icon type="loading" />
+                </div>
+                  
+                ) : (
+                  <i className="iconfont icon-picture" />
+                )}
+              {this.state.imageUploading ? (
+                  <p>Upload your image...</p>
+                ) : (
+                  <p>Select image or paste it from the clipboard.</p>
+                )}
+            </label>
+          </Row>
+          <Form.Item>
+          <h3>Tags</h3>
+          {!isComment &&
+            <div className="editor-tags">
+              {tags.map((tag, index) => {
+                return (
+                  <Tag key={tag} closable={index > 1 || (index === 1 && !isEdit)} color={(index > 0 ? 'blue' : 'magenta')} afterClose={() => this.handleCloseTag(tag)}>{tag}</Tag>
+                );
+              })}
+              {inputTagsVisible && (tags.length >= 2) && (
+                <Input
+                  ref={this.refInputTags}
+                  type="text"
+                  size="small"
+                  style={{width: 200}}
+                  value={inputTagsValue}
+                  onChange={this.handleInputTagsChange}
+                  onBlur={this.handleInputConfirm}
+                  onPressEnter={this.handleInputConfirm}
+                />
+              )}
+              
+              {inputTagsVisible && (tags.length === 1) && (
+                <AutoComplete
+                  ref={this.refInputTagsAutoComplete}
+                  dataSource={categories.map(elem => elem.key)}
+                  style={{width: 200}}
+                  value={inputTagsValue}
+                  filterOption={(inputValue, option) => option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+                  onChange={this.handleInputTagsChange}
+                  onBlur={this.handleInputConfirm}
+                  onSelect={this.handleInputConfirm}
+                />
+              )}
+              {!inputTagsVisible && (tags.length < 5) && (
+                <Tag 
+                  onClick={this.showInputTags} 
+                  style={{background: '#fff', borderStyle: 'dashed'}}
+                >
+                  <Icon type="plus"/> Add Tag
+                </Tag>
+              )}
+            </div>
+          }
           </Form.Item>
-          <div style={{
-            maxWidth: '100%',
-            width: '450px', 
-            wordWrap: 'break-word', 
-            border: `${previewState ? '1px solid #22429d' : 'none'}`, 
-            padding: '3px'
-            }}>
-            <ReactMarkdown className={`'preview' ${previewState ? 'preview-active' : 'preview-inactive'}`} source={previewMarkdown}/>
-          </div>
-          <Row  style={{maxWidth: '450px'}} className='preview'> 
-          </Row> 
-      </div>
-      </Form>
+        
+            <Form.Item>
+            <Row type="flex" justify="end" >
+              <Col>
+                <Button onClick={()=>this.handlePreview()} style={{marginRight: '5px'}}>
+                  <p>{previewState ? 'Close Preview' : 'Preview'}</p>
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  style={{
+                    backgroundColor: '#22429d'
+                  }}
+                  htmlType="submit"
+                  type={'primary'}
+                  loading={isBusy}>
+                    {isEdit ? 'Update' : 'Post'}
+                </Button>
+
+              </Col>
+              
+            </Row>
+            </Form.Item>
+            <Form.Item>
+              <div style={{
+                maxWidth: '100%', 
+                wordWrap: 'break-word', 
+                border: `${previewState ? '1px solid #22429d' : 'none'}`, 
+                padding: '3px'
+                }}>
+                <ReactMarkdown className={`'preview' ${previewState ? 'preview-active' : 'preview-inactive'}`} source={previewMarkdown}/>
+              </div>
+              <Row  style={{maxWidth: '100%'}} className='preview'> 
+              </Row>
+            </Form.Item>
+   
+        </div>
+        </Form>
+      </Row>
     );
   }
 }

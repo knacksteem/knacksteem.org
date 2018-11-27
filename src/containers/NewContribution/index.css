@@ -1,27 +1,27 @@
-.editor-container {
-    width: 30% ;
-    margin-top: 100px;
-    margin: auto;
-}
-
-.how-to-post-container,
-.profile-container 
-{
-    width: 30% 
-}
-.editor-container {
-    width: 40%;
-}
 
 @media (max-width: 768px) {
     .editor-container {
-        width: 80% !important;
+        width: 100% !important;
         margin: auto;
     }  
 
     .how-to-post-container,
-    .profile-container {
+    .htp-inner-container
+    {
         display: none !important;
     }
     
 } 
+
+@media (max-width: 928px) {
+    .how-to-post-container,
+    .htp-inner-container
+    {
+        display: none !important;
+    }
+
+    .editor-container {
+        width: 100% !important;
+        margin: auto;
+    } 
+}
