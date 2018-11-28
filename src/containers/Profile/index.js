@@ -383,6 +383,7 @@ class Profile extends Component {
                       && (
                         <ArticleListItem
                           key={data.permlink}
+                          user={knacksteemUserObject}
                           data={data}
                           onUpvoteSuccess={loadArticles}
                         />

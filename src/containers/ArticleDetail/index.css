@@ -4,3 +4,27 @@
 img {
     max-width: 100%;
 }
+
+@media (max-width: 768px) {
+    .announcement-container,
+    .similarpost-container 
+    {
+        display: none;
+    }
+    #article-detail {
+        width: 100% !important;
+    }
+
+}
+
+@media (max-width: 928px) {
+    .announcement-container,
+    .similarpost-container 
+    {
+        display: none;
+    }
+    #article-detail {
+        width: 100% !important;
+    }
+
+}

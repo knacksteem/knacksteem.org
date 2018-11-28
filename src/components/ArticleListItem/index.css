@@ -69,6 +69,10 @@
   max-width: 100%;
   height: auto;
 }
+.reservedBy{
+  padding: 10px 5px;
+  font-weight: 400;
+}
 
 @media (max-width: 768px) {
   .article-item-list-container {

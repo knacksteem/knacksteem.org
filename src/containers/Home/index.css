@@ -1,3 +1,22 @@
+<<<<<<< HEAD
+=======
+.home-container {
+    justify-content: center;
+    width: 100%;
+    margin-top: 100px
+}
+.contribution-container,
+.announcement-container{
+    margin-top: 0
+} 
+.home-inner-container {
+    justify-items: space-between !important;
+}
+.select-container {
+    display: flex;
+    justify-content: center;
+}
+>>>>>>> 5d95b9421c552d2dcc6770cd2050b449c033f716
 
 @media (max-width: 768px) {
   .announcement-container {

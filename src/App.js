@@ -13,7 +13,7 @@ import AboutUs from './containers/AboutUs';
 import Contribute from './containers/Contribute';
 import ContactUs from './containers/ContactUs';
 import NewContribution from './containers/NewContribution';
-import PostView from './containers/PostView';
+import ArticleDetail from './containers/ArticleDetail';
 import Callback from './containers/Callback';
 import Review from './containers/Review';
 import Users from './containers/Users';
@@ -55,7 +55,7 @@ const App = (props) => {
         <Route exact path="/mycontributions" component={Home} />
         <Route exact path="/new" component={NewContribution} />
         <Route exact path="/categories/:category" component={Home} />
-        <Route exact path="/articles/:author/:permlink" component={PostView} />
+        <Route exact path="/articles/:author/:permlink" component={ArticleDetail} />
         <Route exact path="/search" component={Search} />
       </Layout>
       <KnackFooter/>

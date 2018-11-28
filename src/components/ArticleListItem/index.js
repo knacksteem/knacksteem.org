@@ -4,14 +4,23 @@ import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {Button, Row, Col, Avatar} from 'antd';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
-import {approveArticle, rejectArticle} from '../../actions/articles';
+import {reserveArticle, approveArticle, rejectArticle} from '../../actions/articles';
 import { truncateString, prettyDate } from '../../services/functions';
 import './index.css';
 
 
 //Single Item for Article Overview
-const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
-  //approve the current article with an api call and reload the pending articles for redux
+const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
+  //reserve the current article with an api call and reload the pending articles for redux
+  const onReserveClick = () => {
+    // In case supervisor clicked on reserve for review in the Home page.
+    // status undefined means it is not on approved or review page;
+    if(status === undefined)
+      dispatch(reserveArticle(data.permlink, 'approved'));
+    else
+      dispatch(reserveArticle(data.permlink, status));
+  };
+  //approve the current article
   const onApproveClick = () => {
     dispatch(approveArticle(data.permlink, status));
   };
@@ -59,7 +68,15 @@ const ArticleListItem = ({data, status, dispatch, onUpvoteSuccess}) => {
         </Col>
       </Row>
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
-      {(status === 'pending' || status === 'reserved') &&
+      {((status === 'pending' || (data.moderation.approved && user.isSupervisor)) && data.author !== user.username) &&
+        <div className="mod-functions">
+            <Button size="small" type="primary" onClick={onReserveClick}>Reserve for review</Button>
+        </div>
+      }
+      {(status === 'reserved' && (user.username !== data.moderation.reservedBy)) && 
+        <div className="reservedBy">Reserved for review by <Link to={`/@${data.moderation.reservedBy}`}>{data.moderation.reservedBy}</Link></div>
+      }
+      {(status === 'reserved' && user.username === data.moderation.reservedBy) &&
         <div className="mod-functions">
           <Button size="small" type="primary" onClick={onApproveClick}>Approve</Button>
           <Button size="small" type="danger" onClick={onRejectClick}>Reject</Button>
