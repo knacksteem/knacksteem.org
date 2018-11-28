@@ -57,13 +57,6 @@ class Review extends Component {
 
     return (
       <div>
-        <Header>
-          <Search
-            placeholder="Search through Knacksteem"
-            onSearch={value => this.setState({searchString: value})}
-            style={{width: 300}}
-          />
-        </Header>
         <Content style={{minHeight: 1080}}>
           <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articles.data.map((data) => {
