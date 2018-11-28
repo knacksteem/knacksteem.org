@@ -151,14 +151,6 @@ class ContributionMetaBar extends React.Component {
                 <span className="contribution-info-bar-label">Moderator </span>
               </Menu.Item>
               { (user.isModerator) &&
-                <Menu.Item key="review" disabled={false}>
-                  <Link to="/moderation/review">
-                    <i style={styles.barIcon} className="fas fa-bookmark"/>
-                    <span className="contribution-info-bar-label">Review</span>
-                  </Link>
-                </Menu.Item>
-              }
-              { (user.isModerator) &&
                 <Menu.Item key="pending" disabled={false}>
                   <Link to="/moderation/pending">
                     <i style={styles.barIcon} className="fas fa-bars"/>

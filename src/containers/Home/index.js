@@ -81,7 +81,7 @@ class Home extends Component {
 
   render() {
 
-    const {articles} = this.props;
+    const {articles, user} = this.props;
  
 
     return (
@@ -90,7 +90,7 @@ class Home extends Component {
           <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articles.data.map((data) => {
               return (
-                <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
+                <ArticleListItem key={data.permlink} data={data} user={user} onUpvoteSuccess={this.loadArticles} />
               );
             })}
           </Row>

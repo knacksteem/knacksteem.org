@@ -138,6 +138,7 @@ export const getArticlesByUsername = (username, skip, search, category = '', lim
  * @param skip number of elemnts to skip, used for lazy loading
  * @param search search string
  */
+
 export const getArticlesModeration = (route, skip, search, username) => {
   return async (dispatch) => {
     dispatch({
@@ -324,6 +325,29 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
       });
     }
     return false;
+  };
+};
+
+/**
+ * reserve article by mod
+ */
+export const reserveArticle = (permlink, status) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    try {
+      //approve article with permalink and status
+      await apiPost('/moderation/reserve', {
+        permlink: permlink,
+        approved: true,
+        access_token: store.user.accessToken
+      });
+    } catch (error) {
+      //handled in api service
+    } finally {
+      //reload pending articles after approval
+      dispatch(getArticlesModeration(`/moderation/${status}`));
+    }
   };
 };
 
