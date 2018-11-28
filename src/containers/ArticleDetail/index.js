@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
-import {Layout, Divider, Spin, Tag, Row, Col} from 'antd';
+import {Layout, Divider, Spin, Row, Col} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
@@ -11,6 +11,7 @@ import {apiGet} from '../../services/api';
 import Comments from '../../components/Comments';
 import Editor from '../../components/Editor';
 import SimilarPosts from '../../components/SimilarPosts';
+import AnouncementMetaBar  from '../../components/AnnouncementMetaBar';
 import './index.css';
 const {Content} = Layout;
 
@@ -118,34 +119,30 @@ class ArticleDetail extends Component {
     }
 
     return (
-      <Row id="article-body" style={{width: '70%', margin: 'auto', marginTop: '100px'}}>
-        <Row type="flex" justify="center" id="article-detail">
-          <Row className="article-detail">
-            {!isEditMode && <h1>{data.title}</h1>}
-            <div className="article-author">Author: {data.author}</div>
-            <div className="article-category">Category: {data.category}</div>
-            <Divider/>
-            {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
-            {!isEditMode && <ReactMarkdown source={data.description} />}
-            <div className="article-footer">
-              <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
-              <div className="article-tags">
-                {data.tags.map((tag, index) => {
-                  return (
-                    <Tag key={tag} closable={false} color={(index > 0 ? 'blue' : 'magenta')}>{tag}</Tag>
-                  );
-                })}
+      <Row id="article-body" type="flex" style={{width: '75%'}}>
+          <Row type="flex" style={{width: '67%'}} id="article-detail">
+            <Row className="article-detail">
+              {!isEditMode && <h1>{data.title}</h1>}
+              <div className="article-author">Author: {data.author}</div>
+              <div className="article-category">Category: {data.category}</div>
+              <Divider/>
+              {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
+              {!isEditMode && <ReactMarkdown source={data.description} />}
+              <div className="article-footer">
+                <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
               </div>
-            </div>
+            </Row>
+              <Divider/>
+              {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
+              <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Row>
-          <Row type="flex" justify="right">
-            <Col>
-              {data.similarPosts && <SimilarPosts data={data.similarPosts} showMore={this.showMore} disableShowMore={this.state.disableShowMore}/>}
-            </Col>
-          </Row>
-            <Divider/>
-            {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
-            <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
+          <Row style={{width: '33%'}} justify="center" type="flex" flexDirection="column">
+              <Col className="announcement-container" style={{marginBottom: '30px'}}>
+                <AnouncementMetaBar/>
+              </Col>
+              <Col className="similarpost-container" >
+                {data.similarPosts && <SimilarPosts data={data.similarPosts} showMore={this.showMore} disableShowMore={this.state.disableShowMore}/>}
+              </Col>
           </Row>
       </Row>
     );

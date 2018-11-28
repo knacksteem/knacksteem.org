@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {Button, Row, Col} from 'antd';
+import {Button, Row, Col, Avatar} from 'antd';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {reserveArticle, approveArticle, rejectArticle} from '../../actions/articles';
-import { truncateString } from '../../services/functions';
+import { truncateString, prettyDate } from '../../services/functions';
 import './index.css';
+
 
 //Single Item for Article Overview
 const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
@@ -29,6 +30,22 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
   };
   return (
     <Row className="ant-list-item list-item-article">
+      <Row type="flex" align="middle">
+        <Col style={{marginLeft: '10px'}}>
+          <a title="Visit profile" href="/home">
+            <Avatar size="small" src={`${data.authorImage}`}  icon="user" />
+          </a>
+        </Col>
+        <Col >
+          <p className="my-auto"><b>{data.author}</b> ({data.authorReputation})</p>
+        </Col>
+        <Col >
+          <p className="my-auto">in {data.tags[1]}</p>
+        </Col>
+        <Col >
+         <p className="my-auto">{prettyDate(data.postedAt)}</p>
+        </Col>
+      </Row>
       <Row className="article-item-list-container"type="flex" style={{ overflow: 'hidden'}}>
         {data.coverImage && 
           <Row className="article-image-container">

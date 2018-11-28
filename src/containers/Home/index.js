@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import './index.css';
 import { Spin, Row, Col } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import AnnouncementMetaBar from '../Home/AnnouncementMetaBar';
+import AnnouncementMetaBar from '../../components/AnnouncementMetaBar';
 import { getArticlesModeration} from '../../actions/articles';
 import Cookies from 'js-cookie';
 
 const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column', width: '70%'},
+  articlesList: {display: 'flex', flexDirection: 'column', width: '67%'},
   barIcon: {
     fontSize: '16px',
     color: '#999',
@@ -85,8 +85,8 @@ class Home extends Component {
  
 
     return (
-      <Row type="flex" className="home-container" justify="right">
-        <Row type="flex" className="home-inner-container" justify="right">
+      <Row style={{width: '75%', flexDirection: 'row'}} type="flex" className="home-container">
+
           <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articles.data.map((data) => {
               return (
@@ -94,13 +94,20 @@ class Home extends Component {
               );
             })}
           </Row>
-          <Row type="flex" className="announcement-container">
-            <Col>
+          { (articles.isBusy || articles.data.length === 0) &&
+            <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+              <div style={{width: '100%', paddingTop: '10px', paddingButtom: '10px', backgroundColor: '#fff'}}>
+                <p style={{textAlign: 'center'}}>No articles yet... </p>
+              </div>
+            </Row>
+          }
+          
+          <Row type="flex" justify="center" style={{width: '33%'}} className="announcement-container">
+            <Col style={{marginTop: 0}}>
               <AnnouncementMetaBar/>
             </Col>
           </Row>
           {articles.isBusy && <Spin/>}
-        </Row>
       </Row>
     );
   }

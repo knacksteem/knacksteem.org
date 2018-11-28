@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Popconfirm, Spin} from 'antd';
+import {Popconfirm, Spin, Row, Col} from 'antd';
 import {upvoteElement, deleteElement} from '../../actions/articles';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
@@ -9,8 +9,8 @@ import Cookies from 'js-cookie';
 const styles = {
   barIcon: {
     fontSize: '16px',
-    marginRight: '5px',
-    color: '#999'
+    color: '#999',
+    marginRight:'5px'
   }
 };
 
@@ -91,24 +91,34 @@ class ArticleMetaBottom extends Component {
     const upvoteIconColor = (data.isVoted || isUpvoted) ? '#999' : '#333';
 
     return (
-      <div className="article-meta">
-        <span
-          className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
-          onClick={this.onUpvoteClick}>
-          <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-arrow-up"/>
-          <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
-          <i style={{...styles.barIcon, marginLeft: '5px', color: '#eee'}} className="fas fa-arrow-down"/>
-        </span>
-        {/* <IconText type="wallet" text={`$${data.totalPayout}`} /> */}
-        <span style={{ float: 'right' }}>
-          <i style={styles.barIcon} className="fas fa-comment-dots"/>
-          <strong className="">{commentCount}</strong>
-        </span>
-        <span className="action-links">
-          {/* {(!isEditMode && !isDeleting) && actionsArray} */}
-          {isDeleting && <Spin size="small" />}
-        </span>
-      </div>
+      <Row  type="flex" className="article-meta" style={{ background: '#fff', padding: '7px'}}>
+        <Col style={{width: '30%'}}>
+          <span
+            className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
+            onClick={this.onUpvoteClick}>
+            <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-thumbs-up"/>
+            <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
+            <i style={{...styles.barIcon, marginLeft: '10px', color: '#eee'}} className="fas fa-thumbs-down"/>
+          </span>
+        </Col>
+        <Col style={{width: '50%', display: 'flex', justifyContent: 'center'}}>
+          {data.tags.map((tag, index) => {
+            return (
+              <div  key={tag} style={{marginRight: '5px', fontStyle:'italic'}}>{tag}</div>
+            );
+          })}
+       </Col>
+        <Col style={{width: '20%', display: 'flex', justifyContent: 'center'}}>
+          <span>
+            <i style={styles.barIcon} className="fas fa-comment-dots"/>
+            <strong className="">{commentCount}</strong>
+          </span>
+          <span className="action-links">
+            {/* {(!isEditMode && !isDeleting) && actionsArray} */}
+            {isDeleting && <Spin size="small" />}
+          </span>
+        </Col>
+      </Row>
     );
   }
 }

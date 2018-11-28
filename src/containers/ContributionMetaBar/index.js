@@ -85,7 +85,9 @@ class ContributionMetaBar extends React.Component {
     const isUserLoggedIn = (user.username !== '');
     
 
-    if (hasLoadedRemoteUserObject) {
+    if (hasLoadedRemoteUserObject &&
+      remoteUserObject.json_metadata !== ''
+    ) {
       remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
       name = remoteUserObjectMeta.name;
       coverImage = remoteUserObjectMeta.cover_image;

@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 .home-container {
     justify-content: center;
     width: 100%;
@@ -14,13 +16,15 @@
     display: flex;
     justify-content: center;
 }
+>>>>>>> 5d95b9421c552d2dcc6770cd2050b449c033f716
 
 @media (max-width: 768px) {
-  .announcement-container,
-  .contribution-container {
+  .announcement-container {
       display: none !important;
+      width: 10px !important
   }
-  .item-feed {
+  .item-feed,
+  .home-container {
       width: 100% !important;
   }
 }
@@ -30,11 +34,9 @@
     .contribution-container {
         display: none !important;
     }
-    .item-feed {
+    .item-feed,
+    .home-container
+    {
         width: 100% !important;
     }
-
-    .mobile-select {
-        display: flex !important;
-    }
-  }
+}

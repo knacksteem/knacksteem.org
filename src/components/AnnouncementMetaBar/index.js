@@ -6,7 +6,7 @@ import './index.css';
 const AnnouncementMetaBar = () => {
 
   return (
-    <div className="contribution-bar ">
+    <div className="contribution-bar " style={{width: '200px'}}>
       <Layout style={{ backgroundColor: '#fff' }}>
         <div className="profile-info-bar-container" style={{width: '200px'}}>  
           <h3 style={{textAlign: 'center'}} className="profile-info-bar-title">Announcement</h3>
