@@ -1,9 +1,4 @@
 
-.select-container {
-    display: flex;
-    justify-content: center;
-}
-
 @media (max-width: 768px) {
   .announcement-container {
       display: none !important;
@@ -25,8 +20,4 @@
     {
         width: 100% !important;
     }
-
-    .mobile-select {
-        display: flex !important;
-    }
-  }
+}
