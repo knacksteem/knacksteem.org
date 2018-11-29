@@ -136,7 +136,7 @@ class ArticleDetail extends Component {
               {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
               <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Row>
-          <Row style={{width: '33%'}} justify="center" type="flex" flexDirection="column">
+          <Row style={{width: '33%', }} justify="center" type="flex" >
               <Col className="announcement-container" style={{marginBottom: '30px'}}>
                 <AnouncementMetaBar/>
               </Col>

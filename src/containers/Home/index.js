@@ -45,7 +45,7 @@ class Home extends Component {
      }
    };
   //get User data
-   
+
 
 
    componentDidMount() {

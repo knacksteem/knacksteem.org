@@ -57,6 +57,10 @@ class ContributionMetaBar extends React.Component {
   componentDidMount() {
     this.loadRemoteUserData();
   }
+
+  componentDidUpdate() {
+    this.loadRemoteUserData();
+  }
   /**
    * @method loadRemoteUserData
    * 
