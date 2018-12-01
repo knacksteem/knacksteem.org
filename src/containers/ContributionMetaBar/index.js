@@ -153,8 +153,10 @@ class ContributionMetaBar extends React.Component {
                 <span className="contribution-info-bar-label">Sponsor</span>
               </Menu.Item>
               <Menu.Item key="moderator" disabled={false}>
-                <i style={styles.barIcon} className="fas fa-user-tie"/>
-                <span className="contribution-info-bar-label">Moderator </span>
+                <Link to="/moderators">
+                  <i style={styles.barIcon} className="fas fa-user-tie"/>
+                  <span className="contribution-info-bar-label">Moderator </span>
+                </Link>
               </Menu.Item>
               { (user.isModerator) &&
                 <Menu.Item key="pending" disabled={false}>
@@ -166,13 +168,12 @@ class ContributionMetaBar extends React.Component {
               }
               { (user.isModerator) &&
                 <Menu.Item key="reserve" disabled={false}>
-                  <Link to="/moderation/reserved"></Link>
-                  <i style={styles.barIcon} className="fas fa-bookmark"/>
-                  <span className="contribution-info-bar-label">Reserved </span>
+                  <Link to="/moderation/reserved">
+                    <i style={styles.barIcon} className="fas fa-bookmark"/>
+                    <span className="contribution-info-bar-label">Reserved </span>
+                  </Link>
                 </Menu.Item>
-              }
-             
-              
+              }  
             </Menu>
   
             <Menu style={{height: '100%', borderRight: 0, marginTop: '20px'}} selectedKeys={[location.pathname]}>
