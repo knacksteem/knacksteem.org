@@ -1,0 +1,17 @@
+@media (max-width: 768px) {
+    .review-container,
+    .review-item {
+        width: 100% !important;
+    }
+    
+
+}
+
+@media (max-width: 928px) {
+    .review-container,
+    .review-item {
+        width: 100% !important;
+    }
+    
+
+}
