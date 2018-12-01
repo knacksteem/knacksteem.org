@@ -33,7 +33,7 @@ class Editor extends Component {
       isMarkdownEditorActive: false,
       previewState: false
     };
-  
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.renderItems = this.renderItems.bind(this);
   }
 

@@ -3,13 +3,13 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Input, Spin, Row, Col} from 'antd';
+import {  Spin, Row } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesModeration} from '../../actions/articles';
-const Search = Input.Search;
+
 
 const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column'}
+  articlesList: {display: 'flex', flexDirection: 'column', width: '80%'}
 };
 
 //Pending Overview
@@ -56,7 +56,7 @@ class Review extends Component {
 
     return (
       <Row type="flex" className="review-container" style={{width: '75%'}}>
-          <div style={{width: '80%'}} className="review-item ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+          <div className="review-item ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articles.data.map((data) => {
               return (
                 <ArticleListItem key={data.permlink} data={data} user={user} status={path} onUpvoteSuccess={this.loadArticles} />

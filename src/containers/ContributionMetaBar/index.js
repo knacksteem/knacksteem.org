@@ -58,9 +58,7 @@ class ContributionMetaBar extends React.Component {
     this.loadRemoteUserData();
   }
 
-  componentDidUpdate() {
-    this.loadRemoteUserData();
-  }
+
   /**
    * @method loadRemoteUserData
    * 
@@ -82,7 +80,6 @@ class ContributionMetaBar extends React.Component {
       remoteUserObjectMeta,
       username;
 
-  
     const {user, location} = this.props;
     const { remoteUserObject} = user;
     const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;

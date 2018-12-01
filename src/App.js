@@ -52,7 +52,7 @@ const App = (props) => {
         <Route exact path="/sponsors" component={Sponsors} />
         <Route exact path="/moderators" component={Moderators} />
         <Route exact path="/callback" component={Callback} />
-        <Route exact path="/mycontributions" component={Home} />
+        <Route exact path="/feeds" component={Home} />
         <Route exact path="/new" component={NewContribution} />
         <Route exact path="/categories/:category" component={Home} />
         <Route exact path="/articles/:author/:permlink" component={ArticleDetail} />

@@ -94,13 +94,7 @@ class Home extends Component {
               );
             })}
           </Row>
-          { (articles.isBusy || articles.data.length === 0) &&
-            <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-              <div style={{width: '100%', paddingTop: '10px', paddingButtom: '10px', backgroundColor: '#fff'}}>
-                <p style={{textAlign: 'center'}}>No articles yet... </p>
-              </div>
-            </Row>
-          }
+         
           
           <Row type="flex" justify="center" style={{width: '33%'}} className="announcement-container">
             <Col style={{marginTop: 0}}>

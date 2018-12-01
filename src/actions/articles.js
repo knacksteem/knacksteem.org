@@ -246,7 +246,7 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
 
       if (!isComment) {
         //redirect to my contributions
-        dispatch(push('/mycontributions'));
+        dispatch(push('/feeds'));
       }
       return true;
     } catch (error) {
