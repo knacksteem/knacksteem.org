@@ -133,10 +133,10 @@ class ContributionMetaBar extends React.Component {
   
             }
   
-            <Menu style={{height: '100%', borderRight: 0}} selectedKeys={[location.pathname]}>
+            <Menu style={{ borderRight: 0}} selectedKeys={[location.pathname]}>
               { isUserLoggedIn && user.isContributor &&
                 <Menu.Item key="feeds">
-                  <Link to="/mycontributions">
+                  <Link to="/feeds">
                     <i style={styles.barIcon} className="fas fa-pen"/>
                     <span className="contribution-info-bar-label">Feeds</span>  
                   </Link>
@@ -173,7 +173,7 @@ class ContributionMetaBar extends React.Component {
               }  
             </Menu>
   
-            <Menu style={{height: '100%', borderRight: 0, marginTop: '20px'}} selectedKeys={[location.pathname]}>
+            <Menu style={{ borderRight: 0}} selectedKeys={[location.pathname]}>
               <Menu.Item key="guidelines">
                 <Link to="/guidelines">
                   <i style={styles.barIcon} className="fas fa-align-left"/>

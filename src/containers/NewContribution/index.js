@@ -110,12 +110,14 @@ class  NewContribution extends React.Component {
 
   proceedSubmit = (tags) => {
     const {isComment, isEdit, parsedPostData} = this.state;
+    console.log(parsedPostData)
     const {dispatch, articleData, onDone, user} = this.props;
     
     if (isEdit){
       dispatch(editArticle(parsedPostData.title, parsedPostData.body, tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
     }else {
       if(user.userObject.isBanned === false) {
+        return
         dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
       } else {
         return 

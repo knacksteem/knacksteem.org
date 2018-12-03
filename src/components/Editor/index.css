@@ -7,6 +7,11 @@
   margin-bottom: 5px;
 }
 
+
+.ant-select-selection--multiple:after, .ant-select-selection--multiple:before {
+  display: none !important;
+}
+
 .editor {
   width: 100%;
   display: flex;
