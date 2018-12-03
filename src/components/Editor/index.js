@@ -414,6 +414,16 @@ class Editor extends Component {
     this.onUpdate();
   };
 
+/**
+ * @method checkTags -- method to validate tags for any error
+ * 
+ * @param {Array} rule -- all rules to validate
+ * 
+ * @param {Array} value -- all values from tag selection
+ * 
+ * @param {Function} callback -- callback funtion
+ */
+
 checkTags = (rule, value, callback) => {
     
     if (!value || value.length < 1 || value.length > 4) {
