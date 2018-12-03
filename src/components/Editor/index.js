@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import { HotKeys } from 'react-hotkeys';
+import isArray from 'lodash/isArray';
 import Dropzone from 'react-dropzone';
 import {Input, Icon, Button,Row, Alert, Col, Form, Select} from 'antd';
 import EditorToolbar from './EditorToolBar';
@@ -65,7 +66,6 @@ class Editor extends Component {
     return items;
   }
 
-  
 
   componentDidMount() {
     if (this.input) {
@@ -73,7 +73,6 @@ class Editor extends Component {
       this.input.addEventListener('paste', this.handlePastedImage);
     }
 
-    // this.setValues(this.props);
 
     // eslint-disable-next-line react/no-find-dom-node
     const select = ReactDOM.findDOMNode(this.select);
@@ -216,7 +215,7 @@ class Editor extends Component {
     this.onUpdate(e);
     this.props.form.validateFieldsAndScroll((err, values) => {
       
-      if (!err && this.input.value !== '') {
+     if (!err && this.input.value !== '') {
 
         this.props.onSubmit({
           ...values,
@@ -386,7 +385,7 @@ class Editor extends Component {
  */
 
   onUpdate = (e) => { 
-    const values =  this.getValues(e, this.state.tags);
+    const values =  this.getValues(e);
     this.props.onUpdate(values);
   };
 
@@ -414,6 +413,7 @@ class Editor extends Component {
     this.setInputCursorPosition(startPos + imageText.length);
     this.onUpdate();
   };
+
 checkTags = (rule, value, callback) => {
     
     if (!value || value.length < 1 || value.length > 4) {
@@ -441,6 +441,7 @@ checkTags = (rule, value, callback) => {
       title: post.title,
       tags: post.tags
     });
+
     if (this.input && post.body !== '') {
       this.input.value = post.body;
       this.renderMarkdown(this.input.value);
@@ -461,9 +462,8 @@ checkTags = (rule, value, callback) => {
  */
   getValues = (e) => {
     const values = {
-      title: this.props.form.getFieldsValue(['title']).title,
+      ...this.props.form.getFieldsValue(['title', 'tags']),
       body: this.input.value,
-      tags: this.props.form.getFieldsValue(['tags']).tags
     };
 
 
@@ -474,6 +474,10 @@ checkTags = (rule, value, callback) => {
 
 
     if (!e) return values;
+
+    if (isArray(e)) {
+      values.tags = e;
+    }
 
     return values;
   };
@@ -505,9 +509,9 @@ checkTags = (rule, value, callback) => {
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
 
   render() {
-    const { tags, inputTagsVisible, inputTagsValue, previewMarkdown, previewState } = this.state;
+    const { previewMarkdown, previewState } = this.state;
     const { form, isComment, isEdit } = this.props;
-    const { isBusy, categories } = this.props.articles;
+    const { isBusy} = this.props.articles;
     const { isMarkdownEditorActive } = this.state;
     return (
     <Row type="flex" style={{width: '100%'}}>

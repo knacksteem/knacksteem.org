@@ -23,7 +23,8 @@ class  NewContribution extends React.Component {
       parsedPostData: null,
       banned: false,
       isEdit: false,
-      isComment: false
+      isComment: false,
+      tags: ['knacksteem']
     };
   }
   
@@ -70,13 +71,19 @@ class  NewContribution extends React.Component {
    */
 
   getNewPostData = (form) => {
+    
     const data = {
       body: form.body,
-      title: form.title,
-      tags: form.tags
+      title: form.title
     };
 
-
+    if(form.tags === undefined){
+      return
+    } else {
+      data.tags = [...this.state.tags, ...form.tags]
+    }
+    
+    console.log(data);
     data.parentAuthor =  '';
 
     if (this.state.isUpdating) data.isUpdating = this.state.isUpdating;
@@ -94,8 +101,6 @@ class  NewContribution extends React.Component {
   onSubmit = () => {
     const form = this.state.parsedPostData;
     const data = this.getNewPostData(form);
-
-
     this.setState({parsedPostData: data});
     this.proceedSubmit(data.tags);
   };
@@ -110,14 +115,12 @@ class  NewContribution extends React.Component {
 
   proceedSubmit = (tags) => {
     const {isComment, isEdit, parsedPostData} = this.state;
-    console.log(parsedPostData)
     const {dispatch, articleData, onDone, user} = this.props;
-    
+   
     if (isEdit){
       dispatch(editArticle(parsedPostData.title, parsedPostData.body, tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
     }else {
       if(user.userObject.isBanned === false) {
-        return
         dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
       } else {
         return 
