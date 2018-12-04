@@ -27,9 +27,6 @@ class Editor extends Component {
       value: '',
       loading: false,
       loaded: false,
-      tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
-      inputTagsVisible: false,
-      inputTagsValue: '',
       previewMarkdown: '',
       isMarkdownEditorActive: false,
       previewState: false
@@ -486,7 +483,7 @@ checkTags = (rule, value, callback) => {
     if (!e) return values;
 
     if (isArray(e)) {
-      values.tags = e;
+      values.tags = [...['knacksteem'], ...e];
     }
 
     return values;

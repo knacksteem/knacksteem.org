@@ -174,7 +174,6 @@ export const getArticlesModeration = (route, skip, search, username) => {
 export const postArticle = (title, body, tags, isComment, parentPermlink, parentAuthor) => {
   let images = [];
   let matches;
-  let tagsToBeSubmitted = tags;
 
   // eslint-disable-next-line
   while ((matches = IMAGE_REGEX.exec(body))) {
@@ -239,8 +238,8 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
           author: store.user.username,
           permlink: newPermLink,
           access_token: store.user.accessToken,
-          category: tagsToBeSubmitted[1],
-          tags: tagsToBeSubmitted
+          category: tags[1],
+          tags: tags
         });
       }
 

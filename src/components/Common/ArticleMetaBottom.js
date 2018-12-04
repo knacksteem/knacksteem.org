@@ -102,12 +102,11 @@ class ArticleMetaBottom extends Component {
           </span>
         </Col>
         <Col style={{width: '50%', display: 'flex', justifyContent: 'center'}}>
-          {data.tags.map((tag, index) => {
-            return (
-              <div  key={tag} style={{marginRight: '5px', fontStyle:'italic'}}>{tag}</div>
-            );
-          })}
-       </Col>
+          <Col>
+            {data.tags[1]}
+          </Col>
+        </Col>
+
         <Col style={{width: '20%', display: 'flex', justifyContent: 'center'}}>
           <span>
             <i style={styles.barIcon} className="fas fa-comment-dots"/>

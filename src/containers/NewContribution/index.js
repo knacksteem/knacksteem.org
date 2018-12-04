@@ -74,16 +74,16 @@ class  NewContribution extends React.Component {
     
     const data = {
       body: form.body,
-      title: form.title
+      title: form.title,
+      tags: form.tags
     };
 
-    if(form.tags === undefined){
-      return
-    } else {
-      data.tags = [...this.state.tags, ...form.tags]
-    }
+    // if(form.tags === undefined){
+    //   return
+    // } else {
+    //   data.tags = [...this.state.tags, ...form.tags]
+    // }
     
-    console.log(data);
     data.parentAuthor =  '';
 
     if (this.state.isUpdating) data.isUpdating = this.state.isUpdating;
@@ -121,6 +121,7 @@ class  NewContribution extends React.Component {
       dispatch(editArticle(parsedPostData.title, parsedPostData.body, tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
     }else {
       if(user.userObject.isBanned === false) {
+        console.log(parsedPostData);
         dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
       } else {
         return 

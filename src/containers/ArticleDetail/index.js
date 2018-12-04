@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
-import {Layout, Divider, Spin, Row, Col} from 'antd';
+import {Layout, Divider, Spin, Row, Col, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
@@ -117,11 +117,12 @@ class ArticleDetail extends Component {
         <div><Content><Spin/></Content></div>
       );
     }
-
+    console.log(data)
     return (
+      
       <Row id="article-body" type="flex" style={{width: '75%'}}>
           <Row type="flex" style={{width: '67%'}} id="article-detail">
-            <Row className="article-detail">
+            <Row className="article-detail" style={{width: '100%'}}>
               {!isEditMode && <h1>{data.title}</h1>}
               <div className="article-author">Author: {data.author}</div>
               <div className="article-category">Category: {data.category}</div>
@@ -133,6 +134,13 @@ class ArticleDetail extends Component {
               </div>
             </Row>
               <Divider/>
+              <div>
+                {data.tags.map((tag, index )=>{
+                  return(
+                    <Tag key={tag} closable={false}>{tag}</Tag>
+                  )
+                })}
+              </div>
               {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
               <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Row>

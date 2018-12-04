@@ -11,6 +11,7 @@ import './index.css';
 
 //Single Item for Article Overview
 const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
+  console.log(data);
   //reserve the current article with an api call and reload the pending articles for redux
   const onReserveClick = () => {
     // In case supervisor clicked on reserve for review in the Home page.

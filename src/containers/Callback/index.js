@@ -28,7 +28,7 @@ class Callback extends Component {
     if (prevProps.user.username !== user.username) {
       //redirect to user contributions or homepage
       if (user.username) {
-        dispatch(push('/mycontributions'));
+        dispatch(push('/feeds'));
       } else {
         dispatch(push('/'));
       }
