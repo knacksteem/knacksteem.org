@@ -57,6 +57,8 @@ class ContributionMetaBar extends React.Component {
   componentDidMount() {
     this.loadRemoteUserData();
   }
+
+
   /**
    * @method loadRemoteUserData
    * 
@@ -78,7 +80,6 @@ class ContributionMetaBar extends React.Component {
       remoteUserObjectMeta,
       username;
 
-  
     const {user, location} = this.props;
     const { remoteUserObject} = user;
     const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
@@ -132,10 +133,10 @@ class ContributionMetaBar extends React.Component {
   
             }
   
-            <Menu style={{height: '100%', borderRight: 0}} selectedKeys={[location.pathname]}>
+            <Menu style={{ borderRight: 0}} selectedKeys={[location.pathname]}>
               { isUserLoggedIn && user.isContributor &&
                 <Menu.Item key="feeds">
-                  <Link to="/mycontributions">
+                  <Link to="/feeds">
                     <i style={styles.barIcon} className="fas fa-pen"/>
                     <span className="contribution-info-bar-label">Feeds</span>  
                   </Link>
@@ -149,8 +150,10 @@ class ContributionMetaBar extends React.Component {
                 <span className="contribution-info-bar-label">Sponsor</span>
               </Menu.Item>
               <Menu.Item key="moderator" disabled={false}>
-                <i style={styles.barIcon} className="fas fa-user-tie"/>
-                <span className="contribution-info-bar-label">Moderator </span>
+                <Link to="/moderators">
+                  <i style={styles.barIcon} className="fas fa-user-tie"/>
+                  <span className="contribution-info-bar-label">Moderator </span>
+                </Link>
               </Menu.Item>
               { (user.isModerator) &&
                 <Menu.Item key="pending" disabled={false}>
@@ -162,16 +165,15 @@ class ContributionMetaBar extends React.Component {
               }
               { (user.isModerator) &&
                 <Menu.Item key="reserve" disabled={false}>
-                  <Link to="/moderation/reserved"></Link>
-                  <i style={styles.barIcon} className="fas fa-bookmark"/>
-                  <span className="contribution-info-bar-label">Reserved </span>
+                  <Link to="/moderation/reserved">
+                    <i style={styles.barIcon} className="fas fa-bookmark"/>
+                    <span className="contribution-info-bar-label">Reserved </span>
+                  </Link>
                 </Menu.Item>
-              }
-             
-              
+              }  
             </Menu>
   
-            <Menu style={{height: '100%', borderRight: 0, marginTop: '20px'}} selectedKeys={[location.pathname]}>
+            <Menu style={{ borderRight: 0}} selectedKeys={[location.pathname]}>
               <Menu.Item key="guidelines">
                 <Link to="/guidelines">
                   <i style={styles.barIcon} className="fas fa-align-left"/>

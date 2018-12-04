@@ -5,8 +5,9 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import { HotKeys } from 'react-hotkeys';
+import isArray from 'lodash/isArray';
 import Dropzone from 'react-dropzone';
-import {Input, AutoComplete, Tag, Icon, Button,Row, Alert, message, Col, Form } from 'antd';
+import {Input, Icon, Button,Row, Alert, Col, Form, Select} from 'antd';
 import EditorToolbar from './EditorToolBar';
 import './index.css';
 
@@ -26,9 +27,6 @@ class Editor extends Component {
       value: '',
       loading: false,
       loaded: false,
-      tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
-      inputTagsVisible: false,
-      inputTagsValue: '',
       previewMarkdown: '',
       isMarkdownEditorActive: false,
       previewState: false
@@ -65,7 +63,6 @@ class Editor extends Component {
     return items;
   }
 
-  
 
   componentDidMount() {
     if (this.input) {
@@ -73,7 +70,6 @@ class Editor extends Component {
       this.input.addEventListener('paste', this.handlePastedImage);
     }
 
-    // this.setValues(this.props);
 
     // eslint-disable-next-line react/no-find-dom-node
     const select = ReactDOM.findDOMNode(this.select);
@@ -214,12 +210,9 @@ class Editor extends Component {
     
     e.preventDefault();
     this.onUpdate(e);
-    if (this.checkTagErrors()) {
-      return;
-    }
     this.props.form.validateFieldsAndScroll((err, values) => {
       
-      if (!err && this.input.value !== '') {
+     if (!err && this.input.value !== '') {
 
         this.props.onSubmit({
           ...values,
@@ -240,7 +233,6 @@ class Editor extends Component {
 
         this.setState({ noContent: true });
         this.props.form.getFieldError(errors)
-        this.checkTagErrors();
       } else {
         
       }
@@ -390,7 +382,7 @@ class Editor extends Component {
  */
 
   onUpdate = (e) => { 
-    const values =  this.getValues(e, this.state.tags);
+    const values =  this.getValues(e);
     this.props.onUpdate(values);
   };
 
@@ -418,93 +410,45 @@ class Editor extends Component {
     this.setInputCursorPosition(startPos + imageText.length);
     this.onUpdate();
   };
-  
-  /**
-   * @method handleCloseTag 
-   * 
-   * @param {String}
-   * 
-   * @return {Array}
-   */
-  handleCloseTag = (removedTag) => {
-    const tags = this.state.tags.filter(tag => tag !== removedTag);
-    this.setState({tags});
-  };
-  
-  /**
-   * @method showInputTags -- the method to show an input when a new tag is needed
-   * 
-   * @param <void>
-   */
-  showInputTags = () => {
-    //show input field for new tag and set focus to input or autocomplete (autocomplete for category tag)
-    this.setState({inputTagsVisible: true, inputTagsValue: ''}, () => {
-      if (this.inputTags) {
-        this.inputTags.focus();
-      } else {
-        this.inputTagsAutoComplete.focus();
-      }
-    });
-  };
-  
-  /**
-   * @method handleInputTagsChange  -- method to change tag
-   * 
-   * @param {Object} e
-   */
 
-  handleInputTagsChange = (e) => {
-    const {tags} = this.state;
-    const {categories} = this.props.articles;
+/**
+ * @method checkTags -- method to validate tags for any error
+ * 
+ * @param {Array} rule -- all rules to validate
+ * 
+ * @param {Array} value -- all values from tag selection
+ * 
+ * @param {Function} callback -- callback funtion
+ */
 
-    //if second tag not in categories list, do not allow to add character
-    if (tags.length === 1 && !e.target && !categories.filter((elem) => elem.key.indexOf(e.toLowerCase()) !== -1).length) {
-      return;
-    }
-    this.setState({inputTagsValue: e.target ? e.target.value : e});
-  };
-  
-  /**
-   * @method handleInputConfirm --callback for confirming a new tag, will get called on enter, mouse click (autocomplete input) and on blur
-   * 
-   * @param {String} value
-   */
+checkTags = (rule, value, callback) => {
+    
+    if (!value || value.length < 1 || value.length > 4) {
+      callback('You have to add 1 to 4 tags');
+    };
 
-  
-  handleInputConfirm = (value) => {
-    const {inputTagsValue, tags} = this.state;
-    const {categories} = this.props.articles;
-    let newTags = tags;
-    const categoriesFlat = categories.map(elem => elem.key);
-    const newTagValue = this.inputTags ? inputTagsValue : value;
-
-    //check if second tag is one of the categories and do not allow to add tag if it is not
-    if (tags.length === 1 && categoriesFlat.indexOf(newTagValue) === -1) {
-      this.setState({
-        inputTagsVisible: false,
-        inputTagsValue: ''
-      });
-      return;
+    if (value){
+      const {isComment} = this.props;
+      const {categories} = this.props.articles;
+      if (!isComment && categories.map(elem => elem.key).indexOf(value[0]) === -1) {
+        callback('first tag must be any of the following; graphics, art, vlog, knack, techtrends ');
+      }   
     }
 
-    if (newTagValue && tags.indexOf(newTagValue) === -1) {
-      newTags = [...newTags, newTagValue];
-    }
+    value
+      .map(tag => ({ tag, valid: /^[a-z0-9]+(-[a-z0-9]+)*$/.test(tag) }))
+      .filter(tag => !tag.valid)
+      .map(tag => callback(`Tag ${tag.tag} is invalid`));
 
-    this.setState({
-      tags: newTags,
-      inputTagsVisible: false,
-      inputTagsValue: ''
-    });
-
-    this.onUpdate(null, newTags);
-
-  };
+    callback();
+};
 
   setValues = (post) => {
     this.props.form.setFieldsValue({
       title: post.title,
+      tags: post.tags
     });
+
     if (this.input && post.body !== '') {
       this.input.value = post.body;
       this.renderMarkdown(this.input.value);
@@ -523,12 +467,12 @@ class Editor extends Component {
  * 
  * @return {Object}
  */
-  getValues = (e, tags) => {
+  getValues = (e) => {
     const values = {
-      title: this.props.form.getFieldsValue(['title']).title,
+      ...this.props.form.getFieldsValue(['title', 'tags']),
       body: this.input.value,
-      tags
     };
+
 
     // values.title = e.target.value;
     this.setState({
@@ -537,6 +481,10 @@ class Editor extends Component {
 
 
     if (!e) return values;
+
+    if (isArray(e)) {
+      values.tags = [...['knacksteem'], ...e];
+    }
 
     return values;
   };
@@ -560,25 +508,6 @@ class Editor extends Component {
     });
   } 
 
- /**
-  * @method checkTagErrors -- method check for errors on tags before posting
-  * 
-  * @return {Object} 
-  */
-  checkTagErrors = () => {
-    const { tags} = this.state;
-    const {isComment} = this.props;
-    const {categories} = this.props.articles;
-    let error = false;
-   
-    //check if the second tag is one of the predefined categories
-    if (!isComment && categories.map(elem => elem.key).indexOf(tags[1]) === -1) {
-      message.error('second tag must be one of the predefined categories');
-      error = true;
-    }
-
-    return error;
-  };
 
   //reference to default input for new tags
   refInputTags = input => this.inputTags = input;
@@ -587,9 +516,9 @@ class Editor extends Component {
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
 
   render() {
-    const { tags, inputTagsVisible, inputTagsValue, previewMarkdown, previewState } = this.state;
+    const { previewMarkdown, previewState } = this.state;
     const { form, isComment, isEdit } = this.props;
-    const { isBusy, categories } = this.props.articles;
+    const { isBusy} = this.props.articles;
     const { isMarkdownEditorActive } = this.state;
     return (
     <Row type="flex" style={{width: '100%'}}>
@@ -678,86 +607,71 @@ class Editor extends Component {
                 )}
             </label>
           </Row>
-          <Form.Item>
-          <h3>Tags</h3>
-          {!isComment &&
-            <div className="editor-tags">
-              {tags.map((tag, index) => {
-                return (
-                  <Tag key={tag} closable={index > 1 || (index === 1 && !isEdit)} color={(index > 0 ? 'blue' : 'magenta')} afterClose={() => this.handleCloseTag(tag)}>{tag}</Tag>
-                );
-              })}
-              {inputTagsVisible && (tags.length >= 2) && (
-                <Input
-                  ref={this.refInputTags}
-                  type="text"
-                  size="small"
-                  style={{width: 200}}
-                  value={inputTagsValue}
-                  onChange={this.handleInputTagsChange}
-                  onBlur={this.handleInputConfirm}
-                  onPressEnter={this.handleInputConfirm}
-                />
-              )}
-              
-              {inputTagsVisible && (tags.length === 1) && (
-                <AutoComplete
-                  ref={this.refInputTagsAutoComplete}
-                  dataSource={categories.map(elem => elem.key)}
-                  style={{width: 200}}
-                  value={inputTagsValue}
-                  filterOption={(inputValue, option) => option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
-                  onChange={this.handleInputTagsChange}
-                  onBlur={this.handleInputConfirm}
-                  onSelect={this.handleInputConfirm}
-                />
-              )}
-              {!inputTagsVisible && (tags.length < 5) && (
-                <Tag 
-                  onClick={this.showInputTags} 
-                  style={{background: '#fff', borderStyle: 'dashed'}}
-                >
-                  <Icon type="plus"/> Add Tag
-                </Tag>
-              )}
-            </div>
-          }
-          </Form.Item>
-        
-            <Form.Item>
-            <Row type="flex" justify="end" >
-              <Col>
-                <Button onClick={()=>this.handlePreview()} style={{marginRight: '5px'}}>
-                  <p>{previewState ? 'Close Preview' : 'Preview'}</p>
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  style={{
-                    backgroundColor: '#22429d'
+          <Form.Item
+              label={
+                <span className="Editor__tags">
+                Tags
+              </span>
+              }
+              extra='Separate tags with commas. Only lowercase letters, numbers and hyphen character is permitted.'
+            >
+              { !isComment && form.getFieldDecorator('tags', {
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please enter some tags',
+                    type: 'array',
+                  },
+                  { validator: this.checkTags },
+                ],
+              })(
+                <Select
+                  ref={(ref) => {
+                    this.select = ref;
                   }}
-                  htmlType="submit"
-                  type={'primary'}
-                  loading={isBusy}>
-                    {isEdit ? 'Update' : 'Post'}
-                </Button>
-
-              </Col>
-              
-            </Row>
+                  onChange={this.onUpdate}
+                  className="Editor__tags"
+                  mode="tags"
+                  placeholder='Add story tag here'
+                  dropdownStyle={{ display: 'none' }}
+                  tokenSeparators={[' ', ',']}
+                />,
+              )}
             </Form.Item>
             <Form.Item>
-              <div style={{
-                maxWidth: '100%', 
-                wordWrap: 'break-word', 
-                border: `${previewState ? '1px solid #22429d' : 'none'}`, 
-                padding: '3px'
-                }}>
-                <ReactMarkdown className={`'preview' ${previewState ? 'preview-active' : 'preview-inactive'}`} source={previewMarkdown}/>
-              </div>
-              <Row  style={{maxWidth: '100%'}} className='preview'> 
-              </Row>
-            </Form.Item>
+              <Row type="flex" justify="end" >
+                <Col>
+                  <Button onClick={()=>this.handlePreview()} style={{marginRight: '5px'}}>
+                    <p>{previewState ? 'Close Preview' : 'Preview'}</p>
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    style={{
+                      backgroundColor: '#22429d'
+                    }}
+                    htmlType="submit"
+                    type={'primary'}
+                    loading={isBusy}>
+                      {isEdit ? 'Update' : 'Post'}
+                  </Button>
+
+                  </Col>
+                
+                </Row>
+              </Form.Item>
+              <Form.Item>
+                <div style={{
+                  maxWidth: '100%', 
+                  wordWrap: 'break-word', 
+                  border: `${previewState ? '1px solid #22429d' : 'none'}`, 
+                  padding: '3px'
+                  }}>
+                  <ReactMarkdown className={`'preview' ${previewState ? 'preview-active' : 'preview-inactive'}`} source={previewMarkdown}/>
+                </div>
+                <Row  style={{maxWidth: '100%'}} className='preview'> 
+                </Row>
+              </Form.Item>
    
         </div>
         </Form>

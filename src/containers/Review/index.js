@@ -3,14 +3,13 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Input, Spin} from 'antd';
+import {  Spin, Row } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
 import {getArticlesModeration} from '../../actions/articles';
-const {Header, Content} = Layout;
-const Search = Input.Search;
+
 
 const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column', width: '50%'}
+  articlesList: {display: 'flex', flexDirection: 'column', width: '80%'}
 };
 
 //Pending Overview
@@ -56,9 +55,8 @@ class Review extends Component {
     const path = location.pathname.replace('/moderation/', '')
 
     return (
-      <div>
-        <Content style={{minHeight: 1080}}>
-          <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+      <Row type="flex" className="review-container" style={{width: '75%'}}>
+          <div className="review-item ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
             {articles.data.map((data) => {
               return (
                 <ArticleListItem key={data.permlink} data={data} user={user} status={path} onUpvoteSuccess={this.loadArticles} />
@@ -69,8 +67,7 @@ class Review extends Component {
             }
           </div>
           {articles.isBusy && <Spin/>}
-        </Content>
-      </div>
+      </Row>
     );
   }
 }

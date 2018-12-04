@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
-import {Layout, Divider, Spin, Row, Col} from 'antd';
+import {Layout, Divider, Spin, Row, Col, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
@@ -12,6 +12,7 @@ import Comments from '../../components/Comments';
 import Editor from '../../components/Editor';
 import SimilarPosts from '../../components/SimilarPosts';
 import AnouncementMetaBar  from '../../components/AnnouncementMetaBar';
+import VotingSlider from '../../components/VotingSlider'
 import './index.css';
 const {Content} = Layout;
 
@@ -110,6 +111,7 @@ class ArticleDetail extends Component {
   };
   render() {
     const {data, isLoading, isEditMode, isReplyMode} = this.state;
+    const {votingSlider} = this.props;
 
     //show spinner/loader while loading article from the backend
     if (isLoading) {
@@ -117,26 +119,38 @@ class ArticleDetail extends Component {
         <div><Content><Spin/></Content></div>
       );
     }
-
     return (
+      
       <Row id="article-body" type="flex" style={{width: '75%'}}>
           <Row type="flex" style={{width: '67%'}} id="article-detail">
-            <Row className="article-detail">
+            <Row className="article-detail" style={{width: '100%'}}>
               {!isEditMode && <h1>{data.title}</h1>}
               <div className="article-author">Author: {data.author}</div>
               <div className="article-category">Category: {data.category}</div>
               <Divider/>
               {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
               {!isEditMode && <ReactMarkdown source={data.description} />}
+              { votingSlider.isVotingSliderVisible &&
+              <div>
+                <VotingSlider/>
+              </div>
+              }
               <div className="article-footer">
                 <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
               </div>
             </Row>
               <Divider/>
+              <div>
+                {data.tags.map((tag, index )=>{
+                  return(
+                    <Tag key={tag} closable={false}>{tag}</Tag>
+                  )
+                })}
+              </div>
               {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
               <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Row>
-          <Row style={{width: '33%'}} justify="center" type="flex" flexDirection="column">
+          <Row style={{width: '33%', }} justify="center" type="flex" >
               <Col className="announcement-container" style={{marginBottom: '30px'}}>
                 <AnouncementMetaBar/>
               </Col>
@@ -155,4 +169,8 @@ ArticleDetail.propTypes = {
   location: PropTypes.object
 };
 
-export default withRouter(connect()(ArticleDetail));
+const mapStateToProps = state => ({
+  votingSlider: state.votingSlider
+});
+
+export default withRouter(connect(mapStateToProps)(ArticleDetail));

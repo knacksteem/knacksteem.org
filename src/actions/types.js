@@ -34,3 +34,4 @@ export const SIDEBAR_VISIBILITY_SET = 'SIDEBAR_VISIBILITY_SET';
 //voting slider
 
 export const VOTE_POWER_CHANGE = 'VOTE_POWER_CHANGE';
+export const TOGGLE_SLIDER = 'TOGGLE_SLIDER';
