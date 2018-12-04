@@ -92,12 +92,16 @@ class ArticleMetaBottom extends Component {
 
     return (
       <Row  type="flex" className="article-meta" style={{ background: '#fff', padding: '7px'}}>
-        <Col style={{width: '30%'}}>
+        <Col style={{width: '15%'}}>
           <span
             className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
             onClick={this.onUpvoteClick}>
             <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-thumbs-up"/>
             <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
+          </span>
+        </Col>
+        <Col style={{width: '15%'}}>
+          <span>
             <i style={{...styles.barIcon, marginLeft: '10px', color: '#eee'}} className="fas fa-thumbs-down"/>
           </span>
         </Col>

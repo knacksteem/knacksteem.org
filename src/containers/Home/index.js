@@ -29,7 +29,6 @@ class Home extends Component {
       searchString: ''
     };
   }
-
   // //scroll handler for lazy loading
    onScroll = () => {
      const {articles} = this.props;

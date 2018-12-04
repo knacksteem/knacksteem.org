@@ -12,6 +12,7 @@ import Comments from '../../components/Comments';
 import Editor from '../../components/Editor';
 import SimilarPosts from '../../components/SimilarPosts';
 import AnouncementMetaBar  from '../../components/AnnouncementMetaBar';
+import VotingSlider from '../../components/VotingSlider'
 import './index.css';
 const {Content} = Layout;
 
@@ -110,6 +111,7 @@ class ArticleDetail extends Component {
   };
   render() {
     const {data, isLoading, isEditMode, isReplyMode} = this.state;
+    const {votingSlider} = this.props;
 
     //show spinner/loader while loading article from the backend
     if (isLoading) {
@@ -117,7 +119,6 @@ class ArticleDetail extends Component {
         <div><Content><Spin/></Content></div>
       );
     }
-    console.log(data)
     return (
       
       <Row id="article-body" type="flex" style={{width: '75%'}}>
@@ -129,6 +130,11 @@ class ArticleDetail extends Component {
               <Divider/>
               {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
               {!isEditMode && <ReactMarkdown source={data.description} />}
+              { votingSlider.isVotingSliderVisible &&
+              <div>
+                <VotingSlider/>
+              </div>
+              }
               <div className="article-footer">
                 <ArticleMetaBottom data={data} onUpdate={this.getArticle} isArticleDetail onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isEditMode={isEditMode} />
               </div>
@@ -163,4 +169,8 @@ ArticleDetail.propTypes = {
   location: PropTypes.object
 };
 
-export default withRouter(connect()(ArticleDetail));
+const mapStateToProps = state => ({
+  votingSlider: state.votingSlider
+});
+
+export default withRouter(connect(mapStateToProps)(ArticleDetail));
