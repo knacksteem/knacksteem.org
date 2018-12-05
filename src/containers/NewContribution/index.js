@@ -119,15 +119,8 @@ class  NewContribution extends React.Component {
    
     if (isEdit){
       dispatch(editArticle(parsedPostData.title, parsedPostData.body, tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
-    }else {
-      if(user.userObject.isBanned === false) {
-        console.log(parsedPostData);
-        dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
-      } else {
-        return 
-        
-      }
-      
+    }else { 
+      dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor)); 
     }
 
     if (onDone) {
