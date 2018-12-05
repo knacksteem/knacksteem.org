@@ -33,6 +33,8 @@ class Editor extends Component {
     };
   
     this.renderItems = this.renderItems.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.onUpdate = this.onUpdate.bind(this);
   }
 
   static hotkeys = {
@@ -522,7 +524,7 @@ checkTags = (rule, value, callback) => {
     const { isMarkdownEditorActive } = this.state;
     return (
     <Row type="flex" style={{width: '100%'}}>
-      <Form layout="vertical" onSubmit={this.handleSubmit} style={{width: '100%'}}>
+      <Form layout="vertical" onSubmit={ this.handleSubmit} style={{width: '100%'}}>
         <div  className={` ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
           <Form.Item>
             <h3>Title</h3>
@@ -650,7 +652,7 @@ checkTags = (rule, value, callback) => {
                     style={{
                       backgroundColor: '#22429d'
                     }}
-                    htmlType="submit"
+                    htmlType='submit'
                     type={'primary'}
                     loading={isBusy}>
                       {isEdit ? 'Update' : 'Post'}

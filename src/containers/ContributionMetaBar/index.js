@@ -83,6 +83,7 @@ class ContributionMetaBar extends React.Component {
     const {user, location} = this.props;
     const { remoteUserObject} = user;
     const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
+
     const isUserLoggedIn = (user.username !== '');
     
 
@@ -102,7 +103,8 @@ class ContributionMetaBar extends React.Component {
       <div className="contribution-bar" style={{width: '200px'}}>
         <Layout style={{ backgroundColor: '#fff' }}>
           <div className="contribution-info-bar-container">
-            {username &&
+            {user.username
+            &&
               <Row type="flex" justify="center"  align="middle" className="image" style={{width: '200px',flexDirection: 'column', ...styles.userImageContainer}}>
                 <Row  type="flex" justify="center" align="middle">
                   <Col >
@@ -121,7 +123,8 @@ class ContributionMetaBar extends React.Component {
                 </Row>
               </Row>
             }  
-            {!username &&
+            {!user.username
+            &&
   
               <Row type="flex"  justify="center" className="image" style={{width: '200px', ...styles.metaImageContainer}}>
                 <Row type="flex" justify="center" align="middle">
