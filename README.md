@@ -22,3 +22,6 @@ Make sure the Backend Server/API is running: https://github.com/knacksteem/knack
 
 ## Dev server recompiling
 If running the development server (`yarn start`) in a virtual machine or container environment (e.g. Docker), the changes made to the filesystem might not get picked up. If so, you can still use live-reloading by changing the configuration of the development server. Modify `config-overrides.js` to uncomment the line setting the `poll` property and the development server should then pick up your changes as you modify the files.
+
+## Contribution Code of Conduct
+> https://rfc.zeromq.org/spec:42/C4/
