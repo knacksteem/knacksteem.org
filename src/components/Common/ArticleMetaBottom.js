@@ -67,10 +67,11 @@ class ArticleMetaBottom extends Component {
   };
   render() {
     const {isDeleting, isUpvoted} = this.state;
-    const {data, isComment, isArticleDetail, onEditClick, onReplyClick} = this.props;
-
+    const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
+    
     const isAuthor = (Cookies.get('username') === data.author);
     const commentCount = isComment ? data.replies.length : data.commentsCount;
+    
 
     const actionsArray = [<a key="action-reply" onClick={onReplyClick}>Reply</a>];
     if (isComment || isArticleDetail) {
@@ -105,19 +106,19 @@ class ArticleMetaBottom extends Component {
             <i style={{...styles.barIcon, marginLeft: '10px', color: '#eee'}} className="fas fa-thumbs-down"/>
           </span>
         </Col>
-        <Col style={{width: '50%', display: 'flex', justifyContent: 'center'}}>
+        <Col style={{width: '30%', display: 'flex', justifyContent: 'center'}}>
           <Col>
-            {data.tags[1]}
+            {data.category}
           </Col>
         </Col>
 
-        <Col style={{width: '20%', display: 'flex', justifyContent: 'center'}}>
+        <Col style={{width: '40%', display: 'flex', justifyContent: 'center'}}>
           <span>
             <i style={styles.barIcon} className="fas fa-comment-dots"/>
             <strong className="">{commentCount}</strong>
           </span>
           <span className="action-links">
-            {/* {(!isEditMode && !isDeleting) && actionsArray} */}
+            {(!isEditMode && !isDeleting) && actionsArray}
             {isDeleting && <Spin size="small" />}
           </span>
         </Col>

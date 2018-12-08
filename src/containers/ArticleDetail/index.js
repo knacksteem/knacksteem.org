@@ -66,6 +66,49 @@ class ArticleDetail extends Component {
     }
   };
 
+  onUpdate = form => {
+    const data = this.getNewPostData(form)
+    this.setState({parsedPostData: data})
+  };
+
+  getNewPostData = (form) => {
+    
+    const data = {
+      body: form.body,
+      title: form.title,
+      tags: form.tags
+    };
+
+    console.log(data);
+
+    
+    data.parentAuthor =  '';
+
+    if (this.state.isUpdating) data.isUpdating = this.state.isUpdating;
+    data.parentPermlink = '';
+    return data;
+  };
+
+  onSubmit = () => {
+    const form = this.state.parsedPostData;
+    const data = this.getNewPostData(form);
+    this.setState({parsedPostData: data});
+    this.proceedSubmit(data.tags);
+  };
+
+  proceedSubmit = (tags) => {
+    const {isComment, isEdit, parsedPostData} = this.state;
+    const {dispatch, articleData, onDone, user} = this.props;
+   
+    if (isEdit){
+      //dispatch(editArticle(parsedPostData.title, parsedPostData.body, tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
+    }
+
+    if (onDone) {
+      onDone();
+    }
+  }
+
   getSimilarPosts = async () => {
     let {match} = this.props;
     let {data} = this.state;
@@ -128,7 +171,7 @@ class ArticleDetail extends Component {
               <div className="article-author">Author: {data.author}</div>
               <div className="article-category">Category: {data.category}</div>
               <Divider/>
-              {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
+              {isEditMode && <Editor isEdit={true} isComment={false} onSubmit={(e)=>{ this.onSubmit()}} onUpdate={this.onUpdate} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
               {!isEditMode && <ReactMarkdown source={data.description} />}
               { votingSlider.isVotingSliderVisible &&
               <div>

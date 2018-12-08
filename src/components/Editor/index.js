@@ -24,10 +24,13 @@ class Editor extends Component {
       noContent: false,
       imageUploading: false,
       dropzoneActive: false,
-      value: '',
+      title:  '',
+      value:  '',
+      notEditing: true,
       loading: false,
       loaded: false,
       previewMarkdown: '',
+      tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
       isMarkdownEditorActive: false,
       previewState: false
     };
@@ -65,6 +68,16 @@ class Editor extends Component {
     return items;
   }
 
+  componentWillReceiveProps(nextProps){
+  const {articleData} = nextProps;
+  
+  if (this.state.isFirst){
+    this.setValues(articleData);
+    this.setState({
+      notEditing: false
+    })
+  }
+  }
 
   componentDidMount() {
     if (this.input) {
@@ -82,6 +95,10 @@ class Editor extends Component {
         selectInput.setAttribute('autocapitalize', 'none');
       }
     }
+    const {articleData} = this.props;
+    this.setValues(articleData);
+console.log(this);
+    console.log(this.props);
 
   }
 
@@ -448,11 +465,11 @@ checkTags = (rule, value, callback) => {
   setValues = (post) => {
     this.props.form.setFieldsValue({
       title: post.title,
-      tags: post.tags
+      tags: post.tags.filter(tags => tags !== 'knacksteem')
     });
 
-    if (this.input && post.body !== '') {
-      this.input.value = post.body;
+    if (this.input && post.description !== '') {
+      this.input.value = post.description;
       this.renderMarkdown(this.input.value);
       this.resizeTextarea();
     }
@@ -474,7 +491,6 @@ checkTags = (rule, value, callback) => {
       ...this.props.form.getFieldsValue(['title', 'tags']),
       body: this.input.value,
     };
-
 
     // values.title = e.target.value;
     this.setState({
