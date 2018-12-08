@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import {Layout, Divider, Spin, Row, Col, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
+import {editArticle} from '../../actions/articles';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {apiGet} from '../../services/api';
 import Comments from '../../components/Comments';
@@ -109,6 +110,21 @@ class ArticleDetail extends Component {
     }
   }
 
+  handleImageInserted = (blob, callback, errorCallback) => {
+    const formData = new FormData();
+    formData.append('files', blob);
+
+    fetch(`https://test.api`, {
+      method: 'POST',
+      body: formData,
+    })
+      .then(res => res.json())
+      .then(res => callback(res.secure_url, blob.name))
+      .catch(() => {
+        errorCallback();
+      });
+  };
+
   getSimilarPosts = async () => {
     let {match} = this.props;
     let {data} = this.state;
@@ -171,7 +187,7 @@ class ArticleDetail extends Component {
               <div className="article-author">Author: {data.author}</div>
               <div className="article-category">Category: {data.category}</div>
               <Divider/>
-              {isEditMode && <Editor isEdit={true} isComment={false} onSubmit={(e)=>{ this.onSubmit()}} onUpdate={this.onUpdate} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
+              {isEditMode && <Editor isEdit={true} isComment={false} onImageInserted={this.handleImageInserted} onSubmit={(e)=>{ this.onSubmit()}} onUpdate={this.onUpdate} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
               {!isEditMode && <ReactMarkdown source={data.description} />}
               { votingSlider.isVotingSliderVisible &&
               <div>

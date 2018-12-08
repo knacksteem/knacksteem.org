@@ -4,6 +4,7 @@ import { throttle } from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
+import {editArticle} from '../../actions/articles';
 import { HotKeys } from 'react-hotkeys';
 import isArray from 'lodash/isArray';
 import Dropzone from 'react-dropzone';
