@@ -317,6 +317,7 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
 
       return true;
     } catch (error) {
+      console.log(error)
       message.error('error editing element');
     } finally {
       dispatch({

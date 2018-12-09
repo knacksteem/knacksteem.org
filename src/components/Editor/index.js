@@ -4,11 +4,11 @@ import { throttle } from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import {editArticle} from '../../actions/articles';
 import { HotKeys } from 'react-hotkeys';
 import isArray from 'lodash/isArray';
 import Dropzone from 'react-dropzone';
 import {Input, Icon, Button,Row, Alert, Col, Form, Select} from 'antd';
+import {editArticle} from '../../actions/articles';
 import EditorToolbar from './EditorToolBar';
 import './index.css';
 
@@ -27,7 +27,7 @@ class Editor extends Component {
       dropzoneActive: false,
       title:  '',
       value:  '',
-      notEditing: true,
+      notOnDom: false,
       loading: false,
       loaded: false,
       previewMarkdown: '',
@@ -71,11 +71,12 @@ class Editor extends Component {
 
   componentWillReceiveProps(nextProps){
   const {articleData} = nextProps;
+
   
-  if (this.state.isFirst){
+  if (this.state.notOnDom){
     this.setValues(articleData);
     this.setState({
-      notEditing: false
+      notOnDom: true
     })
   }
   }
@@ -96,11 +97,10 @@ class Editor extends Component {
         selectInput.setAttribute('autocapitalize', 'none');
       }
     }
-    const {articleData} = this.props;
-    this.setValues(articleData);
-console.log(this);
-    console.log(this.props);
-
+    const {articleData, isEdit} = this.props;
+    if(isEdit){
+      this.setValues(articleData);
+    }
   }
 
 /**
@@ -233,11 +233,21 @@ console.log(this);
     this.props.form.validateFieldsAndScroll((err, values) => {
       
      if (!err && this.input.value !== '') {
-
-        this.props.onSubmit({
-          ...values,
-          body: this.input.value,
-        });
+      values = {...values, body: this.input.value}
+        if (this.props.isEdit){
+          const {articleData, isComment, dispatch, onDone, parentPermlink, parentAuthor} = this.props;
+          dispatch(editArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
+          if (onDone) {
+            onDone();
+          }
+        }else {
+          this.props.onSubmit({
+            ...values,
+            body: this.input.value,
+         });
+        }
+        
+        
       } else if (this.input.value === '') {
         const errors = {
           ...err,
@@ -402,8 +412,15 @@ console.log(this);
  */
 
   onUpdate = (e) => { 
-    const values =  this.getValues(e);
-    this.props.onUpdate(values);
+    const {isEdit} = this.props;
+
+    if (!isEdit){
+      const values =  this.getValues(e);
+      this.props.onUpdate(values);
+    }else {
+      this.getValues(e);
+    }
+    
   };
 
 /**
@@ -454,26 +471,45 @@ checkTags = (rule, value, callback) => {
         callback('first tag must be any of the following; graphics, art, vlog, knack, techtrends ');
       }   
     }
-
-    value
+    if(value) {
+      value
       .map(tag => ({ tag, valid: /^[a-z0-9]+(-[a-z0-9]+)*$/.test(tag) }))
       .filter(tag => !tag.valid)
       .map(tag => callback(`Tag ${tag.tag} is invalid`));
+    }
+    
 
     callback();
 };
 
   setValues = (post) => {
-    this.props.form.setFieldsValue({
-      title: post.title,
-      tags: post.tags.filter(tags => tags !== 'knacksteem')
-    });
-
-    if (this.input && post.description !== '') {
-      this.input.value = post.description;
-      this.renderMarkdown(this.input.value);
-      this.resizeTextarea();
+    const {isEdit} = this.props
+    if(isEdit){
+      this.props.form.setFieldsValue({
+        title: post.title,
+        tags: post.tags.filter(tags => tags !== 'knacksteem')
+      });
+    } else {
+      this.props.form.setFieldsValue({
+        title: post.title,
+        tags: post.tags
+      });
     }
+
+    if (isEdit) {
+      if (this.input && post.description !== '') {
+        this.input.value = post.description;
+        this.renderMarkdown(this.input.value);
+        this.resizeTextarea();
+      }
+    } else {
+      if (this.input && post.body !== '') {
+        this.input.value = post.body;
+        this.renderMarkdown(this.input.value);
+        this.resizeTextarea();
+      }
+    }
+    
   };
 
 /**
@@ -488,24 +524,47 @@ checkTags = (rule, value, callback) => {
  * @return {Object}
  */
   getValues = (e) => {
-    const values = {
-      ...this.props.form.getFieldsValue(['title', 'tags']),
-      body: this.input.value,
-    };
+    const {isEdit} =this.props
+    
 
-    // values.title = e.target.value;
-    this.setState({
-      previewMarkdown: this.input.value.toString('markdown')
-    });
+    if (isEdit) {
+      const values = {
+        ...this.props.form.getFieldsValue(['title', 'tags']),
+        body: this.input.value,
+      };
 
+      if (!e) return values;
 
-    if (!e) return values;
+      if (isArray(e)) {
+        values.tags = [...['knacksteem'], ...e];
+      }
+      this.setState({
+        previewMarkdown: this.input.value.toString('markdown')
+      });
 
-    if (isArray(e)) {
-      values.tags = [...['knacksteem'], ...e];
+      return values;
+
+    } else {
+      const values = {
+        ...this.props.form.getFieldsValue(['title', 'tags']),
+        body: this.input.value,
+      };
+
+      if (!e) return values;
+
+      if (isArray(e)) {
+        values.tags = [...['knacksteem'], ...e];
+      }
+
+      this.setState({
+        previewMarkdown: this.input.value.toString('markdown')
+      });
+
+      return values;
     }
+    
 
-    return values;
+    
   };
 
  /**
