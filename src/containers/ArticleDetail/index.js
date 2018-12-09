@@ -158,6 +158,7 @@ class ArticleDetail extends Component {
               </div>
             </Row>
               <Divider/>
+              {!isReplyMode &&
               <div>
                 {data.tags.map((tag, index )=>{
                   return(
@@ -165,6 +166,7 @@ class ArticleDetail extends Component {
                   )
                 })}
               </div>
+              }
               {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
               <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Row>
