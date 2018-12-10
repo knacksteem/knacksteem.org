@@ -227,7 +227,6 @@ class Editor extends Component {
    * @return {Object}
    */
   handleSubmit = (e) => {
-    console.log(this.props.isComment)
     e.preventDefault();
     this.onUpdate(e);
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -236,6 +235,7 @@ class Editor extends Component {
       values = {...values, body: this.input.value}
         if (this.props.isEdit){
           const {articleData, isComment, dispatch, onDone, parentPermlink, parentAuthor} = this.props;
+          
           dispatch(editArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
           if (onDone) {
             onDone();

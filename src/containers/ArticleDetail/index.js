@@ -6,7 +6,6 @@ import Cookies from 'js-cookie';
 import {Layout, Divider, Spin, Row, Col, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import {editArticle} from '../../actions/articles';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
 import {apiGet} from '../../services/api';
 import Comments from '../../components/Comments';

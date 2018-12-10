@@ -269,7 +269,6 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
     });
 
     const store = getState();
-
     try {
       if (isComment) {
         //edit comment on blockchain
