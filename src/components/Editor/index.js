@@ -97,9 +97,15 @@ class Editor extends Component {
         selectInput.setAttribute('autocapitalize', 'none');
       }
     }
-    const {articleData, isEdit} = this.props;
+    const {articleData, isEdit, isComment} = this.props;
     if(isEdit){
       this.setValues(articleData);
+    }
+    
+    if (isComment && isEdit)
+    {
+      console.log(articleData)
+      this.setValues(articleData)
     }
   }
 
@@ -234,15 +240,16 @@ class Editor extends Component {
      if (!err && this.input.value !== '') {
       values = {...values, body: this.input.value}
         if (this.props.isEdit){
-          const {articleData, isComment, dispatch, onDone, parentPermlink, parentAuthor} = this.props;
           
+          const {articleData, isComment, dispatch, onDone, parentPermlink, parentAuthor} = this.props;
           dispatch(editArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
           if (onDone) {
             onDone();
           }
         }else if(this.props.isComment) {
-          const {articleData, isComment, dispatch, onDone, parentPermlink, parentAuthor} = this.props;
-          dispatch(postArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
+          const { isComment, dispatch, onDone, parentPermlink, parentAuthor} = this.props;
+          values = {...values, title: '', tags: ''}
+          dispatch(postArticle(values.title , values.body, values.tags,  isComment, parentPermlink, parentAuthor));
           if (onDone) {
             onDone();
           }
@@ -491,8 +498,8 @@ checkTags = (rule, value, callback) => {
 };
 
   setValues = (post) => {
-    const {isEdit} = this.props
-    if(isEdit){
+    const {isEdit, isComment} = this.props
+    if(isEdit && !isComment ){
       this.props.form.setFieldsValue({
         title: post.title,
         tags: post.tags.filter(tags => tags !== 'knacksteem')

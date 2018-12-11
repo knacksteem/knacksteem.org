@@ -191,8 +191,10 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
   
     try {
       //post to blockchain
+
       if (isComment) {
         //generate unique permalink for new comment
+        
         const newPermLink = getUniquePermalinkComment(parentPermlink);
         await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body, {});
       } else {
@@ -275,11 +277,12 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
         await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
       } else {
         //edit post on blockchain
+
         const operations = [
           ['comment',
             {
               parent_author: '',
-              parent_permlink: tags[0],
+              parent_permlink: 'knacksteem',
               author: store.user.username,
               permlink: articleData.permlink,
               title: title,
@@ -289,19 +292,6 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
               })
             }
           ],
-          ['comment_options', {
-            author: store.user.username,
-            permlink: articleData.permlink,
-            max_accepted_payout: '100000.000 SBD',
-            percent_steem_dollars: 50,
-            allow_votes: true,
-            allow_curation_rewards: true,
-            extensions: [
-              [0, {
-                beneficiaries: [{account: 'knacksteem.org', weight: 1500}]
-              }]
-            ]
-          }]
         ];
 
         await SteemConnect.broadcast(operations);
@@ -312,6 +302,10 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
           access_token: store.user.accessToken,
           tags: tags
         });
+      }
+      if (!isComment) {
+        //redirect to my contributions
+        dispatch(push('/feeds'));
       }
 
       return true;

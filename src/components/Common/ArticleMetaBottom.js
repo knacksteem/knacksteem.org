@@ -106,12 +106,13 @@ class ArticleMetaBottom extends Component {
             <i style={{...styles.barIcon, marginLeft: '10px', color: '#eee'}} className="fas fa-thumbs-down"/>
           </span>
         </Col>
+        {!isComment && 
         <Col style={{width: '30%', display: 'flex', justifyContent: 'center'}}>
           <Col>
             {data.category}
           </Col>
         </Col>
-
+      }
         <Col style={{width: '40%', display: 'flex', justifyContent: 'center'}}>
           <span>
             <i style={styles.barIcon} className="fas fa-comment-dots"/>
