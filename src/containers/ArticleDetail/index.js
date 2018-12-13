@@ -22,6 +22,8 @@ class ArticleDetail extends Component {
     super(props);
     this.state = {
       data: {},
+      isUpdating: false,
+      parsedPostData: null,
       isLoading: true,
       isEditMode: false,
       isReplyMode: false,
@@ -64,6 +66,21 @@ class ArticleDetail extends Component {
       //error handled in api get service
       dispatch(push('/'));
     }
+  };
+
+  handleImageInserted = (blob, callback, errorCallback) => {
+    const formData = new FormData();
+    formData.append('files', blob);
+
+    fetch(`https://test.api`, {
+      method: 'POST',
+      body: formData,
+    })
+      .then(res => res.json())
+      .then(res => callback(res.secure_url, blob.name))
+      .catch(() => {
+        errorCallback();
+      });
   };
 
   getSimilarPosts = async () => {
@@ -128,7 +145,7 @@ class ArticleDetail extends Component {
               <div className="article-author">Author: {data.author}</div>
               <div className="article-category">Category: {data.category}</div>
               <Divider/>
-              {isEditMode && <Editor isEdit={true} isComment={false} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} />}
+              {isEditMode && <Editor isEdit={true} parentPermlink={data.permlink} parentAuthor={data.author} articleData={data} isComment={false}  onImageInserted={this.handleImageInserted}  />}
               {!isEditMode && <ReactMarkdown source={data.description} />}
               { votingSlider.isVotingSliderVisible &&
               <div>
@@ -140,6 +157,7 @@ class ArticleDetail extends Component {
               </div>
             </Row>
               <Divider/>
+              {!isReplyMode &&
               <div>
                 {data.tags.map((tag, index )=>{
                   return(
@@ -147,6 +165,7 @@ class ArticleDetail extends Component {
                   )
                 })}
               </div>
+              }
               {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
               <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Row>

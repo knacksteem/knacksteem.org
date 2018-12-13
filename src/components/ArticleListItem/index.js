@@ -11,7 +11,7 @@ import './index.css';
 
 //Single Item for Article Overview
 const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
-  console.log(data);
+
   //reserve the current article with an api call and reload the pending articles for redux
   const onReserveClick = () => {
     // In case supervisor clicked on reserve for review in the Home page.
@@ -63,7 +63,7 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
               <h3 className="article-title">{data.title}</h3>
             </Link>
             <Link to={`/articles/${data.author}/${data.permlink}`}>
-              <div className="ant-list .article-content-wrapper">{truncateString(data.description,60)}</div>
+              <div className="ant-list .article-content-wrapper">{truncateString(data.description,140)}</div>
             </Link>
           </Col>
         </Col>

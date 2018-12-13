@@ -8,6 +8,7 @@ import { HotKeys } from 'react-hotkeys';
 import isArray from 'lodash/isArray';
 import Dropzone from 'react-dropzone';
 import {Input, Icon, Button,Row, Alert, Col, Form, Select} from 'antd';
+import {editArticle, postArticle} from '../../actions/articles';
 import EditorToolbar from './EditorToolBar';
 import './index.css';
 
@@ -24,10 +25,13 @@ class Editor extends Component {
       noContent: false,
       imageUploading: false,
       dropzoneActive: false,
-      value: '',
+      title:  '',
+      value:  '',
+      notOnDom: false,
       loading: false,
       loaded: false,
       previewMarkdown: '',
+      tags: (articleData && !isComment) ? articleData.tags : ['knacksteem'],
       isMarkdownEditorActive: false,
       previewState: false
     };
@@ -65,6 +69,17 @@ class Editor extends Component {
     return items;
   }
 
+  componentWillReceiveProps(nextProps){
+  const {articleData} = nextProps;
+
+  // using a check to stop infinite loop on rendering.
+  if (this.state.notOnDom){
+    this.setValues(articleData);
+    this.setState({
+      notOnDom: true
+    })
+  }
+  }
 
   componentDidMount() {
     if (this.input) {
@@ -82,7 +97,15 @@ class Editor extends Component {
         selectInput.setAttribute('autocapitalize', 'none');
       }
     }
-
+    const {articleData, isEdit, isComment} = this.props;
+    if(isEdit){
+      this.setValues(articleData);
+    }
+    
+    if (isComment && isEdit)
+    {
+      this.setValues(articleData)
+    }
   }
 
 /**
@@ -209,17 +232,33 @@ class Editor extends Component {
    * @return {Object}
    */
   handleSubmit = (e) => {
-    
     e.preventDefault();
     this.onUpdate(e);
     this.props.form.validateFieldsAndScroll((err, values) => {
-      
+      // Validate form for errors
+      const {articleData, isComment, dispatch, onDone, parentPermlink, parentAuthor, isEdit} = this.props;
      if (!err && this.input.value !== '') {
-
-        this.props.onSubmit({
-          ...values,
-          body: this.input.value,
-        });
+      values = {...values, body: this.input.value}
+      // If the the actions is edit dispatch actions to edit.
+        if (isEdit){
+          dispatch(editArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
+          if (onDone) {
+            onDone();
+          }
+      // If its a comment is been posted, dispatch Article to postArticle.
+        }else if(isComment) {
+          values = {...values, title: '', tags: ''}
+          dispatch(postArticle(values.title , values.body, values.tags,  isComment, parentPermlink, parentAuthor));
+          if (onDone) {
+            onDone();
+          }
+        }else {
+          this.props.onSubmit({
+            ...values,
+            body: this.input.value,
+         });
+        }
+        
       } else if (this.input.value === '') {
         const errors = {
           ...err,
@@ -384,8 +423,18 @@ class Editor extends Component {
  */
 
   onUpdate = (e) => { 
-    const values =  this.getValues(e);
-    this.props.onUpdate(values);
+    const {isEdit, isComment} = this.props;
+
+    if (isEdit){
+      this.getValues(e);
+     
+    }else if (isComment) {
+      this.getValues(e)
+    }else {
+      const values =  this.getValues(e);
+      this.props.onUpdate(values);
+    }
+    
   };
 
 /**
@@ -436,26 +485,45 @@ checkTags = (rule, value, callback) => {
         callback('first tag must be any of the following; graphics, art, vlog, knack, techtrends ');
       }   
     }
-
-    value
+    if(value) {
+      value
       .map(tag => ({ tag, valid: /^[a-z0-9]+(-[a-z0-9]+)*$/.test(tag) }))
       .filter(tag => !tag.valid)
       .map(tag => callback(`Tag ${tag.tag} is invalid`));
+    }
+    
 
     callback();
 };
 
   setValues = (post) => {
-    this.props.form.setFieldsValue({
-      title: post.title,
-      tags: post.tags
-    });
-
-    if (this.input && post.body !== '') {
-      this.input.value = post.body;
-      this.renderMarkdown(this.input.value);
-      this.resizeTextarea();
+    const {isEdit, isComment} = this.props
+    if(isEdit && !isComment ){
+      this.props.form.setFieldsValue({
+        title: post.title,
+        tags: post.tags.filter(tags => tags !== 'knacksteem')
+      });
+    } else {
+      this.props.form.setFieldsValue({
+        title: post.title,
+        tags: post.tags
+      });
     }
+
+    if (isEdit) {
+      if (this.input && post.description !== '') {
+        this.input.value = post.description;
+        this.renderMarkdown(this.input.value);
+        this.resizeTextarea();
+      }
+    } else {
+      if (this.input && post.body !== '') {
+        this.input.value = post.body;
+        this.renderMarkdown(this.input.value);
+        this.resizeTextarea();
+      }
+    }
+    
   };
 
 /**
@@ -470,25 +538,47 @@ checkTags = (rule, value, callback) => {
  * @return {Object}
  */
   getValues = (e) => {
-    const values = {
-      ...this.props.form.getFieldsValue(['title', 'tags']),
-      body: this.input.value,
-    };
+    const {isEdit} =this.props
+    
 
+    if (isEdit) {
+      const values = {
+        ...this.props.form.getFieldsValue(['title', 'tags']),
+        body: this.input.value,
+      };
 
-    // values.title = e.target.value;
-    this.setState({
-      previewMarkdown: this.input.value.toString('markdown')
-    });
+      if (!e) return values;
 
+      if (isArray(e)) {
+        values.tags = [...['knacksteem'], ...e];
+      }
+      this.setState({
+        previewMarkdown: this.input.value.toString('markdown')
+      });
 
-    if (!e) return values;
+      return values;
 
-    if (isArray(e)) {
-      values.tags = [...['knacksteem'], ...e];
+    } else {
+      const values = {
+        ...this.props.form.getFieldsValue(['title', 'tags']),
+        body: this.input.value,
+      };
+
+      if (!e) return values;
+
+      if (isArray(e)) {
+        values.tags = [...['knacksteem'], ...e];
+      }
+
+      this.setState({
+        previewMarkdown: this.input.value.toString('markdown')
+      });
+
+      return values;
     }
+    
 
-    return values;
+    
   };
 
  /**
@@ -519,13 +609,42 @@ checkTags = (rule, value, callback) => {
 
   render() {
     const { previewMarkdown, previewState } = this.state;
-    const { form, isComment, isEdit } = this.props;
+    const { form, isComment, isEdit, onCancel } = this.props;
     const { isBusy} = this.props.articles;
     const { isMarkdownEditorActive } = this.state;
+
+    const styles = {
+        commentModePadding: {
+          padding: isComment
+            ? '0px'
+            : '10px'
+      },
+        commentModeHeight: {
+          height: isComment
+            ? '70px !important'
+            : '450px'
+        },
+        commentModeContainerHeight: {
+          height: isComment
+            ? '80px'
+            : '500px'
+        },
+
+        autoResize: {
+          minRows: isComment
+          ?  5
+          :  20,
+          maxRows: isComment
+          ? 5
+          : 20
+        }
+    };
+
     return (
     <Row type="flex" style={{width: '100%'}}>
       <Form layout="vertical" onSubmit={ this.handleSubmit} style={{width: '100%'}}>
         <div  className={` ${isMarkdownEditorActive ? 'markdown-editor-is-active' : 'markdown-editor-is-inactive'}`}>
+        {!isComment &&
           <Form.Item>
             <h3>Title</h3>
             {!isComment && form.getFieldDecorator('title', {
@@ -541,6 +660,8 @@ checkTags = (rule, value, callback) => {
               />)
             }
           </Form.Item>
+          }
+          {!isComment && 
           <Row type="flex" justify="space-between">
             <Col>
               <h3>Story</h3>
@@ -551,7 +672,8 @@ checkTags = (rule, value, callback) => {
               </a>
             </Col>
           </Row>
-          <Row style={{border: '1px solid #eee', padding: '10px', background: '#fff', minHeight: '500px'}}>
+          }
+          <Row  style={{border: '1px solid #eee', ...styles.commentModePadding , background: '#fff', ...styles.commentModeContainerHeight}}>
             <Form.Item 
             validateStatus={
                 this.state.noContent ? 'error' : ''
@@ -559,8 +681,10 @@ checkTags = (rule, value, callback) => {
               help={
                 this.state.noContent && <Alert message="Content can't be empty" type="error" showIcon />
                 }>
+            {!isComment && 
             <EditorToolbar onSelect={this.insertCode} style={{margin: 'auto'}}/>
-            <Row className="Editor__dropzone-base" style={{width: 'inherit', height: '400px'}}>
+            }
+            <Row className="Editor__dropzone-base" style={{width: 'inherit', ...styles.commentModeHeight}}>
                 <Dropzone
                   disableClick
                   style={{}}
@@ -580,8 +704,8 @@ checkTags = (rule, value, callback) => {
                   <HotKeys keyMap={Editor.hotkeys} handlers={this.handlers}>
                   <Input.TextArea
                       className="editor_input"
-                      style={{ border: 'none', height: '450px', marginTop: '10px', boxShadow: 'none'}}
-                      autosize={{ minRows: 20, maxRows: 20 }}
+                      style={{ border: 'none',  marginTop: '10px', boxShadow: 'none',minHeight: '80px'}}
+                      autosize={{...styles.autoResize }}
                       onChange={this.onUpdate}
                       ref={ref => this.setInput(ref)}
                       placeholder='Write your story...'
@@ -591,6 +715,7 @@ checkTags = (rule, value, callback) => {
               </Row>
             </Form.Item>
           </Row>
+          {!isComment &&
           <Row style={{marginTop: '20px'}} className="Editor__imagebox">
             <input type="file" id="inputfile" onChange={this.handleImageChange} />
             <label htmlFor="inputfile">
@@ -609,6 +734,8 @@ checkTags = (rule, value, callback) => {
                 )}
             </label>
           </Row>
+          }
+          {!isComment && 
           <Form.Item
               label={
                 <span className="Editor__tags">
@@ -617,7 +744,7 @@ checkTags = (rule, value, callback) => {
               }
               extra='Separate tags with commas. Only lowercase letters, numbers and hyphen character is permitted.'
             >
-              { !isComment && form.getFieldDecorator('tags', {
+              { form.getFieldDecorator('tags', {
                 rules: [
                   {
                     required: true,
@@ -640,13 +767,17 @@ checkTags = (rule, value, callback) => {
                 />,
               )}
             </Form.Item>
+          }
+                      
             <Form.Item>
               <Row type="flex" justify="end" >
+              {!isComment &&
                 <Col>
                   <Button onClick={()=>this.handlePreview()} style={{marginRight: '5px'}}>
                     <p>{previewState ? 'Close Preview' : 'Preview'}</p>
                   </Button>
                 </Col>
+              }
                 <Col>
                   <Button
                     style={{
@@ -657,11 +788,11 @@ checkTags = (rule, value, callback) => {
                     loading={isBusy}>
                       {isEdit ? 'Update' : 'Post'}
                   </Button>
-
+                  {onCancel && <Button type="secondary" onClick={onCancel} className="button-cancel">Cancel</Button>}
                   </Col>
-                
                 </Row>
               </Form.Item>
+            {!isComment && 
               <Form.Item>
                 <div style={{
                   maxWidth: '100%', 
@@ -674,7 +805,7 @@ checkTags = (rule, value, callback) => {
                 <Row  style={{maxWidth: '100%'}} className='preview'> 
                 </Row>
               </Form.Item>
-   
+            }
         </div>
         </Form>
       </Row>
