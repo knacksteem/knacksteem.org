@@ -24,6 +24,7 @@ class SingleComment extends React.Component {
     this.setState({
       isReplyMode: true
     });
+    
   };
   onCancelEditorClick = () => {
     this.setState({
@@ -53,9 +54,9 @@ class SingleComment extends React.Component {
           {!isEditMode && <ReactMarkdown source={data.description} />}
           <ArticleMetaBottom data={data} onUpdate={onUpdate} onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isComment isEditMode={isEditMode} />
         </div>
-        <div className="replies" style={{width: '80%', marginTop: '20px'}}>
+        <div className="replies" style={{width: '90%', marginTop: '20px'}}>
           {isReplyMode && <Editor isEdit={false} isComment={true} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={data.permlink} parentAuthor={data.author} />}
-          {data.replies.map((elem) => {
+          {data.replies.reverse().map((elem) => {
             return (
               <SingleComment key={elem.permlink} data={elem} isReply parentPermlink={data.permlink} parentAuthor={data.author} onUpdate={onUpdate} />
             );
