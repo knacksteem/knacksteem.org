@@ -72,7 +72,7 @@ class Editor extends Component {
   componentWillReceiveProps(nextProps){
   const {articleData} = nextProps;
 
-  
+  // using a check to stop infinite loop on rendering.
   if (this.state.notOnDom){
     this.setValues(articleData);
     this.setState({
@@ -104,7 +104,6 @@ class Editor extends Component {
     
     if (isComment && isEdit)
     {
-      console.log(articleData)
       this.setValues(articleData)
     }
   }
@@ -236,18 +235,18 @@ class Editor extends Component {
     e.preventDefault();
     this.onUpdate(e);
     this.props.form.validateFieldsAndScroll((err, values) => {
-      
+      // Validate form for errors
+      const {articleData, isComment, dispatch, onDone, parentPermlink, parentAuthor, isEdit} = this.props;
      if (!err && this.input.value !== '') {
       values = {...values, body: this.input.value}
-        if (this.props.isEdit){
-          
-          const {articleData, isComment, dispatch, onDone, parentPermlink, parentAuthor} = this.props;
+      // If the the actions is edit dispatch actions to edit.
+        if (isEdit){
           dispatch(editArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
           if (onDone) {
             onDone();
           }
-        }else if(this.props.isComment) {
-          const { isComment, dispatch, onDone, parentPermlink, parentAuthor} = this.props;
+      // If its a comment is been posted, dispatch Article to postArticle.
+        }else if(isComment) {
           values = {...values, title: '', tags: ''}
           dispatch(postArticle(values.title , values.body, values.tags,  isComment, parentPermlink, parentAuthor));
           if (onDone) {
