@@ -34,8 +34,8 @@ const App = (props) => {
       <Route exact path="/@:username" component={Profile} />
       <Layout id="content-layout" style={{marginTop: '100px', display: 'flex', flexDirection: 'row'}}>
         <Row type="flex" justify="center" className="sidebar" style={{width:'25%', display: `${props.app.isSidebarVisible ? 'flex' : 'none'}`}}>
-          <Col>
-            <ContributionMetaBar/> 
+          <Col style={{position: 'fixed'}}>
+            <ContributionMetaBar /> 
           </Col>
         </Row>
         <Route exact path="/" component={Home} />

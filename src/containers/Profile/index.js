@@ -452,10 +452,20 @@ class Profile extends Component {
 
     history.listen(newLocation => {
       let newCategory = queryString.parse(newLocation.search).category;
-
       this.loadArticlesUser(newCategory, 0);
     });
   }
+
+  componentDidUpdate(prevProps, prevState, snapshot){
+    if (prevProps.location.pathname !== this.props.location.pathname) {
+      this.loadSteemRewardFunds();
+      this.loadCurrentMedianHistoryPrice();
+      this.loadDynamicGlobalProperties();
+      this.loadRemoteUserData();
+    }
+  }
+
+  
 
   componentWillUnmount() {
     const { dispatch } = this.props;
@@ -487,7 +497,6 @@ class Profile extends Component {
     ]);
 
     const activeCategory = queryString.parse(this.props.location.search).category;
-
     const articlesList = typeof activeCategory !== 'undefined' ?
       articles.data.filter(article => article.category === activeCategory) : 
       articles.data;

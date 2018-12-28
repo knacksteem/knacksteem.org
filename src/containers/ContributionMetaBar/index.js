@@ -58,6 +58,11 @@ class ContributionMetaBar extends React.Component {
     this.loadRemoteUserData();
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot){
+    if (prevProps.location.pathname !== this.props.location.pathname) {
+      this.loadRemoteUserData();
+    }
+  }
 
   /**
    * @method loadRemoteUserData
