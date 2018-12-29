@@ -58,6 +58,11 @@ class ContributionMetaBar extends React.Component {
     this.loadRemoteUserData();
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot){
+    if (prevProps.location.pathname !== this.props.location.pathname) {
+      this.loadRemoteUserData();
+    }
+  }
 
   /**
    * @method loadRemoteUserData
@@ -71,36 +76,21 @@ class ContributionMetaBar extends React.Component {
     dispatch(getRemoteUserData(Cookies.get('username')));
   }
 
-  render () {
-
-    let 
-      coverImage,
-      name,
-      reputation,
-      remoteUserObjectMeta,
-      username;
-
-    const {user, location} = this.props;
-    const { remoteUserObject} = user;
-    const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
-
-    const isUserLoggedIn = (user.username !== '');
-    
-
-    if (hasLoadedRemoteUserObject &&
-      remoteUserObject.json_metadata !== ''
-    ) {
-      remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
-      name = remoteUserObjectMeta.name;
-      coverImage = remoteUserObjectMeta.cover_image;
-      reputation = repLog10(parseFloat(remoteUserObject.reputation)); 
-      username = Cookies.get('username');
-    }  
-
-    styles.userImageContainer.backgroundImage = `url(${coverImage})`;
-  
-    return (
+  renderSidebar({
+    user,
+    username,
+    name,
+    reputation,
+    isUserLoggedIn,
+    location,
+    hasLoadedRemoteUserObject
+  })
+  {
+    return ( 
+      
       <div className="contribution-bar" style={{width: '200px'}}>
+        {hasLoadedRemoteUserObject 
+        &&
         <Layout style={{ backgroundColor: '#fff' }}>
           <div className="contribution-info-bar-container">
             {user.username
@@ -133,7 +123,6 @@ class ContributionMetaBar extends React.Component {
                   </Col>
                 </Row>
               </Row>
-  
             }
   
             <Menu style={{ borderRight: 0}} selectedKeys={[location.pathname]}>
@@ -198,8 +187,62 @@ class ContributionMetaBar extends React.Component {
             </Menu>
           </div>
         </Layout>
+        }
       </div>
     );
+  }
+
+  render () {
+
+    let 
+      coverImage,
+      name,
+      reputation,
+      remoteUserObjectMeta,
+      username;
+
+    const {user, location} = this.props;
+    const { remoteUserObject} = user;
+    const hasLoadedRemoteUserObject = Object.keys(remoteUserObject).length > 0;
+    const isUserLoggedIn = (user.username !== '');
+    
+    if(hasLoadedRemoteUserObject){
+      
+      if (typeof remoteUserObject === 'object' 
+          && Object.keys(remoteUserObject).length > 0
+        ) 
+        {
+          if(remoteUserObject.json_metadata !== '' && Object.keys(JSON.parse(remoteUserObject.json_metadata)) ){
+            remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile
+          }
+          
+          name = remoteUserObject.name;
+          if (remoteUserObjectMeta !== undefined ){
+            coverImage = remoteUserObjectMeta.cover_image;
+            styles.userImageContainer.backgroundImage = `url(${coverImage})`;
+          } 
+          
+          reputation = repLog10(parseFloat(remoteUserObject.reputation)); 
+          username = Cookies.get('username');
+          
+        }
+    } 
+
+    return this.renderSidebar({
+      user,
+      username,
+      name,
+      reputation,
+      isUserLoggedIn,
+      location,
+      hasLoadedRemoteUserObject
+
+    })
+        
+
+    
+  
+    
   }
   
 };
