@@ -453,25 +453,29 @@ class Profile extends Component {
     history.listen(newLocation => {
       let newCategory = queryString.parse(newLocation.search).category;
       this.loadArticlesUser(newCategory, 0);
+
     });
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot){
-    if (prevProps.location.pathname !== this.props.location.pathname) {
-      this.loadSteemRewardFunds();
-      this.loadCurrentMedianHistoryPrice();
-      this.loadDynamicGlobalProperties();
-      this.loadRemoteUserData();
-    }
-  }
+  // componentDidUpdate(prevProps){
+  //   if (prevProps.location.pathname !== this.props.location.pathname) {
+  //     this.loadSteemRewardFunds();
+  //     this.loadCurrentMedianHistoryPrice();
+  //     this.loadDynamicGlobalProperties();
+  //     this.loadRemoteUserData();
+  //   }
+  // }
 
   
 
   componentWillUnmount() {
+    
     const { dispatch } = this.props;
+
     dispatch(toggleSidebar({
       isSidebarVisible: true
-    })) 
+    }));
+    
   }
 
   render () {
@@ -496,6 +500,7 @@ class Profile extends Component {
       currentMedianHistoryPriceObject
     ]);
 
+
     const activeCategory = queryString.parse(this.props.location.search).category;
     const articlesList = typeof activeCategory !== 'undefined' ?
       articles.data.filter(article => article.category === activeCategory) : 
@@ -512,11 +517,14 @@ class Profile extends Component {
       );
 
       if (typeof remoteUserObject === 'object'
-      && remoteUserObject.json_metadata !== '') {
-        remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile;
-        name = remoteUserObjectMeta.name;
+      && Object.keys(remoteUserObject).length > 0) {
+         console.log();
+        if(remoteUserObject.json_metadata !== '' && Object.keys(JSON.parse(remoteUserObject.json_metadata)).length > 0 ){
+          remoteUserObjectMeta = JSON.parse(remoteUserObject.json_metadata).profile
+          coverImage = remoteUserObjectMeta.cover_image;
+        }
+        name = remoteUserObject.name;
         displayName = name && name !== '' ? name : uppercaseFirst(match.params.username);
-        coverImage = remoteUserObjectMeta.cover_image;
         reputation = repLog10(parseFloat(remoteUserObject.reputation));
         votingPower = calculateVotePower(remoteUserObject.voting_power, remoteUserObject.last_vote_time).votePower;
 
