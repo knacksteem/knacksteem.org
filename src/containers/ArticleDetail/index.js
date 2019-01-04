@@ -170,10 +170,10 @@ class ArticleDetail extends Component {
               <Comments data={data.comments} onUpdate={this.getArticle} parentPermlink={data.permlink} parentAuthor={data.author} />
           </Row>
           <Row style={{width: '33%', }} justify="center" type="flex" >
-              <Col className="announcement-container" style={{marginBottom: '30px'}}>
+              <Col className="announcement-container" style={{marginBottom: '30px', position: 'fixed'}}>
                 <AnouncementMetaBar/>
               </Col>
-              <Col className="similarpost-container" >
+              <Col style={{position: 'fixed', top: '400px'}} className="similarpost-container" >
                 {data.similarPosts && <SimilarPosts data={data.similarPosts} showMore={this.showMore} disableShowMore={this.state.disableShowMore}/>}
               </Col>
           </Row>
