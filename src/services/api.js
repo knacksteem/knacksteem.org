@@ -23,11 +23,12 @@ export const apiPost = async (url, data, token) => {
 };
 
 //basic get request to backend api
-export const apiGet = async (url, data) => {
+export const apiGet = async (url, data, token) => {
   try {
     return await axios({
       method: 'get',
       url: `${Config.apiURL}${url}`,
+      headers: { Authorization: "Bearer " + token },
       params: data,
       responseType: 'json'
     });
