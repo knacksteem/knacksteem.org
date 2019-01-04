@@ -833,7 +833,7 @@ class Editor extends Component {
             </Row>
 }
             {!isComment && <Form.Item
-              label={< span className = "Editor__tags" > Tags < /span>}
+              label={< span className = "Editor__tags" > Tags </span>}
               extra='Separate tags with commas. Only lowercase letters, numbers and hyphen character is permitted.'>
               {form.getFieldDecorator('tags', {
                 rules: [
