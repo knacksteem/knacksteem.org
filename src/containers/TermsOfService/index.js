@@ -5,7 +5,7 @@ const {Content} = Layout;
 
 const TermsOfService = () => {
   return (
-    <div>
+    <div className='tos-container'>
       <Content>
         <h1>Terms of Service</h1>
         <p> <b>Effective as of 12/21/2018</b></p>
