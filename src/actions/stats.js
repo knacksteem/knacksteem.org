@@ -24,8 +24,9 @@ export const getUserList = (skip, banned, search) => {
       let response = await apiGet('/stats/users', {
         skip: skip || 0,
         banned: !!banned,
+        access_token: Cookies.get('accessToken'),
         search: search || undefined
-      },Cookies.get('accessToken'));
+      });
 
       dispatch({
         type: types.USERLIST_GET,
