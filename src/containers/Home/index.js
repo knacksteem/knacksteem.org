@@ -3,17 +3,25 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import './index.css';
-import {Layout, Input, Spin} from 'antd';
+import { Spin, Row, Col } from 'antd';
 import ArticleListItem from '../../components/ArticleListItem';
-import {getArticlesByCategory, getArticlesByUser} from '../../actions/articles';
-const {Header, Content} = Layout;
-const Search = Input.Search;
+import AnnouncementMetaBar from '../../components/AnnouncementMetaBar';
+import { getArticlesModeration} from '../../actions/articles';
+import Cookies from 'js-cookie';
 
 const styles = {
-  articlesList: {display: 'flex', flexDirection: 'column'}
+  articlesList: {display: 'flex', flexDirection: 'column', width: '67%'},
+  barIcon: {
+    fontSize: '16px',
+    color: '#999',
+    marginRight: '20px',
+    fontWeight: 'bold'
+  }
 };
 
-//Article Overview
+/**
+ *  @class Home
+ */
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -21,96 +29,79 @@ class Home extends Component {
       searchString: ''
     };
   }
-  //scroll handler for lazy loading
-  onScroll = () => {
-    const {searchString} = this.state;
-    const {articles, location} = this.props;
+  // //scroll handler for lazy loading
+   onScroll = () => {
+     const {articles} = this.props;
 
-    //if in loading process, don´t do anything
-    if (articles.isBusy) {
-      return;
-    }
-    //if user hits bottom, load next batch of items
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(articles.data.length, searchString);
-      } else {
-        this.loadArticles(articles.data.length, searchString);
-      }
-    }
-  };
-  componentDidMount() {
-    const {location} = this.props;
+     //if in loading process, don´t do anything
+     if (articles.isBusy) {
+       return;
+     }
+     //   //if user hits bottom, load next batch of items
+     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
+       this.loadArticles(articles.data.length);
+     }
+   };
+  //get User data
 
-    if (location.pathname === '/mycontributions') {
-      this.loadArticlesUser();
-    } else {
-      this.loadArticles();
-    }
 
-    //on scroll, load the next batch of articles
-    window.addEventListener('scroll', this.onScroll);
-  }
-  componentWillUnmount() {
-    //remove scroll event again when hitting another route
-    window.removeEventListener('scroll', this.onScroll);
-  }
-  componentDidUpdate(prevProps, prevState) {
-    const {searchString} = this.state;
-    const {location} = this.props;
 
-    if (prevProps.location.pathname !== location.pathname || searchString !== prevState.searchString) {
-      //location change detected, load new data
-      if (location.pathname === '/mycontributions') {
-        this.loadArticlesUser(0, searchString);
-      } else {
-        this.loadArticles(0, searchString);
-      }
-    }
-  }
-  //load general articles
-  loadArticles = (skip = 0, search) => {
-    const {dispatch, match} = this.props;
+   componentDidMount() {
+     const username = Cookies.get('username');
+     if (username === undefined || null){
+       this.loadArticles();
+     } else {
+       this.loadArticles();
+     }
+     // //on scroll, load the next batch of articles
+     window.addEventListener('scroll', this.onScroll);
+   }
 
-    dispatch(getArticlesByCategory(match.params.category, skip, search));
-  };
-  //load own contributions
-  loadArticlesUser = (skip = 0, search) => {
+   componentWillUnmount() {
+     //remove scroll event again when hitting another route
+     window.removeEventListener('scroll', this.onScroll);
+   }
+  
+   /** load articles that are approved by a mod
+    * 
+    * @method loadArticles
+    * 
+    * @param {Integer}  
+    * 
+    * @returns {Array}
+    */
+   
+  loadArticles = (skip = 0, ) => {
     const {dispatch} = this.props;
 
-    dispatch(getArticlesByUser(skip, search));
+    dispatch(getArticlesModeration('/moderation/approved', skip));
   };
+
   render() {
-    const {articles} = this.props;
+
+    const {articles, user} = this.props;
+ 
 
     return (
-      <div id="home-body">
-        <Layout id="home-articles">
-          <Header>
-            <Search
-              placeholder="Search through Knacksteem"
-              onSearch={value => this.setState({searchString: value})}
-              style={{width: 300}}
-            />
-          </Header>
-          <Content>
-            <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-              {articles.data.map((data) => {
-                return (
-                  <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticles} />
-                );
-              })}
-            </div>
-            {articles.isBusy && <Spin/>}
-          </Content>
-        </Layout>
-        {/*
-        <Layout id="home-announcements">
-          Announcements
-        </Layout>
-        */}
-      </div>
+      <Row style={{width: '75%', flexDirection: 'row'}} type="flex" className="home-container">
+
+          <Row className="item-feed ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
+            {articles.data.map((data) => {
+              return (
+                <ArticleListItem key={data.permlink} data={data} user={user} onUpvoteSuccess={this.loadArticles} />
+              );
+            })}
+          </Row>
+         
+          
+          <Row type="flex" justify="center" style={{width: '33%'}} className="announcement-container">
+            <Col style={{marginTop: 0, position: 'fixed'}}>
+              <AnnouncementMetaBar/>
+            </Col>
+          </Row>
+          {articles.isBusy && <Spin/>}
+      </Row>
     );
   }
 }
@@ -119,11 +110,13 @@ Home.propTypes = {
   location: PropTypes.object,
   match: PropTypes.object,
   dispatch: PropTypes.func,
-  articles: PropTypes.object
+  articles: PropTypes.object,
+  user: PropTypes.object
 };
 
 const mapStateToProps = state => ({
-  articles: state.articles
+  articles: state.articles,
+  user: state.user,
 });
 
 export default withRouter(connect(mapStateToProps)(Home));

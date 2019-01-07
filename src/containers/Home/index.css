@@ -1,16 +1,23 @@
-#home-body {
-    flex-grow: 1;
-    display: flex;
+
+@media (max-width: 768px) {
+  .announcement-container {
+      display: none !important;
+      width: 10px !important
+  }
+  .item-feed,
+  .home-container {
+      width: 100% !important;
+  }
 }
 
-#home-announcements {
-    margin-left: 2rem;
-    background-color: #fff;
-    padding: 1rem;
-    box-shadow: 0px 2px 6px 0px rgba(0,0,0, 0.2);
-    flex: 0 0 14rem;
-}
-
-@media only screen and (max-width: 60rem) {
-    #home-announcements { display: none; }
+@media (max-width: 928px) {
+    .announcement-container,
+    .contribution-container {
+        display: none !important;
+    }
+    .item-feed,
+    .home-container
+    {
+        width: 100% !important;
+    }
 }

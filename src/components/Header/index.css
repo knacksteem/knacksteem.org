@@ -1,29 +1,138 @@
-#header-wrapper {
-  display: flex;
-  justify-content: flex-start;
-  padding: 10px 2rem;
-  width: 100%;
-  max-width: 70rem;
-  margin: 0 auto;
-}
-
-.username-login {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.username-login > * {
-  margin: 5px;
-}
-
 
 .logo {
-  width: 210px;
-  flex-shrink: 0;
+  width:20%;
+}
+.input-container {
+  width: 50%;
+  
+}
+.mx-auto {
+  margin: auto !important;
+}
+.button-container {
+  width: 20%;
+}
+.header-container {
+  width: 100%;
+  margin: auto;
+  padding: 5px;
+}
+.toggle-cointainer {
+  width: 5%;
+}
+.navbar__link-toggle {
+  display: none;
 }
 
-.logo img {
-  width: 100%;
-  height: auto;
+.ml {
+  margin-left: 12px ;
+}
+
+.mb {
+  margin-bottom: 18px ;
+}
+
+@media (max-width: 768px) {
+  .navbar__items,
+  .navbar {
+    flex-direction: column !important;
+  }
+
+  .navbar__items {
+    display: none !important;
+  }
+
+  .header-container{
+    justify-content: space-between !important;
+    width: 100%
+  }
+
+
+  .navbar__link-toggle {
+    align-self: flex-end;
+    display: initial;
+    align-self: auto;
+  }
+  .brand {
+    align-self: flex-start
+  }
+  .profile {
+    display: none;
+    
+  }
+  .edit {
+    display: none;
+  }
+  
+  
+}
+
+@media (max-width: 992px) {
+  
+  .header-container{
+    justify-content: space-between !important;
+  }
+
+  .button-container {
+    display: none !important;
+  }
+
+  .select {
+    display: none !important;
+    
+  }
+
+  .navbar__link-toggle {
+    align-self: flex-end;
+    display: initial;
+    align-self: auto;
+  }
+  .brand {
+    align-self: flex-start
+  }
+  
+
+  .header-container{
+    width: 90%
+  }
+
+  
+  
+}
+
+@media (max-width: 1200px) {
+ 
+  .navbar__items--right {
+    margin-left: 0;
+  }
+
+
+  .header-container{
+    justify-content: space-between !important;
+  }
+
+  .button-container {
+    display: none !important;
+  }
+
+
+  .select {
+    display: none !important;
+    
+  }
+  
+
+  .collasped-header {
+   flex-basis: column;
+  }
+
+  
+  .brand {
+    align-self: flex-start
+  }
+  
+  
+  .header-container{
+    width: 90%
+  }
 }

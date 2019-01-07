@@ -5,7 +5,8 @@ const initialState = {
   currentCategory: '',
   searchString: '',
   data: [],
-  categories: []
+  categories: [],
+  type: '',
 };
 
 const articles = (state = initialState, action) => {

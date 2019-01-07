@@ -6,6 +6,8 @@ import Cookies from 'js-cookie';
 import SteemConnect from '../services/SteemConnect';
 import {message} from 'antd';
 
+const IMAGE_REGEX = /!\[.*?]\((.*?)\)/g;
+
 /**
  * get categories from server
  */
@@ -65,7 +67,7 @@ export const getArticlesByCategory = (category, skip, search) => {
 /**
  * get articles by user from backend
  */
-export const getArticlesByUser = (skip, search) => {
+export const getArticlesByUser = (skip, search, limit=25) => {
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -81,7 +83,40 @@ export const getArticlesByUser = (skip, search) => {
         username: Cookies.get('username') || undefined,
         author: store.user.username,
         skip: skip || undefined, //skip elements for paging
-        search: search || undefined
+        search: search || undefined,
+        limit
+      });
+      dispatch({
+        type: types.ARTICLES_GET,
+        skip: skip || undefined,
+        payload: response.data.results
+      });
+    } catch (error) {
+      dispatch({
+        type: types.ARTICLES_GET,
+        payload: []
+      });
+    }
+  };
+};
+
+export const getArticlesByUsername = (username, skip, search, category = '', limit=25) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
+      category
+    });
+
+    //get user articles from server
+    try {
+      let response = await apiGet('/posts', {
+        username: username || undefined,
+        author: username,
+        skip: skip || undefined, //skip elements for paging
+        search: search || undefined,
+        category: category || undefined,
+        limit: limit || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,
@@ -103,7 +138,8 @@ export const getArticlesByUser = (skip, search) => {
  * @param skip number of elemnts to skip, used for lazy loading
  * @param search search string
  */
-export const getArticlesModeration = (route, skip, search) => {
+
+export const getArticlesModeration = (route, skip, search, username) => {
   return async (dispatch) => {
     dispatch({
       type: types.ARTICLES_REQUEST,
@@ -115,7 +151,8 @@ export const getArticlesModeration = (route, skip, search) => {
     try {
       let response = await apiGet(`/stats${route}`, {
         skip: skip || undefined, //skip elements for paging
-        search: search || undefined
+        search: search || undefined,
+        username: username || undefined
       });
       dispatch({
         type: types.ARTICLES_GET,
@@ -135,23 +172,35 @@ export const getArticlesModeration = (route, skip, search) => {
  * post article to blockchain and knacksteem backend
  */
 export const postArticle = (title, body, tags, isComment, parentPermlink, parentAuthor) => {
+  let images = [];
+  let matches;
+
+  // eslint-disable-next-line
+  while ((matches = IMAGE_REGEX.exec(body))) {
+    if (images.indexOf(matches[1]) === -1 && matches[1].search(/https?:\/\//) === 0) {
+      images.push(matches[1]);
+    }
+  }
+
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_POSTING
     });
 
     const store = getState();
-
+   
     try {
       //post to blockchain
+
       if (isComment) {
         //generate unique permalink for new comment
+        
         const newPermLink = getUniquePermalinkComment(parentPermlink);
         await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body, {});
       } else {
         //generate unique permalink for new article
         const newPermLink = getUniquePermalink(title);
-
+    
         //post with beneficiaries
         const operations = [
           ['comment',
@@ -163,7 +212,8 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
               title: title,
               body: body,
               json_metadata: JSON.stringify({
-                tags: tags
+                tags: tags,
+                image: images
               })
             }
           ],
@@ -181,23 +231,23 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
             ]
           }]
         ];
-
+      
         await SteemConnect.broadcast(operations);
+
 
         //successfully posted to blockchain, now posting to backend with permalink and category
         await apiPost('/posts/create', {
           author: store.user.username,
           permlink: newPermLink,
-          access_token: store.user.accessToken,
           category: tags[1],
           tags: tags
-        });
+        }, store.user.accessToken);
       }
 
       if (!isComment) {
         //redirect to my contributions
-        dispatch(push('/mycontributions'));
-      }
+        dispatch(push('/feeds'));
+      } 
       return true;
     } catch (error) {
       message.error('error creating article');
@@ -220,18 +270,18 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
     });
 
     const store = getState();
-
     try {
       if (isComment) {
         //edit comment on blockchain
         await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
       } else {
         //edit post on blockchain
+
         const operations = [
           ['comment',
             {
               parent_author: '',
-              parent_permlink: tags[0],
+              parent_permlink: 'knacksteem',
               author: store.user.username,
               permlink: articleData.permlink,
               title: title,
@@ -241,19 +291,6 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
               })
             }
           ],
-          ['comment_options', {
-            author: store.user.username,
-            permlink: articleData.permlink,
-            max_accepted_payout: '100000.000 SBD',
-            percent_steem_dollars: 50,
-            allow_votes: true,
-            allow_curation_rewards: true,
-            extensions: [
-              [0, {
-                beneficiaries: [{account: 'knacksteem.org', weight: 1500}]
-              }]
-            ]
-          }]
         ];
 
         await SteemConnect.broadcast(operations);
@@ -261,9 +298,12 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
         //successfully edited post on blockchain, now editing tags on backend
         await apiPut('/posts/update', {
           permlink: articleData.permlink,
-          access_token: store.user.accessToken,
           tags: tags
-        });
+        }, store.user.accessToken);
+      }
+      if (!isComment) {
+        //redirect to my contributions
+        dispatch(push('/feeds'));
       }
 
       return true;
@@ -279,6 +319,28 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
 };
 
 /**
+ * reserve article by mod
+ */
+export const reserveArticle = (permlink, status) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    try {
+      //approve article with permalink and status
+      await apiPost('/moderation/reserve', {
+        permlink: permlink,
+        approved: true,
+      }, store.user.accessToken);
+    } catch (error) {
+      //handled in api service
+    } finally {
+      //reload pending articles after approval
+      dispatch(getArticlesModeration(`/moderation/${status}`));
+    }
+  };
+};
+
+/**
  * approve article by mod
  */
 export const approveArticle = (permlink, status) => {
@@ -290,8 +352,7 @@ export const approveArticle = (permlink, status) => {
       await apiPost('/moderation/moderate', {
         permlink: permlink,
         approved: true,
-        access_token: store.user.accessToken
-      });
+      },store.user.accessToken);
     } catch (error) {
       //handled in api service
     } finally {
@@ -313,8 +374,7 @@ export const rejectArticle = (permlink, status) => {
       await apiPost('/moderation/moderate', {
         permlink: permlink,
         approved: false,
-        access_token: store.user.accessToken
-      });
+      }, store.user.accessToken);
     } catch (error) {
       //handled in api service
     } finally {
@@ -360,6 +420,37 @@ export const deleteElement = (permlink) => {
       ]);
     } catch (error) {
       message.error('error deleting element');
+    }
+  };
+};
+
+/**
+ * get articles by search term
+ */
+export const getArticlesBySearchTerm = (skip, searchterm) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.ARTICLES_REQUEST,
+      skip: skip || undefined,
+      category: ''
+    });
+
+    //get articles by search term from server
+    try {
+      let response = await apiGet('/posts', {
+        skip: skip || undefined, //skip elements for paging
+        search: searchterm || undefined
+      });
+      dispatch({
+        type: types.ARTICLES_GET_SEARCH,
+        skip: skip || undefined,
+        payload: response.data.results
+      });
+    } catch (error) {
+      dispatch({
+        type: types.ARTICLES_GET_SEARCH,
+        payload: []
+      });
     }
   };
 };

@@ -7,12 +7,15 @@
     "axios": "^0.18.0",
     "express": "^4.16.3",
     "express-http-to-https": "^1.1.4",
+    "fecha": "^2.3.3",
     "history": "^4.7.2",
     "js-cookie": "^2.2.0",
     "prop-types": "^15.6.2",
     "qs": "^6.5.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-dropzone": "^7.0.1",
+    "react-hotkeys": "^1.1.4",
     "react-markdown": "^3.3.4",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
@@ -20,7 +23,8 @@
     "react-rte": "^0.16.1",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
-    "sc2-sdk": "^1.0.2"
+    "sc2-sdk": "^1.0.2",
+    "steem": "^0.7.2"
   },
   "scripts": {
     "start": "react-app-rewired start",

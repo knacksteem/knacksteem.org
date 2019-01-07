@@ -1,0 +1,27 @@
+.active {
+    display: block;
+}
+
+.inactive {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none !important;
+    }
+    
+    #content-layout {
+        padding-left: 0px !important;
+    }
+}
+
+@media (max-width: 928px) {
+    .sidebar {
+        display: none !important;
+    }
+    #content-layout {
+        padding-left: 0px !important;
+        justify-content: center !important; 
+    }
+  }
