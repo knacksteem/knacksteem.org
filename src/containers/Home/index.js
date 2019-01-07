@@ -96,7 +96,7 @@ class Home extends Component {
          
           
           <Row type="flex" justify="center" style={{width: '33%'}} className="announcement-container">
-            <Col style={{marginTop: 0}}>
+            <Col style={{marginTop: 0, position: 'fixed'}}>
               <AnnouncementMetaBar/>
             </Col>
           </Row>

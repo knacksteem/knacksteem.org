@@ -140,7 +140,7 @@ class  NewContribution extends React.Component {
           </Col> 
         </Row>
         <Row type="flex" justify="center" style={{width: '33%'}} className="how-to-post-container" >
-          <Col className="htp-inner-container">
+          <Col style={{position: 'fixed'}} className="htp-inner-container">
             <HowToPost/>
           </Col>
         </Row>

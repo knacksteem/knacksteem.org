@@ -109,7 +109,7 @@ class ContributionMetaBar extends React.Component {
                     <Col>
                       <span style={{color: '#eee'}}>@{username}</span>
                     </Col>
-                  </Col>
+                  </Col>  
                 </Row>
               </Row>
             }  
@@ -182,6 +182,12 @@ class ContributionMetaBar extends React.Component {
                 <Link to="/tos">
                   <i style={styles.barIcon} className="fas fa-file"/>
                   <span className="contribution-info-bar-label">TOS</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="privacy" disabled={false}>
+                <Link to="/privacy">
+                  <i style={styles.barIcon} className="fas fa-file"/>
+                  <span className="contribution-info-bar-label">Privacy Policy</span>
                 </Link>
               </Menu.Item>
             </Menu>
