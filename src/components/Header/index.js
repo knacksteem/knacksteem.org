@@ -8,7 +8,7 @@ import {toggleHeader} from '../../actions/header';
 import './index.css';
 import SteemConnect from '../../services/SteemConnect';
 import Logo from '../../assets/images/logo_black.png';
-import {KnackSelect} from '../../components/Select';
+import KnackSelect from '../../components/Select';
 import KnackSearch from '../../components/Search';
 import {getArticlesByCategory} from '../../actions/articles';
 const {Header} = Layout;
@@ -17,16 +17,20 @@ class KnackHeader extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      searchString: ''
+      searchString: '',
+      selectedCategory: ''
     };
 
     this.handleHeaderToggle = this.handleHeaderToggle.bind(this);
     this.onLogoutClick = this.onLogoutClick.bind(this);
   }
 
-  loadArticles(skip = 0, search) {
-    const {dispatch, match} = this.props;
-    dispatch(getArticlesByCategory(match.params.category, skip, search));
+  loadArticles(selectedCategory) {
+    this.setState({
+      selectedCategory: selectedCategory
+    });
+    const {dispatch} = this.props;
+    dispatch(getArticlesByCategory(selectedCategory));
   }
 
   handleHeaderToggle(){ 
@@ -76,7 +80,7 @@ class KnackHeader extends React.Component {
           </Row>
           <Row type="flex" justify="center" className=" navbar__items input-container">
             <Col className="select">
-              <KnackSelect/>
+              <KnackSelect onChangeCategory={this.loadArticles.bind(this)}/>
             </Col>
             <Col className="ml search">
               <KnackSearch onSearch={(value) => {this.setState({searchString: value}); this.search();}}/>
@@ -119,7 +123,7 @@ class KnackHeader extends React.Component {
         <Row type="flex" justify="center" align="middle" style={Object.assign({}, styles.header)} className="collasped-header">
           <Row type="flex" align="middle">
             <Col  className=" mb">
-              <KnackSelect/>
+            <KnackSelect onChangeCategory={this.loadArticles.bind(this)}/>
             </Col>
           </Row>
           <Row type="flex" align="middle">
@@ -142,7 +146,8 @@ const mapStateToProps = state => {
   return {
     user: state.user,
     articles: state.articles,
-    header: state.header
+    header: state.header,
+    selectedCategory: state.selectedCategory
   };
 };
 
