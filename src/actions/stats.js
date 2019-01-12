@@ -22,9 +22,9 @@ export const getUserList = (skip, banned, search) => {
     try {
       //get user details from database, including the user role (supervisor, moderator, contributor)
       let response = await apiGet('/stats/users', {
-        access_token: Cookies.get('accessToken'),
         skip: skip || 0,
         banned: !!banned,
+        access_token: Cookies.get('accessToken'),
         search: search || undefined
       });
 
@@ -61,11 +61,10 @@ export const moderateUser = (username, action, banReason, bannedUntil) => {
     };
     try {
       let req = await apiPost(modEndpoints[action], {
-        access_token: Cookies.get('accessToken'),
         username: username,
         banReason: banReason,
         bannedUntil: bannedUntil,
-      });
+      },Cookies.get('accessToken'));
 
       message.success(req.data.message);
 

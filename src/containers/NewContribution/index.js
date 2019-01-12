@@ -4,7 +4,7 @@ import Editor from '../../components/Editor';
 import {connect} from 'react-redux';
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
-import {postArticle, editArticle} from '../../actions/articles';
+import {postArticle} from '../../actions/articles';
 import {HowToPost} from '../../components/HowToPost/'
 import './index.css';
 
@@ -114,14 +114,10 @@ class  NewContribution extends React.Component {
    */
 
   proceedSubmit = (tags) => {
-    const {isComment, isEdit, parsedPostData} = this.state;
-    const {dispatch, articleData, onDone, user} = this.props;
-   
-    if (isEdit){
-      dispatch(editArticle(parsedPostData.title, parsedPostData.body, tags, articleData, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor));
-    }else { 
+    const {isComment, parsedPostData} = this.state;
+    const {dispatch, onDone} = this.props;
+ 
       dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor)); 
-    }
 
     if (onDone) {
       onDone();
@@ -144,7 +140,7 @@ class  NewContribution extends React.Component {
           </Col> 
         </Row>
         <Row type="flex" justify="center" style={{width: '33%'}} className="how-to-post-container" >
-          <Col className="htp-inner-container">
+          <Col style={{position: 'fixed'}} className="htp-inner-container">
             <HowToPost/>
           </Col>
         </Row>

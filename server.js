@@ -3,11 +3,16 @@ const express = require('express');
 const https = require('https');
 const http = require('http');
 const fs = require('fs');
-const secure = require('express-force-https')
 
 const app = express();
 
-app.use(secure);
+app.use (function (req, res, next) {
+  if (req.secure) {
+    next();
+  } else {
+    res.redirect('https://' + req.headers.host + req.url);
+  }
+});
 
 const options = {
   key: fs.readFileSync('./privkey.pem'),

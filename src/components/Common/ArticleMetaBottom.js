@@ -1,16 +1,18 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Popconfirm, Spin, Row, Col} from 'antd';
+import IconText from '../Common/IconText';
+import {Popconfirm, Spin, Row, Col, Divider} from 'antd';
 import {upvoteElement, deleteElement} from '../../actions/articles';
+import {prettyDate} from '../../services/functions';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
 
 const styles = {
   barIcon: {
     fontSize: '16px',
-    color: '#999',
-    marginRight:'5px'
+    color: '#999'
+    
   }
 };
 
@@ -67,10 +69,11 @@ class ArticleMetaBottom extends Component {
   };
   render() {
     const {isDeleting, isUpvoted} = this.state;
-    const {data, isComment, isArticleDetail, onEditClick, onReplyClick} = this.props;
-
+    const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
+    
     const isAuthor = (Cookies.get('username') === data.author);
     const commentCount = isComment ? data.replies.length : data.commentsCount;
+    
 
     const actionsArray = [<a key="action-reply" onClick={onReplyClick}>Reply</a>];
     if (isComment || isArticleDetail) {
@@ -91,36 +94,61 @@ class ArticleMetaBottom extends Component {
     const upvoteIconColor = (data.isVoted || isUpvoted) ? '#999' : '#333';
 
     return (
-      <Row  type="flex" className="article-meta" style={{ background: '#fff', padding: '7px'}}>
-        <Col style={{width: '15%'}}>
-          <span
-            className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
-            onClick={this.onUpvoteClick}>
-            <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-thumbs-up"/>
-            <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
-          </span>
-        </Col>
-        <Col style={{width: '15%'}}>
-          <span>
-            <i style={{...styles.barIcon, marginLeft: '10px', color: '#eee'}} className="fas fa-thumbs-down"/>
-          </span>
-        </Col>
-        <Col style={{width: '50%', display: 'flex', justifyContent: 'center'}}>
+      <Row  type="flex" justify="space-between" className="article-meta" style={{ background: isComment ? 'transparent' : '#fff', width: '100%',padding: '7px'}}>
+         <Col style={{display: 'flex'}}>
           <Col>
-            {data.tags[1]}
+            <IconText type="clock-circle-o" text={prettyDate(data.postedAt)} />
+          </Col>
+          <Col>
+            <Divider type="vertical" />
+          </Col>
+          <Col>
+            <span
+              className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
+              onClick={this.onUpvoteClick}>
+              <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-thumbs-up"/>
+              <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
+            </span>
+          </Col>
+          <Col>
+            <Divider type="vertical" />
+          </Col>
+          <Col>
+            <span>
+              <i style={{...styles.barIcon, marginLeft: '10px', color: '#eee'}} className="fas fa-thumbs-down"/>
+            </span>
+          </Col>
+          <Col>
+            <Divider type="vertical" />
           </Col>
         </Col>
-
-        <Col style={{width: '20%', display: 'flex', justifyContent: 'center'}}>
+        {!isComment && 
+        <Col>
+          <Col>
+            {data.category}
+          </Col>
+        </Col>
+      }
+      <Col style={{display: 'flex'}}>
+        <Col>
+              <Divider type="vertical" />
+        </Col>
+        <Col>
           <span>
-            <i style={styles.barIcon} className="fas fa-comment-dots"/>
-            <strong className="">{commentCount}</strong>
+            <strong> <i style={styles.barIcon} className="fas fa-comment-dots"/>{commentCount}</strong>
           </span>
+        </Col>
+        <Col>
+            <Divider type="vertical" />
+        </Col>
+        <Col>
           <span className="action-links">
-            {/* {(!isEditMode && !isDeleting) && actionsArray} */}
+            {(!isEditMode && !isDeleting) && actionsArray}
             {isDeleting && <Spin size="small" />}
           </span>
         </Col>
+      </Col>
+        
       </Row>
     );
   }

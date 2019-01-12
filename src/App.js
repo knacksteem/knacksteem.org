@@ -19,6 +19,7 @@ import Review from './containers/Review';
 import Users from './containers/Users';
 import KnackFooter from './components/Footer';
 import Profile from './containers/Profile';
+import Privacy from './containers/Privacy';
 import 'antd/dist/antd.min.css';
 import './assets/styles/index.css';
 import './assets/styles/ant-overrides.css';
@@ -34,8 +35,8 @@ const App = (props) => {
       <Route exact path="/@:username" component={Profile} />
       <Layout id="content-layout" style={{marginTop: '100px', display: 'flex', flexDirection: 'row'}}>
         <Row type="flex" justify="center" className="sidebar" style={{width:'25%', display: `${props.app.isSidebarVisible ? 'flex' : 'none'}`}}>
-          <Col>
-            <ContributionMetaBar/> 
+          <Col style={{position: 'fixed'}}>
+            <ContributionMetaBar /> 
           </Col>
         </Row>
         <Route exact path="/" component={Home} />
@@ -44,6 +45,7 @@ const App = (props) => {
         <Route exact path="/tos" component={TermsOfService} />
         <Route exact path="/how" component={HowItWorks} />
         <Route exact path="/about" component={AboutUs} />
+        <Route exact path="/privacy" component={Privacy} />
         <Route exact path="/contribute" component={Contribute} />
         <Route exact path="/contact" component={ContactUs} />
         <Route exact path="/moderation/pending" component={Review} />

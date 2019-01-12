@@ -7,7 +7,7 @@ import './index.css';
 const Comments = ({data, onUpdate, parentPermlink, parentAuthor}) => {
   return (
     <div>
-      {data.map((elem) => {
+      {data.reverse().map((elem) => {
         return (
           <SingleComment key={elem.permlink} data={elem} parentPermlink={parentPermlink} parentAuthor={parentAuthor} onUpdate={onUpdate} />
         );

@@ -5,7 +5,7 @@ const { Meta } = Card;
 
 export const HowToPost = () => {
     return (
-    <div className="how-to-post ">
+    <div className="how-to-post  ">
       <Layout style={{ backgroundColor: '#fff' }}>
         <div className="profile-info-bar-container" style={{width: '200px'}}>  
           <h3 style={{textAlign: 'center'}} className="how-to-post-title">How to Post</h3>

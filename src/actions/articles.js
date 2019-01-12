@@ -188,11 +188,13 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
     });
 
     const store = getState();
-  
+   
     try {
       //post to blockchain
+
       if (isComment) {
         //generate unique permalink for new comment
+        
         const newPermLink = getUniquePermalinkComment(parentPermlink);
         await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, newPermLink, '', body, {});
       } else {
@@ -229,7 +231,7 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
             ]
           }]
         ];
-
+      
         await SteemConnect.broadcast(operations);
 
 
@@ -237,16 +239,15 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
         await apiPost('/posts/create', {
           author: store.user.username,
           permlink: newPermLink,
-          access_token: store.user.accessToken,
           category: tags[1],
           tags: tags
-        });
+        }, store.user.accessToken);
       }
 
       if (!isComment) {
         //redirect to my contributions
         dispatch(push('/feeds'));
-      }
+      } 
       return true;
     } catch (error) {
       message.error('error creating article');
@@ -269,18 +270,18 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
     });
 
     const store = getState();
-
     try {
       if (isComment) {
         //edit comment on blockchain
         await SteemConnect.comment(parentAuthor, parentPermlink, store.user.username, articleData.permlink, '', body, {});
       } else {
         //edit post on blockchain
+
         const operations = [
           ['comment',
             {
               parent_author: '',
-              parent_permlink: tags[0],
+              parent_permlink: 'knacksteem',
               author: store.user.username,
               permlink: articleData.permlink,
               title: title,
@@ -290,19 +291,6 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
               })
             }
           ],
-          ['comment_options', {
-            author: store.user.username,
-            permlink: articleData.permlink,
-            max_accepted_payout: '100000.000 SBD',
-            percent_steem_dollars: 50,
-            allow_votes: true,
-            allow_curation_rewards: true,
-            extensions: [
-              [0, {
-                beneficiaries: [{account: 'knacksteem.org', weight: 1500}]
-              }]
-            ]
-          }]
         ];
 
         await SteemConnect.broadcast(operations);
@@ -310,9 +298,12 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
         //successfully edited post on blockchain, now editing tags on backend
         await apiPut('/posts/update', {
           permlink: articleData.permlink,
-          access_token: store.user.accessToken,
           tags: tags
-        });
+        }, store.user.accessToken);
+      }
+      if (!isComment) {
+        //redirect to my contributions
+        dispatch(push('/feeds'));
       }
 
       return true;
@@ -339,8 +330,7 @@ export const reserveArticle = (permlink, status) => {
       await apiPost('/moderation/reserve', {
         permlink: permlink,
         approved: true,
-        access_token: store.user.accessToken
-      });
+      }, store.user.accessToken);
     } catch (error) {
       //handled in api service
     } finally {
@@ -362,8 +352,7 @@ export const approveArticle = (permlink, status) => {
       await apiPost('/moderation/moderate', {
         permlink: permlink,
         approved: true,
-        access_token: store.user.accessToken
-      });
+      },store.user.accessToken);
     } catch (error) {
       //handled in api service
     } finally {
@@ -385,8 +374,7 @@ export const rejectArticle = (permlink, status) => {
       await apiPost('/moderation/moderate', {
         permlink: permlink,
         approved: false,
-        access_token: store.user.accessToken
-      });
+      }, store.user.accessToken);
     } catch (error) {
       //handled in api service
     } finally {

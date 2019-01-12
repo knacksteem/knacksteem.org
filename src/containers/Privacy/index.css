@@ -1,4 +1,4 @@
-.tos-container {
+.privacy-container {
     align-items: center;
     font-family: "Montserrat", sans-serif;
     margin-bottom: 17.6px;
@@ -6,7 +6,7 @@
 }
 
 @media (max-width: 768px) {
-    .tos-container {
+    .privacy-container {
         width:90%;
     }
 }

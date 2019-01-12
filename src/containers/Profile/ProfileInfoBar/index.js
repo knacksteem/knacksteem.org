@@ -149,7 +149,7 @@ const ProfileInfoBar = ({
     <div className="profile-info-bar" style={{width: '220px'}}>
       <Layout  style={{ background: '#fff' }}>
         <Row type="flex" style={{ flexDirection: 'column', padding: '5px'}} className="profile-info-bar-container">
-          <Col style={{paddingLeft: '12px',paddingTop: '10px', textAlign: 'left'}}>
+          <Col style={{paddingLeft: '12px',paddingTop: '10px', textAlign: 'left', width: '100%', overflowWrap: 'break-word'}}>
             {(about !== undefined && about.length > 0) &&   
               <h4 className="profile-info-bar-title">{about}</h4>
             }

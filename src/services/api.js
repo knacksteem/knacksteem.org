@@ -5,14 +5,16 @@ import Config from '../config';
 //set some default settings for axios to handle backend api correctly
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
+
 //basic post request to backend api
-export const apiPost = async (url, data) => {
+export const apiPost = async (url, data, token) => {
   try {
     return await axios({
       method: 'post',
       url: `${Config.apiURL}${url}`,
       data: data,
-      responseType: 'json'
+      headers: { Authorization: "Bearer " + token },
+      responseType: 'json',
     });
   } catch (error) {
     message.error(error.response.data.message);
@@ -36,12 +38,13 @@ export const apiGet = async (url, data) => {
 };
 
 //basic put (update) request to backend api
-export const apiPut = async (url, data) => {
+export const apiPut = async (url, data, token) => {
   try {
     return await axios({
       method: 'put',
       url: `${Config.apiURL}${url}`,
       data: data,
+      headers: { Authorization: "Bearer " + token },
       responseType: 'json'
     });
   } catch (error) {
