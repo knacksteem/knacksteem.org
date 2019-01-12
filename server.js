@@ -6,14 +6,6 @@ const fs = require('fs');
 
 const app = express();
 
-app.use (function (req, res, next) {
-  if (req.secure) {
-    next();
-  } else {
-    res.redirect('https://' + req.headers.host + req.url);
-  }
-});
-
 const options = {
   key: fs.readFileSync('./privkey.pem'),
   cert: fs.readFileSync('./fullchain.pem')
@@ -22,5 +14,13 @@ const options = {
 const staticPath = path.join(__dirname, 'build');
 app.use(express.static(staticPath));
 
-http.createServer(app).listen(80);
+http
+  .createServer(function(req, res) {
+    res.writeHead(301, {
+      Location: 'https://' + req.headers['host'] + req.url
+    });
+    res.end();
+  })
+  .listen(80);
+
 https.createServer(options, app).listen(443);
