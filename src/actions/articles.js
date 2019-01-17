@@ -441,10 +441,15 @@ export const getArticlesBySearchTerm = (skip, searchterm) => {
         skip: skip || undefined, //skip elements for paging
         search: searchterm || undefined
       });
+
+      if(response.data.results.length === 0){
+          message.info("No posts found for searchterm: " + searchterm);
+      }
+
       dispatch({
         type: types.ARTICLES_GET,
         skip: skip || undefined,
-        payload: response.data.results
+        payload: response && response.data ? response.data.results : []
       });
     } catch (error) {
       dispatch({
