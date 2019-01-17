@@ -158,13 +158,13 @@ export const getUserListBySearch = (skip, search) => {
       });
 
       dispatch({
-        type: types.USERLIST_GET_SEARCH,
+        type: types.USERLIST_GET,
         payload: response.data.results
       });
     } catch (error) {
       window.console.log(error);
       dispatch({
-        type: types.USERLIST_GET_SEARCH,
+        type: types.USERLIST_GET,
         payload: []
       });
     }

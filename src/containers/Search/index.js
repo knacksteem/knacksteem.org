@@ -47,7 +47,7 @@ class Search extends Component {
   }
 
   loadArticlesBySearchTerm = (skip = 0, search) => {
-	   const {dispatch} = this.props;
+     const {dispatch} = this.props;
 	   dispatch(getArticlesBySearchTerm(skip, search));
   };
 
@@ -57,7 +57,7 @@ class Search extends Component {
   };
 
   render() {
-    const {articles, stats} = this.props;
+    const {articles, stats, user} = this.props;
     const {users} = stats;
 
     return (
@@ -66,9 +66,9 @@ class Search extends Component {
           <Content>
             <h2>Posts</h2>
             <div className="ant-list ant-list-vertical ant-list-lg ant-list-split ant-list-something-after-last-item" style={styles.articlesList}>
-                  {articles.type === 'post' && articles.data.map((data) => {
+                  {articles.data.map((data) => {
                     return (
-                      <ArticleListItem key={data.permlink} data={data} onUpvoteSuccess={this.loadArticlesBySearchTerm} />
+                      <ArticleListItem key={data.permlink} data={data} user={user} onUpvoteSuccess={this.loadArticlesBySearchTerm} />
                     );
                   })}
             </div>
@@ -76,7 +76,7 @@ class Search extends Component {
           </Content>
           <Content>
           <h2>Users</h2>
-          { stats.type === 'user' && <List
+          { <List
               dataSource={users}
               renderItem={item => {
                 return (
@@ -99,12 +99,14 @@ class Search extends Component {
 Search.propTypes = {
   dispatch: PropTypes.func,
   articles: PropTypes.object,
-  stats: PropTypes.object
+  stats: PropTypes.object,
+  user: PropTypes.object
 };
 
 const mapStateToProps = state => ({
   articles: state.articles,
-  stats: state.stats
+  stats: state.stats,
+  user: state.user
 });
 
 export default withRouter(connect(mapStateToProps)(Search));

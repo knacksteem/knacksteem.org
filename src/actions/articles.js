@@ -442,13 +442,13 @@ export const getArticlesBySearchTerm = (skip, searchterm) => {
         search: searchterm || undefined
       });
       dispatch({
-        type: types.ARTICLES_GET_SEARCH,
+        type: types.ARTICLES_GET,
         skip: skip || undefined,
         payload: response.data.results
       });
     } catch (error) {
       dispatch({
-        type: types.ARTICLES_GET_SEARCH,
+        type: types.ARTICLES_GET,
         payload: []
       });
     }
