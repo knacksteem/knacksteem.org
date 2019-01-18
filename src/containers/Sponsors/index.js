@@ -15,7 +15,7 @@ export default class Sponsors extends Component {
     let json = [];
     let globalData = [];
     //Put your api endpoint here
-    axios.get('./delegations.json').then(res => {
+    axios.get('./get_steem_delegations/delegations.json').then(res => {
       json = res.data;
       return res;
     }).catch(err => {
