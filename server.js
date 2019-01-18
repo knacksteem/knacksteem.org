@@ -3,7 +3,6 @@ const express = require('express');
 const https = require('https');
 const http = require('http');
 const fs = require('fs');
-const redirectToHTTPS = require('express-http-to-https').redirectToHTTPS;
 
 const app = express();
 
@@ -14,7 +13,14 @@ const options = {
 
 const staticPath = path.join(__dirname, 'build');
 app.use(express.static(staticPath));
-app.use(redirectToHTTPS([/localhost:(\d{4})/], [], 301));
 
-http.createServer(app).listen(80);
+http
+  .createServer(function(req, res) {
+    res.writeHead(301, {
+      Location: 'https://' + req.headers['host'] + req.url
+    });
+    res.end();
+  })
+  .listen(80);
+
 https.createServer(options, app).listen(443);

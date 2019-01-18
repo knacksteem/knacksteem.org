@@ -142,7 +142,7 @@ const Guidelines = () => {
           <li>We recommend good visual content that will be catchy. It is critical to provide a lot of pictorial or visual content in this section.</li>
           <li>List the materials used if you are a fashion designer or illustrator.</li>
           <li>Include personal thoughts, and the reasons behind your choice of design.</li>
-          <li>Provide helpful tips and make your presentation very lucrative..</li>
+          <li>Provide helpful tips and make your presentation look fancy.</li>
         </ul>
         
       </Content>
