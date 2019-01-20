@@ -16,7 +16,7 @@ export const getCategories = () => {
     try {
       let response = await apiGet('/categories');
       response.data.results = response.data.results.filter((category) => {
-        if(category.key === 'vlog' || category.key === 'graphics' || category.key === 'art' || category.key === 'knack' || category.key === 'techtrends') {
+        if(category.key === 'gaming' || category.key === 'documentary' || category.key === 'art' || category.key === 'altruism' || category.key === 'techtrends' || category.key === 'humour' || category.key === 'music' || category.key === 'diy' || category.key === 'fashion') {
           return true;
         }
         return false;
