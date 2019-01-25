@@ -403,6 +403,24 @@ export const upvoteElement = (author, permlink, weight) => {
 };
 
 /**
+ * downvote article or comment
+ * @param author author of the article or comment
+ * @param permlink permalink of the article of comment
+ * @param weight weight of the downvote (-10000 is -100%)
+ */
+export const downvoteElement = (author, permlink, weight) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    try {
+      return await SteemConnect.vote(store.user.username, author, permlink, weight);
+    } catch (error) {
+      message.error('error downvoting element');
+    }
+  };
+};
+
+/**
  * delete article or comment
  * @param permlink permalink of the article of comment
  */

@@ -2,11 +2,14 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import IconText from '../Common/IconText';
-import {Popconfirm, Spin, Row, Col, Divider} from 'antd';
-import {upvoteElement, deleteElement} from '../../actions/articles';
+import {Popconfirm, Spin, Row, Col, Divider, message} from 'antd';
+
+import {upvoteElement, downvoteElement, deleteElement} from '../../actions/articles';
 import {prettyDate} from '../../services/functions';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
+import {apiGet} from '../../services/api';
+import {push} from 'react-router-redux';
 
 const styles = {
   barIcon: {
@@ -32,27 +35,59 @@ class ArticleMetaBottom extends Component {
     super(props);
     this.state = {
       isDeleting: false,
-      isUpvoted: false
+      isUpvoted: false,
+      isDownvoted: false,
+      votesData: []
     };
   }
+  componentDidMount() {
+    this.getArticleVotes();
+  }
+
+  componentDidUpdate() {
+    this.getArticleVotes();
+  }
+
   //upvote article or comment
   onUpvoteClick = async () => {
-    const {data, dispatch, onUpdate} = this.props;
-
-    //if already voted, immediately return - maybe implement unvoting later, if needed
-    if (data.isVoted) {
-      return;
-    }
+    const {data, dispatch} = this.props;
+    const {isUpvoted} = this.state;
     //upvote with 10000 - which equals 100%
     try {
-      this.setState({isUpvoted: true});
-      await dispatch(upvoteElement(data.author, data.permlink, 10000));
-      //on successful update, reload article or article list
-      onUpdate();
+      if (isUpvoted) {
+        //if already voted, send 0 to unvote
+        this.setState({isUpvoted: false});
+        await dispatch(upvoteElement(data.author, data.permlink, 0));
+      }
+      else {
+        this.setState({isUpvoted: true});
+        await dispatch(upvoteElement(data.author, data.permlink, 10000));
+      }
     } catch (err) {
-      //error handled in upvoteElement action
+      message.error('An Error occured, please try again later');
     }
   };
+
+  //downvote article or comment
+  onDownvoteClick = async () => {
+    const {data, dispatch} = this.props;
+    const {isDownvoted} = this.state;
+    //downvote with -10000 - which equals -100%
+    try {
+      if (isDownvoted) {
+        //if already downvotes, send 0 to unvote
+        this.setState({isDownvoted: false});
+        await dispatch(upvoteElement(data.author, data.permlink, 0));
+      }
+      else {
+        this.setState({isDownvoted: true});
+        await dispatch(downvoteElement(data.author, data.permlink, -10000));
+      }
+    } catch (err) {
+      message.error('An Error occured, please try again later');
+    }
+  };
+
   //delete article or comment - will get called after confirmation
   onDeleteClick = async () => {
     const {data, dispatch, onUpdate} = this.props;
@@ -67,15 +102,40 @@ class ArticleMetaBottom extends Component {
       //error handled in deleteElement action
     }
   };
+
+  getArticleVotes = async () => {
+    const {data, dispatch} = this.props;
+    try {
+      //calling the api to get the votes of the articles
+      let response = await apiGet(`/posts/${data.author}/${data.permlink}/votes`, {username: Cookies.get('username') || undefined});
+      if (response && response.data && response.data.results) {
+        // checking if the author has upvoted or downvoted
+        const isAuthorUpvoted = response.data.results.filter(vote => vote.voter === Cookies.get('username') && vote.percent > 0).length > 0;
+        const isAuthorDownvoted = response.data.results.filter(vote => vote.voter === Cookies.get('username') && vote.percent < 0).length > 0;
+        this.setState({
+          votesData: response.data.results,
+          isUpvoted: isAuthorUpvoted,
+          isDownvoted: isAuthorDownvoted
+        });
+      }
+    } catch (error) {
+      message.error('An Error occured, please try again later');
+      dispatch(push('/'));
+    }
+  };
+
   render() {
-    const {isDeleting, isUpvoted} = this.state;
+    const {isDeleting, votesData, isUpvoted, isDownvoted} = this.state;
     const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
     
     const isAuthor = (Cookies.get('username') === data.author);
     const commentCount = isComment ? data.replies.length : data.commentsCount;
-    
+
+    const upvoteCount = votesData.filter(vote => vote.percent > 0).length;
+    const downvoteCount = votesData.filter(vote => vote.percent < 0).length;
 
     const actionsArray = [<a key="action-reply" onClick={onReplyClick}>Reply</a>];
+
     if (isComment || isArticleDetail) {
       if (isAuthor) {
         actionsArray.push(
@@ -92,6 +152,7 @@ class ArticleMetaBottom extends Component {
     }
 
     const upvoteIconColor = (data.isVoted || isUpvoted) ? '#999' : '#333';
+    const downvoteIconColor = (data.isVoted || isDownvoted) ? '#999' : '#FF0000';
 
     return (
       <Row  type="flex" justify="space-between" className="article-meta" style={{ background: isComment ? 'transparent' : '#fff', width: '100%',padding: '7px'}}>
@@ -104,18 +165,22 @@ class ArticleMetaBottom extends Component {
           </Col>
           <Col>
             <span
-              className={`upvote ${(data.isVoted || isUpvoted) ? 'active' : ''}`}
+              className={`upvote ${(isUpvoted) ? 'active' : ''}`}
               onClick={this.onUpvoteClick}>
               <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-thumbs-up"/>
-              <strong>{isUpvoted ? (data.votesCount + 1) : data.votesCount}</strong>
+              <strong>{upvoteCount}</strong>
             </span>
+
           </Col>
           <Col>
             <Divider type="vertical" />
           </Col>
           <Col>
-            <span>
-              <i style={{...styles.barIcon, marginLeft: '10px', color: '#eee'}} className="fas fa-thumbs-down"/>
+            <span
+              className={`downvote ${(isDownvoted) ? 'active' : ''}`}
+              onClick={this.onDownvoteClick}>
+              <i style={{...styles.barIcon, marginLeft: '10px', color: downvoteIconColor}} className="fas fa-thumbs-down"/>
+              <strong>{downvoteCount}</strong>
             </span>
           </Col>
           <Col>
