@@ -157,9 +157,13 @@ export const getUserListBySearch = (skip, search) => {
         search: search || undefined
       });
 
+      if(!response){
+        message.info("No users found for searchterm: " + search);
+      }
+
       dispatch({
         type: types.USERLIST_GET,
-        payload: response.data.results
+        payload: response && response.data ? response.data.results : []
       });
     } catch (error) {
       window.console.log(error);

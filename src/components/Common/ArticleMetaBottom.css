@@ -1,9 +1,5 @@
-.upvote {
+.upvote, .downvote {
   cursor: pointer;
-}
-
-.upvote:hover, .upvote.active {
-  color: #1890ff;
 }
 
 .action-links > a:not(:last-child) {

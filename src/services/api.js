@@ -32,7 +32,7 @@ export const apiGet = async (url, data) => {
       responseType: 'json'
     });
   } catch (error) {
-    message.error(error.response.data.message);
+    //message.error(error.response.data.message);
     return false;
   }
 };

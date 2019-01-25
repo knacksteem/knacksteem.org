@@ -32,6 +32,8 @@
     position: absolute;
     top: -50%;
     transform: translateY(50%); 
+    margin-left: 11%;
+    margin-top: 2%;
 }
 
 .hero-title {

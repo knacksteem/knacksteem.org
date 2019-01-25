@@ -403,6 +403,24 @@ export const upvoteElement = (author, permlink, weight) => {
 };
 
 /**
+ * downvote article or comment
+ * @param author author of the article or comment
+ * @param permlink permalink of the article of comment
+ * @param weight weight of the downvote (-10000 is -100%)
+ */
+export const downvoteElement = (author, permlink, weight) => {
+  return async (dispatch, getState) => {
+    const store = getState();
+
+    try {
+      return await SteemConnect.vote(store.user.username, author, permlink, weight);
+    } catch (error) {
+      message.error('error downvoting element');
+    }
+  };
+};
+
+/**
  * delete article or comment
  * @param permlink permalink of the article of comment
  */
@@ -441,10 +459,15 @@ export const getArticlesBySearchTerm = (skip, searchterm) => {
         skip: skip || undefined, //skip elements for paging
         search: searchterm || undefined
       });
+
+      if(response.data.results.length === 0){
+          message.info("No posts found for searchterm: " + searchterm);
+      }
+
       dispatch({
         type: types.ARTICLES_GET,
         skip: skip || undefined,
-        payload: response.data.results
+        payload: response && response.data ? response.data.results : []
       });
     } catch (error) {
       dispatch({
