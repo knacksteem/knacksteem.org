@@ -151,8 +151,8 @@ class ArticleMetaBottom extends Component {
       }
     }
 
-    const upvoteIconColor = (data.isVoted || isUpvoted) ? '#999' : '#333';
-    const downvoteIconColor = (data.isVoted || isDownvoted) ? '#999' : '#FF0000';
+    const upvoteIconColor = isUpvoted ? '#1890ff' : '#999';
+    const downvoteIconColor = isDownvoted ? '#1890ff' : '#999';
 
     return (
       <Row  type="flex" justify="space-between" className="article-meta" style={{ background: isComment ? 'transparent' : '#fff', width: '100%',padding: '7px'}}>
@@ -168,7 +168,7 @@ class ArticleMetaBottom extends Component {
               className={`upvote ${(isUpvoted) ? 'active' : ''}`}
               onClick={this.onUpvoteClick}>
               <i style={{...styles.barIcon, color: upvoteIconColor}} className="fas fa-thumbs-up"/>
-              <strong>{upvoteCount}</strong>
+              <strong style={{color: upvoteIconColor}}>{upvoteCount}</strong>
             </span>
 
           </Col>
@@ -180,7 +180,7 @@ class ArticleMetaBottom extends Component {
               className={`downvote ${(isDownvoted) ? 'active' : ''}`}
               onClick={this.onDownvoteClick}>
               <i style={{...styles.barIcon, marginLeft: '10px', color: downvoteIconColor}} className="fas fa-thumbs-down"/>
-              <strong>{downvoteCount}</strong>
+              <strong style={{color: downvoteIconColor}}>{downvoteCount}</strong>
             </span>
           </Col>
           <Col>

@@ -2,14 +2,6 @@
   cursor: pointer;
 }
 
-.upvote:hover, .upvote.active {
-  color: #1890ff;
-}
-
-.downvote:hover, .downvote.active {
-  color: #B22222;
-}
-
 .action-links > a:not(:last-child) {
   margin-right: 5px;
 }
