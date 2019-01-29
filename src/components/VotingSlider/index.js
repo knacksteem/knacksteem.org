@@ -4,6 +4,7 @@ import store from '../../store';
 import {votePowerChange} from '../../actions/votingSlider';
 import { Slider, Icon, Button } from 'antd';
 import getVoteWorth from './getVoteWorth';
+import PropTypes from 'prop-types';
 
 const marks = {
   0: '0%',
@@ -12,7 +13,16 @@ const marks = {
   75: '75%',
   100: '100%'
 };
-export default class VotingSlider extends Component {
+
+const negativeMarks = {
+  '0': '0%',
+  '-25': '-25%',
+  '-50': '-50%',
+  '-75': '-75%',
+  '-100': '-100%'
+};
+
+class VotingSlider extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,29 +45,42 @@ export default class VotingSlider extends Component {
   handleChange = async (e) => {
     const value = Number(e);
     store.dispatch(votePowerChange(value * 100));
+    this.props.onVotePowerChange(value * 100);
     await this.setState({
       votePower: value * 100,
       voteWorth: await getVoteWorth({
         isMaxVote: false
       })
     });
+    
   }
   handleTip = () => {
     return `${this.state.votePower / 100}% $${this.state.voteWorth}`;
   }
   render() {
+    const {onConfirm, onCancel, votingDirection} = this.props;
+    const voteValues = votingDirection > 0 ? marks : negativeMarks;
     return (
       <div className="voting-container">
         <div className="voting-header-container">
           <span>
-            <button className="voting-button-header"><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
-            <button className="voting-button-header"><Icon type="close-circle" /> Cancel</button>
+            <button className="voting-button-header" onClick={onConfirm}><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
+            <button className="voting-button-header" onClick={onCancel}><Icon type="close-circle" /> Cancel</button>
           </span>
           <span>{this.state.voteWorth === 0 ? <div className="loader"/> : `$${this.state.maxVoteWorth}`}</span>
         </div>
-        <Slider disabled={this.state.maxVoteWorth === 0 ? true : false} onChange={this.handleChange} max={100} min={0} marks={marks} defaultValue={100} value={this.state.votePower / 100} tipFormatter={this.handleTip}/>
+        {
+          votingDirection >= 0 && <Slider disabled={this.state.maxVoteWorth === 0 ? true : false} onChange={this.handleChange} max={100} min={0} marks={voteValues} defaultValue={100} value={this.state.votePower / 100} tipFormatter={this.handleTip}/>
+        }
+        {
+          votingDirection < 0 && <Slider disabled={this.state.maxVoteWorth === 0 ? true : false} onChange={this.handleChange} max={0} min={-100} marks={voteValues} defaultValue={-100} value={this.state.votePower / 100} tipFormatter={this.handleTip}/>
+        }
+        
         <div className="voting-buttons-container">
-          {Object.keys(marks).map(key => {
+          {votingDirection >= 0 && Object.keys(voteValues).map(key => {
+            return <Button className="voting-button" disabled={this.state.maxVoteWorth === 0 ? true : false} key={key} onClick={() => this.handleChange(key)}>{key}%</Button>;
+          })}
+          {votingDirection < 0 && Object.keys(voteValues).sort((a, b) => a - b).map(key => {
             return <Button className="voting-button" disabled={this.state.maxVoteWorth === 0 ? true : false} key={key} onClick={() => this.handleChange(key)}>{key}%</Button>;
           })}
         </div>
@@ -68,3 +91,18 @@ export default class VotingSlider extends Component {
     );
   }
 }
+
+VotingSlider.propTypes = {
+  onConfirm: PropTypes.func,
+  onCancel: PropTypes.func,
+  onVotePowerChange: PropTypes.func,
+  votingDirection: PropTypes.number
+};
+
+VotingSlider.defaultProps = {
+  onConfirm: () => {},
+  onCancel: () => {},
+  onVotePowerChange: () => {},
+};
+
+export default VotingSlider;
