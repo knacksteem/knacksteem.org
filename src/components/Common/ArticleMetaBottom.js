@@ -4,12 +4,13 @@ import {connect} from 'react-redux';
 import IconText from '../Common/IconText';
 import {Popconfirm, Spin, Row, Col, Divider, message} from 'antd';
 
-import {upvoteElement, downvoteElement, deleteElement} from '../../actions/articles';
+import {upvoteElement, deleteElement} from '../../actions/articles';
 import {prettyDate} from '../../services/functions';
 import './ArticleMetaBottom.css';
 import Cookies from 'js-cookie';
 import {apiGet} from '../../services/api';
 import {push} from 'react-router-redux';
+import VotingSlider from '../../components/VotingSlider';
 
 const styles = {
   barIcon: {
@@ -37,57 +38,41 @@ class ArticleMetaBottom extends Component {
       isDeleting: false,
       isUpvoted: false,
       isDownvoted: false,
-      votesData: []
+      votesData: [],
+      sliderVisible: false,
+      sliderValue: 100
     };
   }
   componentDidMount() {
     this.getArticleVotes();
   }
 
-  componentDidUpdate(prevProps) {
-    // This had to be made because of Update Blocking -> https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/guides/blocked-updates.md
-    if (prevProps.data.permlink !== this.props.data.permlink) {
+  componentDidUpdate() {
+    if (this.state.votesData.length === 0) {
       this.getArticleVotes();
     }
   }
-
+  
   //upvote article or comment
-  onUpvoteClick = async () => {
-    const {data, dispatch} = this.props;
-    const {isUpvoted} = this.state;
-    //upvote with 10000 - which equals 100%
-    try {
-      if (isUpvoted) {
-        //if already voted, send 0 to unvote
-        this.setState({isUpvoted: false});
-        await dispatch(upvoteElement(data.author, data.permlink, 0));
-      }
-      else {
-        this.setState({isUpvoted: true});
-        await dispatch(upvoteElement(data.author, data.permlink, 10000));
-      }
-    } catch (err) {
-      message.error('An Error occured, please try again later');
+  onUpvoteClick = () => {
+    const {sliderVisible} = this.state;
+    if(!sliderVisible) {
+      this.setState({
+        sliderVisible: true,
+        votingDirection: 100
+      });
     }
   };
 
   //downvote article or comment
   onDownvoteClick = async () => {
-    const {data, dispatch} = this.props;
-    const {isDownvoted} = this.state;
-    //downvote with -10000 - which equals -100%
-    try {
-      if (isDownvoted) {
-        //if already downvotes, send 0 to unvote
-        this.setState({isDownvoted: false});
-        await dispatch(upvoteElement(data.author, data.permlink, 0));
-      }
-      else {
-        this.setState({isDownvoted: true});
-        await dispatch(downvoteElement(data.author, data.permlink, -10000));
-      }
-    } catch (err) {
-      message.error('An Error occured, please try again later');
+    const {sliderVisible} = this.state;
+
+    if(!sliderVisible) {
+      this.setState({
+        sliderVisible: true,
+        votingDirection: -100
+      });
     }
   };
 
@@ -105,6 +90,42 @@ class ArticleMetaBottom extends Component {
       //error handled in deleteElement action
     }
   };
+
+  onCancel = () => {
+    this.setState({
+      sliderVisible: false
+    });
+  };
+
+  onConfirm = async () => {
+    this.setState({
+      sliderVisible: false
+    });
+
+    const {data, dispatch} = this.props;
+    const {isUpvoted, isDownvoted, sliderValue} = this.state;
+
+    //upvote with 10000 - which equals 100%
+    try {
+      if (isUpvoted) {
+        this.setState({isUpvoted: false});
+      } else if (isDownvoted) {
+        this.setState({isDownvoted: false});
+      }
+      else {
+        this.setState({isUpvoted: true});
+        this.setState({isDownvoted: true});
+      }
+      await dispatch(upvoteElement(data.author, data.permlink, sliderValue));
+      this.getArticleVotes();
+    } catch (err) {
+      message.error('An Error occured, please try again later');
+    }
+  };
+
+  changeVotePower = (votePower) => {
+    this.setState({sliderValue: votePower});
+  }
 
   getArticleVotes = async () => {
     const {data, dispatch} = this.props;
@@ -128,7 +149,7 @@ class ArticleMetaBottom extends Component {
   };
 
   render() {
-    const {isDeleting, votesData, isUpvoted, isDownvoted} = this.state;
+    const {isDeleting, votesData, isUpvoted, isDownvoted, sliderVisible} = this.state;
     const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
     
     const isAuthor = (Cookies.get('username') === data.author);
@@ -166,6 +187,11 @@ class ArticleMetaBottom extends Component {
           <Col>
             <Divider type="vertical" />
           </Col>
+          { sliderVisible &&
+            <div>
+              <VotingSlider onCancel={this.onCancel} onConfirm={this.onConfirm} onVotePowerChange={this.changeVotePower} votingDirection={this.state.votingDirection} />
+            </div>
+          }
           <Col>
             <span
               className={`upvote ${(isUpvoted) ? 'active' : ''}`}

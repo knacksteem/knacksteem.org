@@ -1,4 +1,4 @@
-import {VOTE_POWER_CHANGE} from '../actions/types';
+import {VOTE_POWER_CHANGE, TOGGLE_SLIDER} from '../actions/types';
 
 const initialState = {
   value: 10000,
@@ -11,6 +11,10 @@ const votingSlider = (state = initialState, action) => {
       return {
         value: action.payload
       };
+    case TOGGLE_SLIDER:
+      return {
+        isVotingSliderVisible: !initialState.isVotingSliderVisible
+      }
     default:
       return state;
   }
