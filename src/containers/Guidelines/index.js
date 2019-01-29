@@ -77,7 +77,6 @@ const Guidelines = () => {
           <li>Visual material such as images and videos are usually helpful and makes your content even more interesting to read.</li>
           <li>Try to remain neutral in all context and try not to defarm others.</li>
         </ul>
-        <p>[altruism, by its nature, is not neutral]</p>
 
         <h3>Jokes and Humour</h3>
         <hr></hr>

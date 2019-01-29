@@ -517,7 +517,7 @@ class Editor extends Component {
       const {isComment} = this.props;
       const {categories} = this.props.articles;
       if (!isComment && categories.map(elem => elem.key).indexOf(value[0]) === -1) {
-        callback('first tag must be any of the following; graphics, art, vlog, knack, techtrends ');
+        callback('first tag must be any of the following; gaming, art, documentation, altriusm, techtrends, fashion, humour, music, diy. ');
       }
     }
     if (value) {
