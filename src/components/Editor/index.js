@@ -248,13 +248,13 @@ class Editor extends Component {
    *
    * @return {Object}
    */
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     this.onUpdate(e);
     this
       .props
       .form
-      .validateFieldsAndScroll((err, values) => {
+      .validateFieldsAndScroll(async (err, values) => {
         // Validate form for errors
         const {
           articleData,
@@ -272,7 +272,7 @@ class Editor extends Component {
           }
           // If the the actions is edit dispatch actions to edit.
           if (isEdit) {
-            dispatch(editArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
+            await dispatch(editArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
             if (onDone) {
               onDone();
             }
@@ -283,7 +283,7 @@ class Editor extends Component {
               title: '',
               tags: ''
             }
-            dispatch(postArticle(values.title, values.body, values.tags, isComment, parentPermlink, parentAuthor));
+            await dispatch(postArticle(values.title, values.body, values.tags, isComment, parentPermlink, parentAuthor));
             if (onDone) {
               onDone();
             }
