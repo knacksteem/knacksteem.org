@@ -676,7 +676,7 @@ class Editor extends Component {
 
   render() {
     const { previewMarkdown, previewState } = this.state;
-    const { form, isComment, isEdit, onCancel } = this.props;
+    const { form, isComment, isEdit, onCancel, articles } = this.props;
     const { isBusy } = this.props.articles;
     const { isMarkdownEditorActive } = this.state;
 
@@ -706,7 +706,12 @@ class Editor extends Component {
           : 20
       }
     };
-
+    const TagOptions = Select.Option;
+    const { categories = [] } = articles;
+    let children = [];
+    categories.map((catrgory) => {
+      children.push(<TagOptions key={catrgory.key}>{catrgory.name}</TagOptions>);
+    });
     return (
       <Row type="flex" style={{
         width: '100%'
@@ -850,9 +855,10 @@ class Editor extends Component {
                     required: true,
                     message: 'Please enter some tags',
                     type: 'array'
-                  }, {
-                    validator: this.checkTags
                   }
+                  // , {
+                  //   validator: this.checkTags
+                  // }
                 ]
               })(
                 <Select
@@ -861,12 +867,10 @@ class Editor extends Component {
                   }}
                   onChange={this.onUpdate}
                   className="Editor__tags"
-                  mode="tags"
+                  mode="multiple"
                   placeholder='Add story tag here'
-                  dropdownStyle={{
-                    display: 'none'
-                  }}
-                  tokenSeparators={[' ', ',']} />)}
+                  tokenSeparators={[' ', ',']} >
+                  {children}</Select>)}
             </Form.Item>
             }
 
@@ -925,7 +929,7 @@ class Editor extends Component {
             }
           </div>
         </Form>
-      </Row>
+      </Row >
     );
   }
 }
