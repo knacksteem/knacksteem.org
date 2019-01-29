@@ -117,11 +117,21 @@ class  NewContribution extends React.Component {
     const {isComment, parsedPostData} = this.state;
     const {dispatch, onDone} = this.props;
  
-      dispatch(postArticle(parsedPostData.title, parsedPostData.body, tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor)); 
+      dispatch(postArticle(parsedPostData.title, this.replaceAtMentionsWithLinks(parsedPostData.body), tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor)); 
 
     if (onDone) {
       onDone();
     }
+  }
+
+  /**
+   * @method replaceAtMentionsWithLinks
+   * @description Replace username with markdown link url text
+   * @param {String} text 
+   * @return {String}
+   */
+  replaceAtMentionsWithLinks = text => {
+    return text.replace(/@([a-z\d_]+)/ig, '[@$1](http://knacksteem.org/@$1)');
   }
 
   render() {

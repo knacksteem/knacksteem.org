@@ -292,7 +292,7 @@ class Editor extends Component {
               .props
               .onSubmit({
                 ...values,
-                body: this.input.value
+                body: this.replaceAtMentionsWithLinks(this.input.value)
               });
           }
 
@@ -665,10 +665,22 @@ class Editor extends Component {
   //reference to autocomplete input for second tag (category)
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
 
+  /**
+   * @method replaceAtMentionsWithLinks
+   * @description Replace username with markdown link url text
+   * @param {String} text 
+   * @return {String}
+   */
   replaceAtMentionsWithLinks = text => {
     return text.replace(/@([a-z\d_]+)/ig, '[@$1](http://knacksteem.org/@$1)');
   }
 
+  /**
+    * @method replaceLinksWithAtMentions
+    * @description Replace username link with username
+    * @param {String} text 
+    * @return {String}
+    */
   replaceLinksWithAtMentions = text => {
     //eslint-disable-next-line no-useless-escape
     return text.replace(new RegExp("\\[@([a-z\d_]+).*?\\]\\(http://knacksteem.org/@([a-z\d_]+).*?\\)", "g"), "\@$1");
