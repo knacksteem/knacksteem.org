@@ -44,8 +44,11 @@ class ArticleMetaBottom extends Component {
     this.getArticleVotes();
   }
 
-  componentDidUpdate() {
-    this.getArticleVotes();
+  componentDidUpdate(prevProps) {
+    // This had to be made because of Update Blocking -> https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/guides/blocked-updates.md
+    if (prevProps.data.permlink !== this.props.data.permlink) {
+      this.getArticleVotes();
+    }
   }
 
   //upvote article or comment
