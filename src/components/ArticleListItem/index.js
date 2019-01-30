@@ -1,22 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Link} from 'react-router-dom';
-import {connect} from 'react-redux';
-import {Button, Row, Col, Avatar} from 'antd';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Button, Row, Col, Avatar } from 'antd';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
-import {reserveArticle, approveArticle, rejectArticle} from '../../actions/articles';
+import { reserveArticle, approveArticle, rejectArticle } from '../../actions/articles';
 import { truncateString, prettyDate } from '../../services/functions';
 import './index.css';
 
 
 //Single Item for Article Overview
-const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
+const ArticleListItem = ({ data, user, status, dispatch, onUpvoteSuccess }) => {
 
   //reserve the current article with an api call and reload the pending articles for redux
   const onReserveClick = () => {
     // In case supervisor clicked on reserve for review in the Home page.
     // status undefined means it is not on approved or review page;
-    if(status === undefined)
+    if (status === undefined)
       dispatch(reserveArticle(data.permlink, 'approved'));
     else
       dispatch(reserveArticle(data.permlink, status));
@@ -26,15 +26,15 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
     dispatch(approveArticle(data.permlink, status));
   };
   //reject the current article
-  const onRejectClick = () => { 
+  const onRejectClick = () => {
     dispatch(rejectArticle(data.permlink, status));
   };
   return (
     <Row className="ant-list-item list-item-article">
       <Row type="flex" align="middle">
-        <Col style={{marginLeft: '10px'}}>
+        <Col style={{ marginLeft: '10px' }}>
           <a title="Visit profile" href="/home">
-            <Avatar size="small" src={`${data.authorImage}`}  icon="user" />
+            <Avatar size="small" src={`${data.authorImage}`} icon="user" />
           </a>
         </Col>
         <Col >
@@ -44,18 +44,22 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
           <p className="my-auto">in {data.tags[1]}</p>
         </Col>
         <Col >
-         <p className="my-auto">{prettyDate(data.postedAt)}</p>
+          <p className="my-auto">{prettyDate(data.postedAt)}</p>
         </Col>
       </Row>
-      <Row className="article-item-list-container"type="flex" style={{ overflow: 'hidden'}}>
-        {data.coverImage && 
-          <Row className="article-image-container">
-            <Link style={{ width: 'inherit', height: 'auto' }} to={`/articles/${data.author}/${data.permlink}`}>
-              <picture style={{ width: 'inherit', height: 'auto' }} >
+      <Row className="article-item-list-container" type="flex" style={{ overflow: 'hidden' }}>
+        {data.coverImage &&
+          <Link style={{ width: 'inherit', height: 'auto' }} to={`/articles/${data.author}/${data.permlink}`}>
+            <Row className="article-image-container" style={{
+              backgroundImage: `url(https://steemitimages.com/640x480/${data.coverImage})`
+            }}>
+
+              {/* <picture style={{ width: 'inherit', height: 'auto' }} >
                 <img  className="article-image"  srcSet={`https://steemitimages.com/640x480/${data.coverImage}`} alt={data.title}/>
-              </picture>
-            </Link>
-          </Row>
+              </picture> */}
+
+            </Row>
+          </Link>
         }
         <Col className="article-details" gutter={0} >
           <Col>
@@ -63,7 +67,7 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
               <h3 className="article-title">{data.title}</h3>
             </Link>
             <Link to={`/articles/${data.author}/${data.permlink}`}>
-              <div className="ant-list .article-content-wrapper">{truncateString(data.description,140)}</div>
+              <div className="ant-list .article-content-wrapper">{truncateString(data.description, 140)}</div>
             </Link>
           </Col>
         </Col>
@@ -71,10 +75,10 @@ const ArticleListItem = ({data, user, status, dispatch, onUpvoteSuccess}) => {
       <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
       {((status === 'pending' || (data.moderation && data.moderation.approved && user.isSupervisor)) && data.author !== user.username) &&
         <div className="mod-functions">
-            <Button size="small" type="primary" onClick={onReserveClick}>Reserve for review</Button>
+          <Button size="small" type="primary" onClick={onReserveClick}>Reserve for review</Button>
         </div>
       }
-      {(status === 'reserved' && (user.username !== data.moderation.reservedBy)) && 
+      {(status === 'reserved' && (user.username !== data.moderation.reservedBy)) &&
         <div className="reservedBy">Reserved for review by <Link to={`/@${data.moderation.reservedBy}`}>{data.moderation.reservedBy}</Link></div>
       }
       {(status === 'reserved' && user.username === data.moderation.reservedBy) &&

@@ -32,7 +32,7 @@ class ArticleDetail extends Component {
     };
   };
   componentDidMount() {
-    this.getArticle();
+    this.getArticle(true);
   };
 
   componentDidUpdate (prevProps, prevState) {
@@ -43,13 +43,13 @@ class ArticleDetail extends Component {
     }
   };
 
-  getArticle = async () => {
+  getArticle = async (loadingOnRefresh) => {
     const {match, dispatch} = this.props;
     try {
       this.setState({
         limit: 3,
         disableShowMore: false,
-        isLoading: true
+        isLoading: loadingOnRefresh
       });
       let response = await apiGet(`/posts/${match.params.author}/${match.params.permlink}`, {username: Cookies.get('username') || undefined});
       //no article found, go back to main route
