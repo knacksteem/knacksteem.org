@@ -264,6 +264,14 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
  * edit article on blockchain - knacksteem backend changes are only for tags
  */
 export const editArticle = (title, body, tags, articleData, isComment, parentPermlink, parentAuthor) => {
+  let images = [];
+  let matches;
+  // eslint-disable-next-line
+  while ((matches = IMAGE_REGEX.exec(body))) {
+    if (images.indexOf(matches[1]) === -1 && matches[1].search(/https?:\/\//) === 0) {
+      images.push(matches[1]);
+    }
+  }
   return async (dispatch, getState) => {
     dispatch({
       type: types.ARTICLES_POSTING
@@ -287,7 +295,8 @@ export const editArticle = (title, body, tags, articleData, isComment, parentPer
               title: title,
               body: body,
               json_metadata: JSON.stringify({
-                tags: tags
+                tags: tags,
+                image: images
               })
             }
           ],

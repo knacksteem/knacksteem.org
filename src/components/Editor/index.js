@@ -44,7 +44,8 @@ class Editor extends Component {
         ? articleData.tags
         : ['knacksteem'],
       isMarkdownEditorActive: false,
-      previewState: false
+      previewState: false,
+      openSelect: false
     };
 
     this.renderItems = this
@@ -105,6 +106,7 @@ class Editor extends Component {
         .input
         .addEventListener('paste', this.handlePastedImage);
     }
+    
 
     // eslint-disable-next-line react/no-find-dom-node
     const select = ReactDOM.findDOMNode(this.select);
@@ -607,7 +609,8 @@ class Editor extends Component {
         previewMarkdown: this.replaceAtMentionsWithLinks(this
           .input
           .value)
-          .toString('markdown')
+          .toString('markdown'),
+        openSelect: false
       });
 
       return values;
@@ -635,7 +638,8 @@ class Editor extends Component {
         previewMarkdown: this.replaceAtMentionsWithLinks(this
           .input
           .value)
-          .toString('markdown')
+          .toString('markdown'),
+        openSelect: false
       });
 
       return values;
@@ -689,8 +693,19 @@ class Editor extends Component {
     return text.replace(new RegExp("\\[@([a-z\d_]+).*?\\]\\(http://knacksteem.org/@([a-z\d_]+).*?\\)", "g"), "\@$1");
   }
 
+  /**
+    * @method openCloseDropdown
+    * @description open close tags dropdown
+    * @param {boolean} openSelect
+    */
+  openCloseDropdown = async openSelect => {
+    await this.setState({
+      openSelect
+    });
+  }
+
   render() {
-    const { previewMarkdown, previewState } = this.state;
+    const { previewMarkdown, previewState, openSelect } = this.state;
     const { form, isComment, isEdit, onCancel, articles } = this.props;
     const { isBusy } = this.props.articles;
     const { isMarkdownEditorActive } = this.state;
@@ -880,11 +895,14 @@ class Editor extends Component {
                   ref={(ref) => {
                     this.select = ref;
                   }}
+                  open={openSelect}
                   onChange={this.onUpdate}
                   className="Editor__tags"
                   mode="tags"
                   placeholder='Add story tag here'
-                  tokenSeparators={[' ', ',']} >
+                  tokenSeparators={[' ', ',']} onFocus={()=>{
+                    this.openCloseDropdown(true)
+                  }} >
                   {children}</Select>)}
             </Form.Item>
             }
