@@ -144,7 +144,10 @@ class Editor extends Component {
    * @return <void></void>
    */
   renderMarkdown = (value) => {
-    this.setState({ contentHtml: value });
+    this.setState({
+      contentHtml: value, previewMarkdown: this.replaceAtMentionsWithLinks(value)
+        .toString('markdown')
+    });
   };
 
   /**
@@ -601,9 +604,9 @@ class Editor extends Component {
         ];
       }
       this.setState({
-        previewMarkdown: this
+        previewMarkdown: this.replaceAtMentionsWithLinks(this
           .input
-          .value
+          .value)
           .toString('markdown')
       });
 
@@ -629,9 +632,9 @@ class Editor extends Component {
       }
 
       this.setState({
-        previewMarkdown: this
+        previewMarkdown: this.replaceAtMentionsWithLinks(this
           .input
-          .value
+          .value)
           .toString('markdown')
       });
 
