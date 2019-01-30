@@ -11,14 +11,12 @@ const Guidelines = () => {
         <hr></hr>
         <h2>Policies</h2>
         <hr></hr>
-        <p>Policies are rules which you must adhere to. Failure to follow any of the following policies will lead to rejection of your contribution and may lead to a ban.</p>
+        <p>Policies are rules which you should adhere to. Failure to follow them may lead to rejection of your contribution, and/or ban from using our service.</p>
         <ul>
           <li>Only posts written in clear and easily understood English will be accepted.</li>
-          <li>Contributions and comments must not include offensive speech directed at others.</li>
-          <li>Contributions and comments may not contain false information about another user that may be perceived as defamatory.</li>
-          <li>Post may not include licensed or commercial materials, and should cite the source of Creative Commons media.</li>
-          <li>Plagiarism.</li>
-          <li>Using multiple accounts to abuse the system.</li> 
+          <li>Every commercial material used within a contribution must be licensed, or cited properly.</li>
+          <li>Avoid plagiarism.</li>
+          <li>Avoid using multiple accounts to game or abuse the system.</li> 
         </ul>
 
         <h2>Category guidelines (Tips for submitting a great post)</h2>
