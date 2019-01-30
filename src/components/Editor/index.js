@@ -868,9 +868,9 @@ class Editor extends Component {
                     message: 'Please enter some tags',
                     type: 'array'
                   }
-                  // , {
-                  //   validator: this.checkTags
-                  // }
+                  , {
+                    validator: this.checkTags
+                  }
                 ]
               })(
                 <Select
@@ -879,7 +879,7 @@ class Editor extends Component {
                   }}
                   onChange={this.onUpdate}
                   className="Editor__tags"
-                  mode="multiple"
+                  mode="tags"
                   placeholder='Add story tag here'
                   tokenSeparators={[' ', ',']} >
                   {children}</Select>)}
