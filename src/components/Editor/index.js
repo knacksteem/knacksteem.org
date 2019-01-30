@@ -739,7 +739,7 @@ class Editor extends Component {
     const TagOptions = Select.Option;
     const { categories = [] } = articles;
     let children = [];
-    categories.map((catrgory) => {
+    categories.forEach((catrgory) => {
       children.push(<TagOptions key={catrgory.key}>{catrgory.name}</TagOptions>);
     });
     return (
