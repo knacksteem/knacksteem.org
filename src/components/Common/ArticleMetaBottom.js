@@ -187,11 +187,13 @@ class ArticleMetaBottom extends Component {
           <Col>
             <Divider type="vertical" />
           </Col>
+          <Col>
           { sliderVisible &&
             <div>
               <VotingSlider onCancel={this.onCancel} onConfirm={this.onConfirm} onVotePowerChange={this.changeVotePower} votingDirection={this.state.votingDirection} />
             </div>
           }
+          </Col>
           <Col>
             <span
               className={`upvote ${(isUpvoted) ? 'active' : ''}`}
