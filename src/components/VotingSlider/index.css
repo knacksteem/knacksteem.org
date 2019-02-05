@@ -61,6 +61,17 @@
   -ms-transform: translateZ(0);
   transform: translateZ(0);
 }
+
+@media (max-width: 768px) {
+  .voting-buttons-container {
+    display: block;
+  }
+  .voting-buttons-container .voting-button {
+    width: 100%;
+    margin: 0 0 10px 0;
+  }
+}
+
 @-webkit-keyframes load4 {
   0%,
   100% {
