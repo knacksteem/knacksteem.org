@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import {throttle} from 'lodash';
-import {connect} from 'react-redux';
+import { throttle } from 'lodash';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
-import {HotKeys} from 'react-hotkeys';
+import { HotKeys } from 'react-hotkeys';
 import isArray from 'lodash/isArray';
 import Dropzone from 'react-dropzone';
 import {
@@ -17,7 +17,7 @@ import {
   Form,
   Select
 } from 'antd';
-import {editArticle, postArticle} from '../../actions/articles';
+import { editArticle, postArticle } from '../../actions/articles';
 import EditorToolbar from './EditorToolBar';
 import './index.css';
 
@@ -27,7 +27,7 @@ import './index.css';
 class Editor extends Component {
   constructor(props) {
     super(props);
-    const {articleData, isComment} = props;
+    const { articleData, isComment } = props;
 
     this.state = {
       contentHtml: '',
@@ -44,7 +44,8 @@ class Editor extends Component {
         ? articleData.tags
         : ['knacksteem'],
       isMarkdownEditorActive: false,
-      previewState: false
+      previewState: false,
+      openSelect: false
     };
 
     this.renderItems = this
@@ -87,12 +88,12 @@ class Editor extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {articleData} = nextProps;
+    const { articleData } = nextProps;
 
     // using a check to stop infinite loop on rendering.
     if (this.state.notOnDom) {
       this.setValues(articleData);
-      this.setState({notOnDom: true})
+      this.setState({ notOnDom: true })
     }
   }
 
@@ -105,6 +106,7 @@ class Editor extends Component {
         .input
         .addEventListener('paste', this.handlePastedImage);
     }
+    
 
     // eslint-disable-next-line react/no-find-dom-node
     const select = ReactDOM.findDOMNode(this.select);
@@ -115,7 +117,7 @@ class Editor extends Component {
         selectInput.setAttribute('autocapitalize', 'none');
       }
     }
-    const {articleData, isEdit, isComment} = this.props;
+    const { articleData, isEdit, isComment } = this.props;
     if (isEdit) {
       this.setValues(articleData);
     }
@@ -144,7 +146,10 @@ class Editor extends Component {
    * @return <void></void>
    */
   renderMarkdown = (value) => {
-    this.setState({contentHtml: value});
+    this.setState({
+      contentHtml: value, previewMarkdown: this.replaceAtMentionsWithLinks(value)
+        .toString('markdown')
+    });
   };
 
   /**
@@ -155,7 +160,7 @@ class Editor extends Component {
    * @return <void>
    */
   insertCode = (type) => {
-    if (!this.input) 
+    if (!this.input)
       return;
     this
       .input
@@ -237,10 +242,10 @@ class Editor extends Component {
  * @return {Void}
  */
   resizeTextarea = () => {
-    if (this.originalInput) 
+    if (this.originalInput)
       this.originalInput.resizeTextarea();
-    };
-  
+  };
+
   /**
    * @method handleSubmit
    *
@@ -248,13 +253,13 @@ class Editor extends Component {
    *
    * @return {Object}
    */
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     this.onUpdate(e);
     this
       .props
       .form
-      .validateFieldsAndScroll((err, values) => {
+      .validateFieldsAndScroll(async (err, values) => {
         // Validate form for errors
         const {
           articleData,
@@ -268,11 +273,11 @@ class Editor extends Component {
         if (!err && this.input.value !== '') {
           values = {
             ...values,
-            body: this.input.value
+            body: this.replaceAtMentionsWithLinks(this.input.value)
           }
           // If the the actions is edit dispatch actions to edit.
           if (isEdit) {
-            dispatch(editArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
+            await dispatch(editArticle(values.title, values.body, values.tags, articleData, isComment, parentPermlink, parentAuthor));
             if (onDone) {
               onDone();
             }
@@ -283,7 +288,7 @@ class Editor extends Component {
               title: '',
               tags: ''
             }
-            dispatch(postArticle(values.title, values.body, values.tags, isComment, parentPermlink, parentAuthor));
+            await dispatch(postArticle(values.title, values.body, values.tags, isComment, parentPermlink, parentAuthor));
             if (onDone) {
               onDone();
             }
@@ -292,7 +297,7 @@ class Editor extends Component {
               .props
               .onSubmit({
                 ...values,
-                body: this.input.value
+                body: this.replaceAtMentionsWithLinks(this.input.value)
               });
           }
 
@@ -309,12 +314,12 @@ class Editor extends Component {
             }
           };
 
-          this.setState({noContent: true});
+          this.setState({ noContent: true });
           this
             .props
             .form
             .getFieldError(errors)
-        } else {}
+        } else { }
       });
   };
 
@@ -335,12 +340,12 @@ class Editor extends Component {
           if (item.kind === 'file') {
             e.preventDefault();
 
-            this.setState({imageUploading: true});
+            this.setState({ imageUploading: true });
 
             const blob = item.getAsFile();
             this
               .props
-              .onImageInserted(blob, this.insertImage, () => this.setState({imageUploading: false}),);
+              .onImageInserted(blob, this.insertImage, () => this.setState({ imageUploading: false }));
           }
         });
     }
@@ -356,10 +361,10 @@ class Editor extends Component {
 
   handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      this.setState({imageUploading: true});
+      this.setState({ imageUploading: true });
       this
         .props
-        .onImageInserted(e.target.files[0], this.insertImage, () => this.setState({imageUploading: false}),);
+        .onImageInserted(e.target.files[0], this.insertImage, () => this.setState({ imageUploading: false }));
       // Input reacts on value change, so if user selects the same file nothing will
       // happen. We have to reset its value, so if same image is selected it will emit
       // onChange event.
@@ -377,11 +382,11 @@ class Editor extends Component {
 
   handleDrop = (files) => {
     if (files.length === 0) {
-      this.setState({dropzoneActive: false});
+      this.setState({ dropzoneActive: false });
       return;
     }
 
-    this.setState({dropzoneActive: false, imageUploading: true});
+    this.setState({ dropzoneActive: false, imageUploading: true });
     let callbacksCount = 0;
     Array
       .from(files)
@@ -392,11 +397,11 @@ class Editor extends Component {
             callbacksCount += 1;
             this.insertImage(image, imageName);
             if (callbacksCount === files.length) {
-              this.setState({imageUploading: false});
+              this.setState({ imageUploading: false });
             }
           }, () => {
-            this.setState({imageUploading: false});
-          },);
+            this.setState({ imageUploading: false });
+          });
       });
   };
 
@@ -404,13 +409,13 @@ class Editor extends Component {
    * @method handleDragEnter -- method to handle draging files into the Editor
    */
 
-  handleDragEnter = () => this.setState({dropzoneActive: true});
+  handleDragEnter = () => this.setState({ dropzoneActive: true });
 
   /**
    * @method handleDragLeave -- method to handle drag leaving into the Editor
    */
 
-  handleDragLeave = () => this.setState({dropzoneActive: false});
+  handleDragLeave = () => this.setState({ dropzoneActive: false });
 
   /**
    * @method insertAtCursor
@@ -427,7 +432,7 @@ class Editor extends Component {
    */
 
   insertAtCursor = (before, after, deltaStart = 0, deltaEnd = 0) => {
-    if (!this.input) 
+    if (!this.input)
       return;
     const startPos = this.input.selectionStart;
     const endPos = this.input.selectionEnd;
@@ -435,12 +440,12 @@ class Editor extends Component {
       .input
       .value
       .substring(0, startPos) + before + this
-      .input
-      .value
-      .substring(startPos, endPos) + after + this
-      .input
-      .value
-      .substring(endPos, this.input.value.length);
+        .input
+        .value
+        .substring(startPos, endPos) + after + this
+          .input
+          .value
+          .substring(endPos, this.input.value.length);
     this.input.selectionStart = startPos + deltaStart;
     this.input.selectionEnd = endPos + deltaEnd;
   };
@@ -452,7 +457,7 @@ class Editor extends Component {
  */
 
   onUpdate = (e) => {
-    const {isEdit, isComment} = this.props;
+    const { isEdit, isComment } = this.props;
 
     if (isEdit) {
       this.getValues(e);
@@ -478,19 +483,19 @@ class Editor extends Component {
  * @return <void></void>
  */
   insertImage = (image, imageName = 'image') => {
-    if (!this.input) 
+    if (!this.input)
       return;
-    
+
     const startPos = this.input.selectionStart;
     const endPos = this.input.selectionEnd;
     const imageText = `![${imageName}](${image})\n`;
     this.input.value = `${this
       .input
       .value
-      .substring(0, startPos,)}${imageText}${this
-      .input
-      .value
-      .substring(endPos, this.input.value.length)}`;
+      .substring(0, startPos)}${imageText}${this
+        .input
+        .value
+        .substring(endPos, this.input.value.length)}`;
     this.resizeTextarea();
     this.renderMarkdown(this.input.value);
     this.setInputCursorPosition(startPos + imageText.length);
@@ -514,8 +519,8 @@ class Editor extends Component {
     };
 
     if (value) {
-      const {isComment} = this.props;
-      const {categories} = this.props.articles;
+      const { isComment } = this.props;
+      const { categories } = this.props.articles;
       if (!isComment && categories.map(elem => elem.key).indexOf(value[0]) === -1) {
         callback('first tag must be any of the following; gaming, art, documentation, altriusm, techtrends, fashion, humour, music, diy. ');
       }
@@ -523,9 +528,9 @@ class Editor extends Component {
     if (value) {
       value
         .map(tag => ({
-        tag,
-        valid: /^[a-z0-9]+(-[a-z0-9]+)*$/.test(tag)
-      }))
+          tag,
+          valid: /^[a-z0-9]+(-[a-z0-9]+)*$/.test(tag)
+        }))
         .filter(tag => !tag.valid)
         .map(tag => callback(`Tag ${tag.tag} is invalid`));
     }
@@ -534,7 +539,7 @@ class Editor extends Component {
   };
 
   setValues = (post) => {
-    const {isEdit, isComment} = this.props
+    const { isEdit, isComment } = this.props
     if (isEdit && !isComment) {
       this
         .props
@@ -549,18 +554,18 @@ class Editor extends Component {
       this
         .props
         .form
-        .setFieldsValue({title: post.title, tags: post.tags});
+        .setFieldsValue({ title: post.title, tags: post.tags });
     }
-
     if (isEdit) {
       if (this.input && post.description !== '') {
-        this.input.value = post.description;
+        this.input.value = this.replaceLinksWithAtMentions(post.description);
+        console.log(' post.description', this.input.value)
         this.renderMarkdown(this.input.value);
         this.resizeTextarea();
       }
     } else {
       if (this.input && post.body !== '') {
-        this.input.value = post.body;
+        this.input.value = this.replaceLinksWithAtMentions(post.body);
         this.renderMarkdown(this.input.value);
         this.resizeTextarea();
       }
@@ -580,7 +585,7 @@ class Editor extends Component {
  * @return {Object}
  */
   getValues = (e) => {
-    const {isEdit} = this.props
+    const { isEdit } = this.props
 
     if (isEdit) {
       const values = {
@@ -591,9 +596,9 @@ class Editor extends Component {
         body: this.input.value
       };
 
-      if (!e) 
+      if (!e)
         return values;
-      
+
       if (isArray(e)) {
         values.tags = [
           ...['knacksteem'],
@@ -601,10 +606,11 @@ class Editor extends Component {
         ];
       }
       this.setState({
-        previewMarkdown: this
+        previewMarkdown: this.replaceAtMentionsWithLinks(this
           .input
-          .value
-          .toString('markdown')
+          .value)
+          .toString('markdown'),
+        openSelect: false
       });
 
       return values;
@@ -618,9 +624,9 @@ class Editor extends Component {
         body: this.input.value
       };
 
-      if (!e) 
+      if (!e)
         return values;
-      
+
       if (isArray(e)) {
         values.tags = [
           ...['knacksteem'],
@@ -629,10 +635,11 @@ class Editor extends Component {
       }
 
       this.setState({
-        previewMarkdown: this
+        previewMarkdown: this.replaceAtMentionsWithLinks(this
           .input
-          .value
-          .toString('markdown')
+          .value)
+          .toString('markdown'),
+        openSelect: false
       });
 
       return values;
@@ -665,11 +672,43 @@ class Editor extends Component {
   //reference to autocomplete input for second tag (category)
   refInputTagsAutoComplete = input => this.inputTagsAutoComplete = input;
 
+  /**
+   * @method replaceAtMentionsWithLinks
+   * @description Replace username with markdown link url text
+   * @param {String} text 
+   * @return {String}
+   */
+  replaceAtMentionsWithLinks = text => {
+    return text.replace(/@([a-z\d_]+)/ig, '[@$1](http://knacksteem.org/@$1)');
+  }
+
+  /**
+    * @method replaceLinksWithAtMentions
+    * @description Replace username link with username
+    * @param {String} text 
+    * @return {String}
+    */
+  replaceLinksWithAtMentions = text => {
+    //eslint-disable-next-line no-useless-escape
+    return text.replace(new RegExp("\\[@([a-z\d_]+).*?\\]\\(http://knacksteem.org/@([a-z\d_]+).*?\\)", "g"), "\@$1");
+  }
+
+  /**
+    * @method openCloseDropdown
+    * @description open close tags dropdown
+    * @param {boolean} openSelect
+    */
+  openCloseDropdown = async openSelect => {
+    await this.setState({
+      openSelect
+    });
+  }
+
   render() {
-    const {previewMarkdown, previewState} = this.state;
-    const {form, isComment, isEdit, onCancel} = this.props;
-    const {isBusy} = this.props.articles;
-    const {isMarkdownEditorActive} = this.state;
+    const { previewMarkdown, previewState, openSelect } = this.state;
+    const { form, isComment, isEdit, onCancel, articles } = this.props;
+    const { isBusy } = this.props.articles;
+    const { isMarkdownEditorActive } = this.state;
 
     const styles = {
       commentModePadding: {
@@ -697,7 +736,12 @@ class Editor extends Component {
           : 20
       }
     };
-
+    const TagOptions = Select.Option;
+    const { categories = [] } = articles;
+    let children = [];
+    categories.forEach((catrgory) => {
+      children.push(<TagOptions key={catrgory.key}>{catrgory.name}</TagOptions>);
+    });
     return (
       <Row type="flex" style={{
         width: '100%'
@@ -706,12 +750,12 @@ class Editor extends Component {
           layout="vertical"
           onSubmit={this.handleSubmit}
           style={{
-          width: '100%'
-        }}>
+            width: '100%'
+          }}>
           <div
             className={` ${isMarkdownEditorActive
-            ? 'markdown-editor-is-active'
-            : 'markdown-editor-is-inactive'}`}>
+              ? 'markdown-editor-is-active'
+              : 'markdown-editor-is-inactive'}`}>
             {!isComment && <Form.Item>
               <h3>Title</h3>
               {!isComment && form.getFieldDecorator('title', {
@@ -723,17 +767,17 @@ class Editor extends Component {
                 ]
               })(<Input
                 ref={(title) => {
-                this.title = title;
-              }}
+                  this.title = title;
+                }}
                 style={{
-                fontWeight: '900'
-              }}
+                  fontWeight: '900'
+                }}
                 onChange={this.onUpdate}
                 className="Editor__title"
-                placeholder='Add title'/>)
-}
+                placeholder='Add title' />)
+              }
             </Form.Item>
-}
+            }
             {!isComment && <Row type="flex" justify="space-between">
               <Col>
                 <h3>Story</h3>
@@ -741,36 +785,36 @@ class Editor extends Component {
               <Col>
                 <a onClick={e => this.handleEditorToggle(e)}>
                   <p>{isMarkdownEditorActive
-                      ? 'visual'
-                      : 'markdown'}</p>
+                    ? 'visual'
+                    : 'markdown'}</p>
                 </a>
               </Col>
             </Row>
-}
+            }
             <Row
               style={{
-              border: '1px solid #eee',
-              ...styles.commentModePadding,
-              background: '#fff',
-              ...styles.commentModeContainerHeight
-            }}>
+                border: '1px solid #eee',
+                ...styles.commentModePadding,
+                background: '#fff',
+                ...styles.commentModeContainerHeight
+              }}>
               <Form.Item
                 validateStatus={this.state.noContent
-                ? 'error'
-                : ''}
-                help={this.state.noContent && <Alert message="Content can't be empty" type="error" showIcon/>}>
+                  ? 'error'
+                  : ''}
+                help={this.state.noContent && <Alert message="Content can't be empty" type="error" showIcon />}>
                 {!isComment && <EditorToolbar
                   onSelect={this.insertCode}
                   style={{
-                  margin: 'auto'
-                }}/>
-}
+                    margin: 'auto'
+                  }} />
+                }
                 <Row
                   className="Editor__dropzone-base"
                   style={{
-                  width: 'inherit',
-                  ...styles.commentModeHeight
-                }}>
+                    width: 'inherit',
+                    ...styles.commentModeHeight
+                  }}>
                   <Dropzone
                     disableClick
                     style={{}}
@@ -781,7 +825,7 @@ class Editor extends Component {
                     {this.state.dropzoneActive && (
                       <div className="Editor__dropzone">
                         <div>
-                          <i className="iconfont icon-picture"/>
+                          <i className="iconfont icon-picture" />
                           <p>
                             Drop your images here...</p>
                         </div>
@@ -791,17 +835,17 @@ class Editor extends Component {
                       <Input.TextArea
                         className="editor_input"
                         style={{
-                        border: 'none',
-                        marginTop: '10px',
-                        boxShadow: 'none',
-                        minHeight: '80px'
-                      }}
+                          border: 'none',
+                          marginTop: '10px',
+                          boxShadow: 'none',
+                          minHeight: '80px'
+                        }}
                         autosize={{
-                        ...styles.autoResize
-                      }}
+                          ...styles.autoResize
+                        }}
                         onChange={this.onUpdate}
                         ref={ref => this.setInput(ref)}
-                        placeholder='Write your story...'/>
+                        placeholder='Write your story...' />
                     </HotKeys>
                   </Dropzone>
                 </Row>
@@ -809,19 +853,19 @@ class Editor extends Component {
             </Row>
             {!isComment && <Row
               style={{
-              marginTop: '20px'
-            }}
+                marginTop: '20px'
+              }}
               className="Editor__imagebox">
-              <input type="file" id="inputfile" onChange={this.handleImageChange}/>
+              <input type="file" id="inputfile" onChange={this.handleImageChange} />
               <label htmlFor="inputfile">
                 {this.state.imageUploading
                   ? (
                     <div>
-                      <Icon type="loading"/>
+                      <Icon type="loading" />
                     </div>
 
                   )
-                  : (<i className="iconfont icon-picture"/>)}
+                  : (<i className="iconfont icon-picture" />)}
                 {this.state.imageUploading
                   ? (
                     <p>Upload your image...</p>
@@ -831,9 +875,9 @@ class Editor extends Component {
                   )}
               </label>
             </Row>
-}
+            }
             {!isComment && <Form.Item
-              label={< span className = "Editor__tags" > Tags </span>}
+              label={< span className="Editor__tags" > Tags </span>}
               extra='Separate tags with commas. Only lowercase letters, numbers and hyphen character is permitted.'>
               {form.getFieldDecorator('tags', {
                 rules: [
@@ -841,25 +885,27 @@ class Editor extends Component {
                     required: true,
                     message: 'Please enter some tags',
                     type: 'array'
-                  }, {
+                  }
+                  , {
                     validator: this.checkTags
                   }
                 ]
               })(
                 <Select
-                ref={(ref) => {
-                this.select = ref;
-              }}
-                onChange={this.onUpdate}
-                className="Editor__tags"
-                mode="tags"
-                placeholder='Add story tag here'
-                dropdownStyle={{
-                display: 'none'
-              }}
-                tokenSeparators={[' ', ',']}/>,)}
+                  ref={(ref) => {
+                    this.select = ref;
+                  }}
+                  open={openSelect}
+                  onChange={this.onUpdate}
+                  className="Editor__tags"
+                  mode="tags"
+                  placeholder='Add story tag here'
+                  tokenSeparators={[' ', ',']} onFocus={()=>{
+                    this.openCloseDropdown(true)
+                  }} >
+                  {children}</Select>)}
             </Form.Item>
-}
+            }
 
             <Form.Item>
               <Row type="flex" justify="end">
@@ -867,19 +913,19 @@ class Editor extends Component {
                   <Button
                     onClick={() => this.handlePreview()}
                     style={{
-                    marginRight: '5px'
-                  }}>
+                      marginRight: '5px'
+                    }}>
                     <p>{previewState
-                        ? 'Close Preview'
-                        : 'Preview'}</p>
+                      ? 'Close Preview'
+                      : 'Preview'}</p>
                   </Button>
                 </Col>
-}
+                }
                 <Col>
                   <Button
                     style={{
-                    backgroundColor: '#22429d'
-                  }}
+                      backgroundColor: '#22429d'
+                    }}
                     htmlType='submit'
                     type={'primary'}
                     loading={isBusy}>
@@ -894,29 +940,29 @@ class Editor extends Component {
             {!isComment && <Form.Item>
               <div
                 style={{
-                maxWidth: '100%',
-                wordWrap: 'break-word',
-                border: `${previewState
-                  ? '1px solid #22429d'
-                  : 'none'}`,
-                padding: '3px'
-              }}>
+                  maxWidth: '100%',
+                  wordWrap: 'break-word',
+                  border: `${previewState
+                    ? '1px solid #22429d'
+                    : 'none'}`,
+                  padding: '3px'
+                }}>
                 <ReactMarkdown
                   className={`'preview' ${previewState
-                  ? 'preview-active'
-                  : 'preview-inactive'}`}
-                  source={previewMarkdown}/>
+                    ? 'preview-active'
+                    : 'preview-inactive'}`}
+                  source={previewMarkdown} />
               </div>
               <Row
                 style={{
-                maxWidth: '100%'
-              }}
+                  maxWidth: '100%'
+                }}
                 className='preview'></Row>
             </Form.Item>
-}
+            }
           </div>
         </Form>
-      </Row>
+      </Row >
     );
   }
 }
@@ -934,6 +980,6 @@ Editor.defaultProps = {
   isEdit: false
 };
 
-const mapStateToProps = state => ({articles: state.articles});
+const mapStateToProps = state => ({ articles: state.articles });
 
 export default connect(mapStateToProps)(Form.create()(Editor));

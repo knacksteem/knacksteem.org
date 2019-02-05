@@ -46,7 +46,11 @@
   background: #FFF;
 }
 .article-image-container {
-  max-width:20% ;
+  width: 108px;
+  min-height: 100%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 .ant-list .article-content-wrapper {
   font-family:  "Open Sans", Helvetica, Arial, sans-serif;

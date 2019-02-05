@@ -187,6 +187,11 @@ class ArticleMetaBottom extends Component {
           <Col>
             <Divider type="vertical" />
           </Col>
+          { sliderVisible &&
+            <div>
+              <VotingSlider onCancel={this.onCancel} onConfirm={this.onConfirm} onVotePowerChange={this.changeVotePower} votingDirection={this.state.votingDirection} />
+            </div>
+          }
           <Col>
           { sliderVisible &&
             <div>
