@@ -55,10 +55,12 @@ class VotingSlider extends Component {
     
   }
   handleTip = () => {
-    return `${this.state.votePower / 100}% $${this.state.voteWorth}`;
+    const {showVoteWorth} = this.props;
+    const returnValue = showVoteWorth ? `${this.state.votePower / 100}% $${this.state.voteWorth}` : `${this.state.votePower / 100}%`
+    return returnValue;
   }
   render() {
-    const {onConfirm, onCancel, votingDirection} = this.props;
+    const {onConfirm, onCancel, votingDirection, showVoteWorth} = this.props;
     const voteValues = votingDirection > 0 ? marks : negativeMarks;
     return (
       <div className="voting-container">
@@ -67,7 +69,7 @@ class VotingSlider extends Component {
             <button className="voting-button-header" onClick={onConfirm}><Icon style={{color: '#22419c'}} type="check-circle" /> Confirm</button>
             <button className="voting-button-header" onClick={onCancel}><Icon type="close-circle" /> Cancel</button>
           </span>
-          <span>{this.state.voteWorth === 0 ? <div className="loader"/> : `$${this.state.maxVoteWorth}`}</span>
+          <span>{showVoteWorth && (this.state.voteWorth === 0 ? <div className="loader"/> : `$${this.state.maxVoteWorth}`)}</span>
         </div>
         {
           votingDirection >= 0 && <Slider disabled={this.state.maxVoteWorth === 0 ? true : false} onChange={this.handleChange} max={100} min={0} marks={voteValues} defaultValue={100} value={this.state.votePower / 100} tipFormatter={this.handleTip}/>
@@ -84,9 +86,10 @@ class VotingSlider extends Component {
             return <Button className="voting-button" disabled={this.state.maxVoteWorth === 0 ? true : false} key={key} onClick={() => this.handleChange(key)}>{key}%</Button>;
           })}
         </div>
-        <div className="voting-worth-information">
-          Your vote will be worth: ${this.state.voteWorth}.
-        </div>
+        { showVoteWorth && <div className="voting-worth-information">
+            Your vote will be worth: ${this.state.voteWorth}.
+          </div>
+        }
       </div>
     );
   }

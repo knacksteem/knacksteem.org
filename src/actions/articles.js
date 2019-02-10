@@ -352,7 +352,7 @@ export const reserveArticle = (permlink, status) => {
 /**
  * approve article by mod
  */
-export const approveArticle = (permlink, status) => {
+export const approveArticle = (permlink, status, score) => {
   return async (dispatch, getState) => {
     const store = getState();
 
@@ -361,6 +361,7 @@ export const approveArticle = (permlink, status) => {
       await apiPost('/moderation/moderate', {
         permlink: permlink,
         approved: true,
+        score: score
       },store.user.accessToken);
     } catch (error) {
       //handled in api service

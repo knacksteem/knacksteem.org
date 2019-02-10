@@ -159,6 +159,7 @@ class ArticleMetaBottom extends Component {
     const downvoteCount = votesData.filter(vote => vote.percent < 0).length;
 
     const actionsArray = [<a key="action-reply" onClick={onReplyClick}>Reply</a>];
+    const showVoteWorth = true;
 
     if (isComment || isArticleDetail) {
       if (isAuthor) {
@@ -190,7 +191,7 @@ class ArticleMetaBottom extends Component {
           <Col>
           { sliderVisible &&
             <div>
-              <VotingSlider onCancel={this.onCancel} onConfirm={this.onConfirm} onVotePowerChange={this.changeVotePower} votingDirection={this.state.votingDirection} />
+              <VotingSlider onCancel={this.onCancel} onConfirm={this.onConfirm} onVotePowerChange={this.changeVotePower} votingDirection={this.state.votingDirection} showVoteWorth={showVoteWorth} />
             </div>
           }
           </Col>
