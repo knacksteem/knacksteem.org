@@ -37,9 +37,10 @@ class Home extends Component {
      if (articles.isBusy) {
        return;
      }
-     //   //if user hits bottom, load next batch of items
+     // if user hits bottom, load next batch of items 
+     // Only load if the count of articles is more than the initial load
      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight) {
+     if ((window.innerHeight + scrollTop) >= document.body.scrollHeight && articles.count > articles.data.length) {
        this.loadArticles(articles.data.length);
      }
    };
