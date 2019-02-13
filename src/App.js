@@ -49,8 +49,8 @@ const App = (props) => {
         <Route exact path="/privacy" component={Privacy} />
         <Route exact path="/contribute" component={Contribute} />
         <Route exact path="/contact" component={ContactUs} />
-        {props.user.username !== ''  && <Route exact path="/moderation/pending" component={Review} />}
-        {props.user.username !== ''  && <Route exact path="/moderation/reserved" component={Review} />}
+        {props.user.isModerator && <Route exact path="/moderation/pending" component={Review} />}
+        {props.user.isModerator && <Route exact path="/moderation/reserved" component={Review} />}
         {props.user.username !== ''  && <Route exact path="/users" component={Users} />}
         <Route exact path="/sponsors" component={Sponsors} />
         <Route exact path="/moderators" component={Moderators} />
