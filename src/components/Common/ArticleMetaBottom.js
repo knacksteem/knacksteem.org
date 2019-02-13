@@ -40,7 +40,8 @@ class ArticleMetaBottom extends Component {
       isDownvoted: false,
       votesData: [],
       sliderVisible: false,
-      sliderValue: 100
+      sliderValue: 100,
+      stateChanged: false
     };
   }
   componentDidMount() {
@@ -48,7 +49,7 @@ class ArticleMetaBottom extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.votesData.length === 0) {
+    if (this.state.stateChanged) {
       this.getArticleVotes();
     }
   }
@@ -99,7 +100,8 @@ class ArticleMetaBottom extends Component {
 
   onConfirm = async () => {
     this.setState({
-      sliderVisible: false
+      sliderVisible: false,
+      stateChanged: true
     });
 
     const {data, dispatch} = this.props;
@@ -139,7 +141,8 @@ class ArticleMetaBottom extends Component {
         this.setState({
           votesData: response.data.results,
           isUpvoted: isAuthorUpvoted,
-          isDownvoted: isAuthorDownvoted
+          isDownvoted: isAuthorDownvoted,
+          stateChanged: false
         });
       }
     } catch (error) {
@@ -150,7 +153,7 @@ class ArticleMetaBottom extends Component {
 
   render() {
     const {isDeleting, votesData, isUpvoted, isDownvoted, sliderVisible} = this.state;
-    const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
+    const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode, user} = this.props;
     
     const isAuthor = (Cookies.get('username') === data.author);
     const commentCount = isComment ? data.replies.length : data.commentsCount;
@@ -189,7 +192,7 @@ class ArticleMetaBottom extends Component {
             <Divider type="vertical" />
           </Col>
           <Col>
-          { sliderVisible &&
+          { sliderVisible && user.username !== '' &&
             <div>
               <VotingSlider onCancel={this.onCancel} onConfirm={this.onConfirm} onVotePowerChange={this.changeVotePower} votingDirection={this.state.votingDirection} showVoteWorth={showVoteWorth} />
             </div>

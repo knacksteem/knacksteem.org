@@ -108,7 +108,7 @@ class ArticleListItem extends Component {
             </Col>
           </Col>
         </Row>
-        <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} />
+        <ArticleMetaBottom data={data} onUpdate={onUpvoteSuccess} user={user} />
         {((status === 'pending' || (data.moderation && data.moderation.approved && user.isSupervisor)) && data.author !== user.username) &&
           <div className="mod-functions">
             <Button size="small" type="primary" onClick={this.onReserveClick}>Reserve for review</Button>
