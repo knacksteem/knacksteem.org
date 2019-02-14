@@ -5,7 +5,7 @@ async function start() {
   setInterval(async () => {
     await getData().catch(err => console.log(err))
     console.log("Delegations downloaded.", Date.now())
-    return null;
+    return "test";
   }, 300000)
   return null;
 }
@@ -24,8 +24,8 @@ async function getData() {
     });
     data = sorted;
     
-    return res;
   }).catch(err => {
+    console.log('Downloading error', err)
     return err;
   });
   
@@ -66,21 +66,26 @@ async function getData() {
 
     });
     //deleting delegations with zero vests
-    const filterZeroVesting = arr.filter(item => {
+    const filterZeroVesting = await arr.filter(item => {
       return item.vesting_shares !== 0;
     });
 
-    const sorted = filterZeroVesting.sort(function(a, b){
+    const sorted = await filterZeroVesting.sort(function(a, b){
       const x = a.vesting_shares;
       const y = b.vesting_shares;
       if (x < y) {return 1;}
       if (x > y) {return -1;}
-      return 0;
+      return null;
     });
-
-    
-    fs.writeFile("delegations.json", JSON.stringify(sorted), err => console.log(err))
-    return null;
+    if(!fs.existsSync('./delegations.json')) {
+      fs.writeFileSync('delegations.json', JSON.stringify(sorted), err => console.log(err)).catch(err=>"Creating file error" ,err)
+    }
+    fs.readFile('./delegations.json', handleFile)
+    function handleFile(err, data) {
+    if (err) throw err
+    fs.writeFileSync("delegations.json", JSON.stringify(sorted), err => console.log('Writting error', err))
+    }
+    return "Success!";
   } else {
     store = store.concat(data)
     await getData();
