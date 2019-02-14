@@ -28,6 +28,7 @@ import Moderators from './containers/Moderators';
 import Search from './containers/Search';
 import ContributionMetaBar from './containers/ContributionMetaBar';
 import './index.css';
+
 const App = (props) => {
   return (
     <Layout id="page-layout">
@@ -48,14 +49,14 @@ const App = (props) => {
         <Route exact path="/privacy" component={Privacy} />
         <Route exact path="/contribute" component={Contribute} />
         <Route exact path="/contact" component={ContactUs} />
-        <Route exact path="/moderation/pending" component={Review} />
-        <Route exact path="/moderation/reserved" component={Review} />
-        <Route exact path="/users" component={Users} />
+        {props.user.isModerator && <Route exact path="/moderation/pending" component={Review} />}
+        {props.user.isModerator && <Route exact path="/moderation/reserved" component={Review} />}
+        {props.user.username !== ''  && <Route exact path="/users" component={Users} />}
         <Route exact path="/sponsors" component={Sponsors} />
         <Route exact path="/moderators" component={Moderators} />
         <Route exact path="/callback" component={Callback} />
         <Route exact path="/feeds" component={Home} />
-        <Route exact path="/new" component={NewContribution} />
+        {props.user.username !== ''  && <Route exact path="/new" component={NewContribution} />}
         <Route exact path="/categories/:category" component={Home} />
         <Route exact path="/articles/:author/:permlink" component={ArticleDetail} />
         <Route exact path="/search" component={Search} />
@@ -66,9 +67,9 @@ const App = (props) => {
 };
 
 const mapStateToProps = state => ({
+  user: state.user,
   articles: state.articles,
   app: state.app
 });
 
 export default withRouter(connect(mapStateToProps)(App));
-

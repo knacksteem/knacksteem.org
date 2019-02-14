@@ -4,7 +4,7 @@ const Option = Select.Option;
 
 export const KnackSelect = () => {
   return  (
-    <Select defaultValue="Categories" style={{ width: 120 }}>
+    <Select defaultValue="Categories" style={{ width: 150 }}>
 	  <Option value="All">All</Option>
     <Option value="gaming">Gaming</Option>
     <Option value="documentary">Documentary</Option>

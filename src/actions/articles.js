@@ -157,11 +157,13 @@ export const getArticlesModeration = (route, skip, search, username) => {
       dispatch({
         type: types.ARTICLES_GET,
         skip: skip || undefined,
+        count: response.data.count,
         payload: response.data.results
       });
     } catch (error) {
       dispatch({
         type: types.ARTICLES_GET,
+        count: 0,
         payload: []
       });
     }

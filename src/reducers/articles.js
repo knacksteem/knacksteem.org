@@ -7,6 +7,7 @@ const initialState = {
   data: [],
   categories: [],
   type: '',
+  count: 0
 };
 
 const articles = (state = initialState, action) => {
@@ -27,6 +28,7 @@ const articles = (state = initialState, action) => {
       return {
         ...state,
         isBusy: false,
+        count: action.count,
         data: action.skip ? [...state.data, ...action.payload] : action.payload //if lazy loading, combine arrays
       };
     case ARTICLES_POSTING:

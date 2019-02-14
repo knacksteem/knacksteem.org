@@ -146,7 +146,7 @@ class ArticleDetail extends Component {
               <div className="article-category">Category: {data.category}</div>
               <Divider/>
               {isEditMode && <Editor isEdit={true} parentPermlink={data.permlink} parentAuthor={data.author} articleData={data} isComment={false}  onImageInserted={this.handleImageInserted}  />}
-              {!isEditMode && <ReactMarkdown source={data.description} />}
+              {!isEditMode && <ReactMarkdown source={data.description} escapeHtml={false} />}
               { votingSlider.isVotingSliderVisible &&
               <div>
                 <VotingSlider/>

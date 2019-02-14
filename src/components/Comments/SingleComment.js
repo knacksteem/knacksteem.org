@@ -51,7 +51,7 @@ class SingleComment extends React.Component {
           <div className="avatar" style={{backgroundImage: `url(${data.authorImage})`}} />
           <span>{data.author} ({data.authorReputation})</span>
           {isEditMode && <Editor isEdit={true} isComment={true} articleData={data} onCancel={this.onCancelEditorClick} onDone={this.onDoneEditorClick} parentPermlink={parentPermlink} parentAuthor={parentAuthor} />}
-          {!isEditMode && <ReactMarkdown source={data.description} />}
+          {!isEditMode && <ReactMarkdown source={data.description} escapeHtml={false} />}
           <ArticleMetaBottom data={data} onUpdate={onUpdate} onEditClick={this.onEditClick} onReplyClick={this.onReplyClick} isComment isEditMode={isEditMode} />
         </div>
         <div className="replies" style={{width: '90%', marginTop: '20px'}}>

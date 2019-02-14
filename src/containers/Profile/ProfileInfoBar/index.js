@@ -191,7 +191,7 @@ const ProfileInfoBar = ({
 
               {(user.tokens !== undefined) &&
                 <Menu.Item key="tokens" disabled={false}>
-                  <span className="profile-info-bar-label">KNT Count: {user.tokens}</span>
+                  <span className="profile-info-bar-label">KNT Count: {parseFloat(user.tokens).toFixed(2)}</span>
                 </Menu.Item>
               }
 
