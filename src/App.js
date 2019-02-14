@@ -54,7 +54,7 @@ const App = (props) => {
         {props.user.username !== ''  && <Route exact path="/users" component={Users} />}
         <Route exact path="/sponsors" component={Sponsors} />
         <Route exact path="/moderators" component={Moderators} />
-        {props.user.username !== ''  && <Route exact path="/callback" component={Callback} />}
+        <Route exact path="/callback" component={Callback} />
         <Route exact path="/feeds" component={Home} />
         {props.user.username !== ''  && <Route exact path="/new" component={NewContribution} />}
         <Route exact path="/categories/:category" component={Home} />
