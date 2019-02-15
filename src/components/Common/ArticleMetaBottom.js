@@ -130,7 +130,10 @@ class ArticleMetaBottom extends Component {
   }
 
   getArticleVotes = async () => {
-    const {data, dispatch} = this.props;
+    const {data, dispatch, isArticleDetail, isComment} = this.props;
+    if(isComment) {
+      return;
+    }
     try {
       //calling the api to get the votes of the articles
       let response = await apiGet(`/posts/${data.author}/${data.permlink}/votes`, {username: Cookies.get('username') || undefined});
