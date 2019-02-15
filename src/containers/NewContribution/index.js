@@ -1,14 +1,13 @@
 import React from 'react';
-import { Row, Col} from 'antd';
+import {Row, Col, message} from 'antd';
 import Editor from '../../components/Editor';
 import {connect} from 'react-redux';
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
 import {postArticle} from '../../actions/articles';
-import {HowToPost} from '../../components/HowToPost/'
+import {HowToPost} from '../../components/HowToPost/';
+import {push} from 'react-router-redux';
 import './index.css';
-
-
 
 /**
  * Route for adding a new article/contribution with rich text editor
@@ -135,6 +134,14 @@ class  NewContribution extends React.Component {
   }
 
   render() {
+
+    const {user, dispatch} = this.props;
+    const isUserBanned = user.userObject.isBanned;
+
+    if(isUserBanned) {
+      message.error("You are banned from posting on KnackSteem");
+      dispatch(push('/'));
+    }
 
     return (
       <Row type="flex" style={{ width: '75%'}} >
