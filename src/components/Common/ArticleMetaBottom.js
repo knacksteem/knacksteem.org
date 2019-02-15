@@ -164,10 +164,14 @@ class ArticleMetaBottom extends Component {
     const upvoteCount = votesData.filter(vote => vote.percent > 0).length;
     const downvoteCount = votesData.filter(vote => vote.percent < 0).length;
 
-    const actionsArray = [<a key="action-reply" onClick={onReplyClick}>Reply</a>];
+    const actionsArray = [];
     const showVoteWorth = true;
 
     if (isComment || isArticleDetail) {
+      actionsArray.push(
+        <a key="action-reply" onClick={onReplyClick}>Reply</a>
+      );
+
       if (isAuthor) {
         actionsArray.push(
           <a key="action-edit" onClick={onEditClick}>Edit</a>
