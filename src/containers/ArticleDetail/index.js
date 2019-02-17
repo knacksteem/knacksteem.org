@@ -142,7 +142,7 @@ class ArticleDetail extends Component {
           <Row type="flex" style={{width: '67%'}} id="article-detail">
             <Row className="article-detail" style={{width: '100%'}}>
               {!isEditMode && <h1>{data.title}</h1>}
-              <div className="article-author">Author: {data.author}</div>
+              <div className="article-author">Author: <a href={"/@" + data.author}>{data.author}</a></div>
               <div className="article-category">Category: {data.category}</div>
               <Divider/>
               {isEditMode && <Editor isEdit={true} parentPermlink={data.permlink} parentAuthor={data.author} articleData={data} isComment={false}  onImageInserted={this.handleImageInserted}  />}

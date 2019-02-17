@@ -130,7 +130,7 @@ class ArticleMetaBottom extends Component {
   }
 
   getArticleVotes = async () => {
-    const {data, dispatch, isArticleDetail, isComment} = this.props;
+    const {data, dispatch, isComment} = this.props;
     if(isComment) {
       return;
     }

@@ -79,7 +79,7 @@ class ArticleListItem extends Component {
             </a>
           </Col>
           <Col >
-            <p className="my-auto"><b>{data.author}</b> ({data.authorReputation})</p>
+            <p className="my-auto"><a title="Visit Profile" href={'/@' + data.author}><b>{data.author}</b></a> ({data.authorReputation})</p>
           </Col>
           <Col >
             <p className="my-auto">in {data.tags[1]}</p>
