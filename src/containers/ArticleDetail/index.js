@@ -11,10 +11,11 @@ import {apiGet} from '../../services/api';
 import Comments from '../../components/Comments';
 import Editor from '../../components/Editor';
 import SimilarPosts from '../../components/SimilarPosts';
-import AnouncementMetaBar  from '../../components/AnnouncementMetaBar';
+import AnnouncementMetaBar  from '../../components/AnnouncementMetaBar';
 import VotingSlider from '../../components/VotingSlider'
 import './index.css';
 const {Content} = Layout;
+
 
 //Article Detail route
 class ArticleDetail extends Component {
@@ -171,7 +172,7 @@ class ArticleDetail extends Component {
           </Row>
           <Row style={{width: '33%', }} justify="center" type="flex" >
               <Col className="announcement-container" style={{marginBottom: '30px', position: 'fixed'}}>
-                <AnouncementMetaBar/>
+              <AnnouncementMetaBar/>
               </Col>
               <Col style={{position: 'fixed', top: '400px'}} className="similarpost-container" >
                 {data.similarPosts && <SimilarPosts data={data.similarPosts} showMore={this.showMore} disableShowMore={this.state.disableShowMore}/>}

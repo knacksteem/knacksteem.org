@@ -82,7 +82,6 @@ class Home extends Component {
   render() {
 
     const {articles, user} = this.props;
- 
 
     return (
       <Row style={{width: '75%', flexDirection: 'row'}} type="flex" className="home-container">
@@ -98,7 +97,7 @@ class Home extends Component {
           
           <Row type="flex" justify="center" style={{width: '33%'}} className="announcement-container">
             <Col style={{marginTop: 0, position: 'fixed'}}>
-              <AnnouncementMetaBar/>
+              <AnnouncementMetaBar />
             </Col>
           </Row>
           {articles.isBusy && <Spin/>}
