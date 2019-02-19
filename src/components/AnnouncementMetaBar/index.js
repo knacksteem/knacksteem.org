@@ -43,8 +43,8 @@ export default class AnnouncementMetaBar extends Component {
                   {announcementPost.coverImage && <div className="similarPostImg" 
                         style={{backgroundImage: `url(https://steemitimages.com/100x100/${announcementPost.coverImage})`}}>
                   </div>}
-                  <h4 style={{textAlign: 'center'}}>{announcementPost.title}</h4>
-                  <p>{announcementPost.description.substr(0, 30)}</p>
+                  <h4 style={{textAlign: 'center', wordBreak: 'break-all'}}>{announcementPost.title}</h4>
+                  <p style={{wordBreak: 'break-all'}}>{announcementPost.description.substr(0, 30)}</p>
                   <Link to={`/articles/${announcementPost.author}/${announcementPost.permlink}`}>Read more <Icon type="arrow-right" theme="outlined" /></Link>
                 </Card>
               );
