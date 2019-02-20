@@ -117,7 +117,7 @@ class  NewContribution extends React.Component {
     const {isComment, parsedPostData} = this.state;
     const {dispatch, onDone} = this.props;
     
-    dispatch(postArticle(parsedPostData.title, this.replaceAtMentionsWithLinks(parsedPostData.body), tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor, parseInt(parsedPostData.reward))); 
+    dispatch(postArticle(parsedPostData.title, this.replaceAtMentionsWithLinks(parsedPostData.body), tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor, parseInt(parsedPostData.reward, 10))); 
 
     if (onDone) {
       onDone();
