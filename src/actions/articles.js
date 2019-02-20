@@ -173,7 +173,7 @@ export const getArticlesModeration = (route, skip, search, username) => {
 /**
  * post article to blockchain and knacksteem backend
  */
-export const postArticle = (title, body, tags, isComment, parentPermlink, parentAuthor) => {
+export const postArticle = (title, body, tags, isComment, parentPermlink, parentAuthor, percentSBD) => {
   let images = [];
   let matches;
 
@@ -222,8 +222,8 @@ export const postArticle = (title, body, tags, isComment, parentPermlink, parent
           ['comment_options', {
             author: store.user.username,
             permlink: newPermLink,
-            max_accepted_payout: '100000.000 SBD',
-            percent_steem_dollars: 50,
+            max_accepted_payout: !percentSBD ? '0.000 SBD' : '100000.000 SBD',
+            percent_steem_dollars: percentSBD === 100 ? 0 : 50,
             allow_votes: true,
             allow_curation_rewards: true,
             extensions: [
