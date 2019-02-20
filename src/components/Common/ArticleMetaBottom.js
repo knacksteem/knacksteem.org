@@ -230,7 +230,7 @@ class ArticleMetaBottom extends Component {
           </Col>
           <Col>
             <span>
-              <strong><i style={styles.barIcon} className="fas fa-dollar-sign" />{data.totalPayout}</strong>
+              <strong><i style={styles.barIcon} className="fas fa-dollar-sign" />{Number(data.totalPayout).toFixed(2)}</strong>
             </span>
           </Col>
         </Col>
