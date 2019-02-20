@@ -228,6 +228,11 @@ class ArticleMetaBottom extends Component {
           <Col>
             <Divider type="vertical" />
           </Col>
+          <Col>
+            <span>
+              <strong><i style={styles.barIcon} className="fas fa-dollar-sign" />{data.totalPayout}</strong>
+            </span>
+          </Col>
         </Col>
         {!isComment && 
         <Col>

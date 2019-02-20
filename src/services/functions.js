@@ -15,7 +15,7 @@ export const prettyDate = (time) => {
     diff = (((new Date()).getTime() - date.getTime()) / 1000) + date.getTimezoneOffset() * 60,
     day_diff = Math.floor(diff / 86400);
 
-  if (day_diff === 0) {
+  if (day_diff <= 0) {
     //posted just today
     if (diff < 60) {
       return 'just now';

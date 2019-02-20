@@ -21,6 +21,8 @@ import { editArticle, postArticle } from '../../actions/articles';
 import EditorToolbar from './EditorToolBar';
 import './index.css';
 
+const Option = Select.Option;
+
 /**
  * Editor component for comments and articles
  */
@@ -45,7 +47,8 @@ class Editor extends Component {
         : ['knacksteem'],
       isMarkdownEditorActive: false,
       previewState: false,
-      openSelect: false
+      openSelect: false,
+      reward: 50
     };
 
     this.renderItems = this
@@ -57,6 +60,7 @@ class Editor extends Component {
     this.onUpdate = this
       .onUpdate
       .bind(this);
+    this.handleRewardsChange = this.handleRewardsChange.bind(this)
   }
 
   static hotkeys = {
@@ -288,7 +292,7 @@ class Editor extends Component {
               title: '',
               tags: ''
             }
-            await dispatch(postArticle(values.title, values.body, values.tags, isComment, parentPermlink, parentAuthor));
+            await dispatch(postArticle(values.title, values.body, values.tags, isComment, parentPermlink, parentAuthor, 50));
             if (onDone) {
               onDone();
             }
@@ -548,13 +552,13 @@ class Editor extends Component {
           title: post.title,
           tags: post
             .tags
-            .filter(tags => tags !== 'knacksteem')
+            .filter(tags => tags !== 'knacksteem'),
         });
     } else {
       this
         .props
         .form
-        .setFieldsValue({ title: post.title, tags: post.tags });
+        .setFieldsValue({ title: post.title, tags: post.tags, reward: post.reward });
     }
     if (isEdit) {
       if (this.input && post.description !== '') {
@@ -621,7 +625,8 @@ class Editor extends Component {
           .props
           .form
           .getFieldsValue(['title', 'tags']),
-        body: this.input.value
+        body: this.input.value,
+        reward: this.state.reward
       };
 
       if (!e)
@@ -702,6 +707,15 @@ class Editor extends Component {
     await this.setState({
       openSelect
     });
+  }
+
+  /**
+  * @method handleRewardsChange
+  * @description handles reward dropdown changes
+  * @param {string} value
+  */
+  handleRewardsChange(value) {
+    this.setState({ reward: value })
   }
 
   render() {
@@ -906,6 +920,15 @@ class Editor extends Component {
                   {children}</Select>)}
             </Form.Item>
             }
+
+            {!(isEdit || isComment) && <Form.Item
+              label={< span className="Editor__rewards" > Reward </span>}>
+              <Select defaultValue="50" onChange={this.handleRewardsChange}>
+                <Option value="100">100% Steem Power</Option>
+                <Option value="50">50% SBD and 50% SP</Option>
+                <Option value="0">Declined</Option>
+              </Select>
+            </Form.Item>}
 
             <Form.Item>
               <Row type="flex" justify="end">

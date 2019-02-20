@@ -74,7 +74,8 @@ class  NewContribution extends React.Component {
     const data = {
       body: form.body,
       title: form.title,
-      tags: form.tags
+      tags: form.tags,
+      reward: form.reward
     };
 
     // if(form.tags === undefined){
@@ -115,8 +116,8 @@ class  NewContribution extends React.Component {
   proceedSubmit = (tags) => {
     const {isComment, parsedPostData} = this.state;
     const {dispatch, onDone} = this.props;
- 
-      dispatch(postArticle(parsedPostData.title, this.replaceAtMentionsWithLinks(parsedPostData.body), tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor)); 
+    
+    dispatch(postArticle(parsedPostData.title, this.replaceAtMentionsWithLinks(parsedPostData.body), tags, isComment, parsedPostData.parentPermlink, parsedPostData.parentAuthor, parseInt(parsedPostData.reward))); 
 
     if (onDone) {
       onDone();
