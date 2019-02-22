@@ -79,8 +79,8 @@ export const getRewardFund = (method='get') => {
       let steemRewardFundData = await steem.api.getRewardFundAsync('post');
 
       dispatch({
-        type: types.CURRENT_MEDIAN_HISTORY_PRICE_GET,
-        currentMedianHistoryPriceObject: (steemRewardFundData) ? steemRewardFundData : {}
+        type: types.STEEM_REWARD_FUND_GET,
+        rewardFundObject: (steemRewardFundData) ? steemRewardFundData : {}
       }); 
 
     } catch (error) {
