@@ -1,11 +1,9 @@
 import * as types from './types';
-import axios from 'axios';
+import steem from 'steem';
 
 import {apiGet, apiPost} from '../services/api';
 import Cookies from 'js-cookie';
 import {message} from 'antd';
-
-const REMOTE_STEEM_API = 'https://api.steemjs.com';
 
 /**
  * get list of users (for moderative actions)
@@ -77,21 +75,14 @@ export const moderateUser = (username, action, banReason, bannedUntil) => {
 
 export const getRewardFund = (method='get') => {
   return async (dispatch) => {
-    const url = `${REMOTE_STEEM_API}/getRewardFund?name=post`;
-    const params = {};
-
     try {
-      let steemRewardFundData = await axios({
-        method,
-        url,
-        params,
-        responseType: 'json'
-      });
+      let steemRewardFundData = await steem.api.getRewardFundAsync('post');
 
       dispatch({
-        type: types.STEEM_REWARD_FUND_GET,
-        rewardFundObject: (steemRewardFundData) ? steemRewardFundData.data : {}
-      });  
+        type: types.CURRENT_MEDIAN_HISTORY_PRICE_GET,
+        currentMedianHistoryPriceObject: (steemRewardFundData) ? steemRewardFundData : {}
+      }); 
+
     } catch (error) {
       window.console.error('We were unable to fetch steem reward fund data.');
     }
@@ -100,20 +91,12 @@ export const getRewardFund = (method='get') => {
 
 export const getCurrentMedianHistoryPrice = (method='get') => {
   return async (dispatch) => {
-    const url = `${REMOTE_STEEM_API}/getCurrentMedianHistoryPrice`;
-    const params = {};
-
     try {
-      let currentMedianHistoryPriceData = await axios({
-        method,
-        url,
-        params,
-        responseType: 'json'
-      });
+      let currentMedianHistoryPriceData = await steem.api.getCurrentMedianHistoryPriceAsync();
 
       dispatch({
         type: types.CURRENT_MEDIAN_HISTORY_PRICE_GET,
-        currentMedianHistoryPriceObject: (currentMedianHistoryPriceData) ? currentMedianHistoryPriceData.data : {}
+        currentMedianHistoryPriceObject: (currentMedianHistoryPriceData) ? currentMedianHistoryPriceData : {}
       });  
     } catch (error) {
       window.console.error('We were unable to fetch current median history price.');
@@ -123,20 +106,12 @@ export const getCurrentMedianHistoryPrice = (method='get') => {
 
 export const getDynamicGlobalProperties = (method='get') => {
   return async (dispatch) => {
-    const url = `${REMOTE_STEEM_API}/getDynamicGlobalProperties`;
-    const params = {};
-
     try {
-      let dynamicGlobalPropertiesData = await axios({
-        method,
-        url,
-        params,
-        responseType: 'json'
-      });
+      let dynamicGlobalPropertiesData = await steem.api.getDynamicGlobalPropertiesAsync();
 
       dispatch({
         type: types.DYNAMIC_GLOBAL_PROPERTIES_GET,
-        dynamicGlobalPropertiesObject: (dynamicGlobalPropertiesData) ? dynamicGlobalPropertiesData.data : {}
+        dynamicGlobalPropertiesObject: (dynamicGlobalPropertiesData) ? dynamicGlobalPropertiesData : {}
       });
     } catch (error) {
       window.console.error('We were unable to fetch dynamic global properties data.');
