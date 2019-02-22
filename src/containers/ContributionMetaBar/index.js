@@ -89,9 +89,7 @@ class ContributionMetaBar extends React.Component {
     return ( 
       
       <div className="contribution-bar" style={{width: '200px'}}>
-        {hasLoadedRemoteUserObject 
-        &&
-        <Layout style={{ backgroundColor: '#fff' }}>
+        {<Layout style={{ backgroundColor: '#fff' }}>
           <div className="contribution-info-bar-container">
             {user.username
             &&
