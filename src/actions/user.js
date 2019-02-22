@@ -73,11 +73,13 @@ export const userLogout = () => {
 export const getRemoteUserData = (username, method='get') => {
   return async (dispatch) => {
     try {
-      let remoteUserData = await steem.api.getAccountsAsync([username]);
-      dispatch({
-        type: types.REMOTE_USER_GET,
-        remoteUserObject: (remoteUserData) ? remoteUserData[0] : {}
-      });  
+      if(username){
+        let remoteUserData = await steem.api.getAccountsAsync([username]);
+        dispatch({
+          type: types.REMOTE_USER_GET,
+          remoteUserObject: (remoteUserData) ? remoteUserData[0] : {}
+        });  
+      }
     } catch (error) {
       message.error('We were unable to fetch information about this user.');
     }
