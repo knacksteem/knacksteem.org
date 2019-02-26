@@ -262,5 +262,6 @@ export function containsEmptyMap(maps) {
 
 // Creating Uniqye Key Name for Digital Ocean Spaces
 export function uniqueKeyName(imageName) {
-  return `${Math.random().toString(36).substr(2, 16)}-${imageName}`;
+  let imageExtension = imageName.substring(imageName.lastIndexOf('.'), imageName.length);
+  return `${Math.random().toString(36).substr(2, 25)}-image${imageExtension}`;
 }
