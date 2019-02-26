@@ -26,7 +26,7 @@ export default class AnnouncementMetaBar extends Component {
   getAnnoncementPost = async () => {
     let announcementPosts = await apiGet(`/posts`, {author : `${Config.officialAccount}`, limit: 1});
     this.setState({
-      announcementPost: announcementPosts.data.results
+      announcementPost: announcementPosts.data ? announcementPosts.data.results : []
     });
   }
 
