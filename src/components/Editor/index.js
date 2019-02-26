@@ -502,9 +502,18 @@ class Editor extends Component {
         .substring(endPos, this.input.value.length)}`;
     this.resizeTextarea();
     this.renderMarkdown(this.input.value);
-    this.setInputCursorPosition(startPos + imageText.length);
+    this.setValue(this.input.value, startPos + imageText.length, startPos + imageText.length);
+    this.setState({ imageUploading: false });
     this.onUpdate();
   };
+
+  setValue(value, start, end) {
+    if (start && end) {
+      setTimeout(() => {
+        this.input.setSelectionRange(start, end);
+      }, 0);
+    }
+  }
 
   /**
  * @method checkTags -- method to validate tags for any error

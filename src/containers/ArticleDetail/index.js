@@ -14,6 +14,9 @@ import SimilarPosts from '../../components/SimilarPosts';
 import AnnouncementMetaBar  from '../../components/AnnouncementMetaBar';
 import VotingSlider from '../../components/VotingSlider'
 import './index.css';
+import S3 from '../../services/DigitalOcean';
+import Config from '../../config';
+import { uniqueKeyName } from '../../services/functions';
 const {Content} = Layout;
 
 
@@ -72,15 +75,25 @@ class ArticleDetail extends Component {
   handleImageInserted = (blob, callback, errorCallback) => {
     const formData = new FormData();
     formData.append('files', blob);
+     // Creating a unique key to be send to Digital Ocean Spaces
+    const uniqueName = uniqueKeyName(blob.name);
+    const params = { Body: blob, Bucket: 'knacsteem', Key: uniqueName };
 
-    fetch(`https://test.api`, {
-      method: 'POST',
-      body: formData,
-    })
-      .then(res => res.json())
-      .then(res => callback(res.secure_url, blob.name))
-      .catch(() => {
-        errorCallback();
+    // Sending the file to the Spaces
+    S3.putObject(params)
+      .on('build', request => {
+        request.httpRequest.headers.Host = `${Config.digitalOceanSpaces}`;
+        request.httpRequest.headers['Content-Length'] = blob.size;
+        request.httpRequest.headers['Content-Type'] = blob.type;
+        request.httpRequest.headers['x-amz-acl'] = 'public-read';
+      })
+      .send((err) => {
+        if (err) errorCallback();
+        else {
+          // If there is no error updating the editor with the imageUrl
+          const imageUrl = `${Config.digitalOceanSpaces}` + uniqueName
+          callback(imageUrl, uniqueName)
+        }
       });
   };
 

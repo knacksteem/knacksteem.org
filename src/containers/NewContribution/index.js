@@ -7,6 +7,9 @@ import PropTypes from 'prop-types';
 import {postArticle} from '../../actions/articles';
 import {HowToPost} from '../../components/HowToPost/';
 import {push} from 'react-router-redux';
+import S3 from '../../services/DigitalOcean';
+import Config from '../../config';
+import { uniqueKeyName } from '../../services/functions';
 import './index.css';
 
 /**
@@ -50,14 +53,25 @@ class  NewContribution extends React.Component {
     const formData = new FormData();
     formData.append('files', blob);
 
-    fetch(`https://test.api`, {
-      method: 'POST',
-      body: formData,
-    })
-      .then(res => res.json())
-      .then(res => callback(res.secure_url, blob.name))
-      .catch(() => {
-        errorCallback();
+    // Creating a unique key to be send to Digital Ocean Spaces
+    const uniqueName = uniqueKeyName(blob.name);
+    const params = { Body: blob, Bucket: 'knacsteem', Key: uniqueName };
+
+    // Sending the file to the Spaces
+    S3.putObject(params)
+      .on('build', request => {
+        request.httpRequest.headers.Host = `${Config.digitalOceanSpaces}`;
+        request.httpRequest.headers['Content-Length'] = blob.size;
+        request.httpRequest.headers['Content-Type'] = blob.type;
+        request.httpRequest.headers['x-amz-acl'] = 'public-read';
+      })
+      .send((err) => {
+        if (err) errorCallback();
+        else {
+          // If there is no error updating the editor with the imageUrl
+          const imageUrl = `${Config.digitalOceanSpaces}` + uniqueName
+          callback(imageUrl, uniqueName)
+        }
       });
   };
 
