@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {push} from 'react-router-redux';
 import {connect} from 'react-redux';
 import Cookies from 'js-cookie';
-import {Layout, Divider, Spin, Row, Col, Tag} from 'antd';
+import {Layout, Divider, Spin, Row, Col, Tag, message} from 'antd';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import ArticleMetaBottom from '../../components/Common/ArticleMetaBottom';
@@ -75,6 +75,14 @@ class ArticleDetail extends Component {
   handleImageInserted = (blob, callback, errorCallback) => {
     const formData = new FormData();
     formData.append('files', blob);
+
+    const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+
+    if (!validImageTypes.includes(blob.type)) {
+      message.info('Please Upload Valid Image');
+      return errorCallback();
+    }
+
      // Creating a unique key to be send to Digital Ocean Spaces
     const uniqueName = uniqueKeyName(blob.name);
     const params = { Body: blob, Bucket: 'knacsteem', Key: uniqueName };

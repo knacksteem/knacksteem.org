@@ -879,7 +879,7 @@ class Editor extends Component {
                 marginTop: '20px'
               }}
               className="Editor__imagebox">
-              <input type="file" id="inputfile" onChange={this.handleImageChange} />
+              <input type="file" id="inputfile" accept="image/*" onChange={this.handleImageChange} />
               <label htmlFor="inputfile">
                 {this.state.imageUploading
                   ? (

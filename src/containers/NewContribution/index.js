@@ -53,6 +53,13 @@ class  NewContribution extends React.Component {
     const formData = new FormData();
     formData.append('files', blob);
 
+    const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+
+    if (!validImageTypes.includes(blob.type)) {
+      message.info('Please Upload Valid Image');
+      return errorCallback();
+    }
+
     // Creating a unique key to be send to Digital Ocean Spaces
     const uniqueName = uniqueKeyName(blob.name);
     const params = { Body: blob, Bucket: 'knacsteem', Key: uniqueName };
