@@ -502,9 +502,18 @@ class Editor extends Component {
         .substring(endPos, this.input.value.length)}`;
     this.resizeTextarea();
     this.renderMarkdown(this.input.value);
-    this.setInputCursorPosition(startPos + imageText.length);
+    this.setValue(this.input.value, startPos + imageText.length, startPos + imageText.length);
+    this.setState({ imageUploading: false });
     this.onUpdate();
   };
+
+  setValue(value, start, end) {
+    if (start && end) {
+      setTimeout(() => {
+        this.input.setSelectionRange(start, end);
+      }, 0);
+    }
+  }
 
   /**
  * @method checkTags -- method to validate tags for any error
@@ -870,7 +879,7 @@ class Editor extends Component {
                 marginTop: '20px'
               }}
               className="Editor__imagebox">
-              <input type="file" id="inputfile" onChange={this.handleImageChange} />
+              <input type="file" id="inputfile" accept="image/*" onChange={this.handleImageChange} />
               <label htmlFor="inputfile">
                 {this.state.imageUploading
                   ? (

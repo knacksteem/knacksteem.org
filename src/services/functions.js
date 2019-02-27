@@ -259,3 +259,9 @@ export function containsEmptyMap(maps) {
   
   return foundEmptyMap;
 }
+
+// Creating Uniqye Key Name for Digital Ocean Spaces
+export function uniqueKeyName(imageName) {
+  let imageExtension = imageName.substring(imageName.lastIndexOf('.'), imageName.length);
+  return `${Math.random().toString(36).substr(2, 25)}-image${imageExtension}`;
+}
