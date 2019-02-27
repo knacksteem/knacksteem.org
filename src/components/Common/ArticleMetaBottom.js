@@ -156,7 +156,7 @@ class ArticleMetaBottom extends Component {
 
   render() {
     const {isDeleting, votesData, isUpvoted, isDownvoted, sliderVisible} = this.state;
-    const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode} = this.props;
+    const {data, isComment, isArticleDetail, onEditClick, onReplyClick, isEditMode, user} = this.props;
     
     const isAuthor = (Cookies.get('username') === data.author);
     const commentCount = isComment ? data.replies.length : data.commentsCount;
@@ -199,7 +199,7 @@ class ArticleMetaBottom extends Component {
             <Divider type="vertical" />
           </Col>
           <Col>
-          { sliderVisible && Cookies.get('username') !== '' &&
+          { sliderVisible && user.username !== '' &&
             <div>
               <VotingSlider onCancel={this.onCancel} onConfirm={this.onConfirm} onVotePowerChange={this.changeVotePower} votingDirection={this.state.votingDirection} showVoteWorth={showVoteWorth} />
             </div>
