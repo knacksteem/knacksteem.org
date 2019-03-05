@@ -693,7 +693,7 @@ class Editor extends Component {
    * @return {String}
    */
   replaceAtMentionsWithLinks = text => {
-    return text.replace(/@([a-z\d_]+)/ig, '[@$1](http://knacksteem.org/@$1)');
+    return text.replace(/\s@([a-z\d_]+)/ig, '[@$1](http://knacksteem.org/@$1)');
   }
 
   /**

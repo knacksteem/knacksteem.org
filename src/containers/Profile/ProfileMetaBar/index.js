@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Cookies from 'js-cookie';
 
 import {
   Button,
@@ -139,6 +140,7 @@ const ProfileMetaBar = ({
           <Menu.Item key="power" disabled={false}>
             <span className="profile-meta-bar-label" style={{ fontWeight: 'bold' }}>Activity</span>
           </Menu.Item>
+          {Cookies.get('username') === username &&
           <Menu.Item key="edit" disabled={false}>
             <div>
               <Button href={`https://steemit.com/@${username}/settings`} size="small" style={{ borderWidth: '2px', fontWeight: 'bold', width: 'inherit', background: 'transparent' }}>
@@ -146,6 +148,7 @@ const ProfileMetaBar = ({
               </Button>
             </div>
           </Menu.Item>
+          }
 
         </Menu>
       </Row>

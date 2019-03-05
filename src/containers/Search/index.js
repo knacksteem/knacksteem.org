@@ -83,7 +83,7 @@ class Search extends Component {
                   <List.Item>
                     <List.Item.Meta
                       avatar={<div className="avatar" style={{backgroundImage: `url(https://steemitimages.com/u/${item.username}/avatar)`}} />}
-                      title={<a href={`https://knacksteem.org/@${item.username}`}>{item.username}</a> } >
+                      title={<a href={`/@${item.username}`}>{item.username}</a> } >
                     </List.Item.Meta>
                   </List.Item>
                 );
