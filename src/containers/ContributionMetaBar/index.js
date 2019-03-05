@@ -9,6 +9,7 @@ import SteemConnect from '../../services/SteemConnect';
 import { repLog10 } from '../../services/functions';
 import Cookies from 'js-cookie';
 import defaultCover from '../../assets/images/cover.jpg';
+import { matchPath } from 'react-router'
 import './index.css';
 
 
@@ -73,7 +74,14 @@ class ContributionMetaBar extends React.Component {
 
   loadRemoteUserData() {
     const {dispatch} = this.props;
-    dispatch(getRemoteUserData(Cookies.get('username')));
+    const match = matchPath(this.props.location.pathname, {
+      path: '/@:username',
+    });
+    if(match && match.params.username) {
+      dispatch(getRemoteUserData(match.params.username));
+    } else {
+      dispatch(getRemoteUserData(Cookies.get('username')));
+    }
   }
 
   renderSidebar({
